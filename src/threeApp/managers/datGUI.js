@@ -1,17 +1,19 @@
-import Config from '../../config';
+import * as dat from 'dat.gui';
+
+import Config from '../config';
 
 // Manages all dat.GUI interactions
 export default class DatGUI {
-  constructor(main, mesh) {
-    let dat;
+  constructor(main) {
+    //let dat;
     const gui = new dat.GUI();
 
     this.camera = main.camera.threeCamera;
-    this.controls = main.controls.threeControls;
+    this.controls = main.controls;//.threeControls;
     this.light = main.light;
 
     /* Global */
-    //gui.close();
+    gui.close();
 
     /* Camera */
     const cameraFolder = gui.addFolder('Camera');
@@ -65,22 +67,6 @@ export default class DatGUI {
     controlsAutoRotateSpeedGui.onFinishChange(() => {
       this.controls.enableRotate = true;
     });
-
-
-    /* Mesh */
-    const meshFolder = gui.addFolder('Mesh');
-    meshFolder.add(Config.mesh, 'translucent', true).name('Translucent').onChange((value) => {
-      if(value) {
-        mesh.material.transparent = true;
-        mesh.material.opacity = 0.5;
-      } else {
-        mesh.material.opacity = 1.0;
-      }
-    });
-    meshFolder.add(Config.mesh, 'wireframe', true).name('Wireframe').onChange((value) => {
-      mesh.material.wireframe = value;
-    });
-
 
     /* Lights */
     // Ambient Light

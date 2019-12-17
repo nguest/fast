@@ -27,7 +27,7 @@ export default {
     material: {
       color: 0xffffff,
       emissive: 0xffffff
-    }
+    },
   },
   fog: {
     color: 0x444444,
@@ -62,18 +62,6 @@ export default {
       z: 0
     }
   },
-  ambientLight: {
-    enabled: false,
-    color: 0x141414
-  },
-  directionalLight: {
-    enabled: true,
-    color: 0xf0f0f0,
-    intensity: 0.4,
-    x: -75,
-    y: 280,
-    z: 150
-  },
   shadow: {
     enabled: true,
     helperEnabled: true,
@@ -86,6 +74,19 @@ export default {
     right: 100,
     bottom: -100,
     left: -100
+  },
+  gravity: [0,-100,0],
+  ambientLight: {
+    enabled: false,
+    color: 0x141414
+  },
+  directionalLight: {
+    enabled: true,
+    color: 0xf0f0f0,
+    intensity: 0.4,
+    x: -75,
+    y: 280,
+    z: 150
   },
   pointLight: {
     enabled: true,
@@ -104,5 +105,5 @@ export default {
     x: 0,
     y: 0,
     z: 0
-  }
+  },
 };

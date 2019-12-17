@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import Main from './app/main';
+import Main from './threeApp/main';
 
 
 export const ThreeContainer = () => {
@@ -7,7 +7,6 @@ export const ThreeContainer = () => {
     new Main(threeRootElement.current);
   },[])
   const threeRootElement = useRef();
-    return (
-      <div ref={threeRootElement} />
-    );
+
+  return <div ref={threeRootElement} />;
 }

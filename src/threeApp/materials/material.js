@@ -12,17 +12,14 @@ export const createMaterial = ({
   flatShading = false,
   emissive,
 }, assets) => {
-  console.log({ zzz: assets })
     const material = new THREE[type]({
       name,
       color,
       flatShading,
-      roughness: 1,
-      metalness: 0,
       side: THREE[side],
       wireframe,
       emissive,
-      map: assets.map
+      map: assets.UVGrid,
     });
 
     return material;

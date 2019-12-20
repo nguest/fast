@@ -22,5 +22,7 @@ export const createMaterial = ({
       map: assets.UVGrid,
     });
 
+    material.map.wrapT = material.map.wrapS = THREE.RepeatWrapping;
+
     return material;
 };

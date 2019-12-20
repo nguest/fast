@@ -43,3 +43,16 @@ export const klein = ( v, u, optionalTarget ) => {
 export const rand = ( v ) => {
   return (v * (Math.random() - 0.5));
 }
+
+export const throttle = (func, limit) => {
+  let inThrottle;
+  return function() {
+    const args = arguments
+    const context = this
+    if (!inThrottle) {
+      func.apply(context, args)
+      inThrottle = true
+      setTimeout(() => inThrottle = false, limit)
+    }
+  }
+}

@@ -14,7 +14,7 @@ export const materialsIndex = [
     type: 'MeshPhongMaterial',
     color: 0xffffff,
     map: 'UVGrid',
-    side: 'DoubleSide',
+    side: 'FrontSide',
     wireframe: false,
     emissive: 0x000022,
   },

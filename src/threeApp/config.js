@@ -49,7 +49,7 @@ export default {
     zoomSpeed: 0.8,
     minDistance: 200,
     maxDistance: 600,
-    minPolarAngle: Math.PI / 5,
+    minPolarAngle: -Math.PI / 2,
     maxPolarAngle: Math.PI / 2,
     minAzimuthAngle: -Infinity,
     maxAzimuthAngle: Infinity,

@@ -1,4 +1,4 @@
-[https://github.com/facebook/create-react-app](https://github.com/facebook/create-react-app).
+[https://github.com/nguest/threejs-react-ammojs-boilerplate](https://github.com/nguest/threejs-react-ammojs-boilerplate).
 
 ## threejs-react-ammojs-boilerplate
 

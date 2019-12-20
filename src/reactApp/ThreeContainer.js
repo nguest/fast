@@ -1,10 +1,10 @@
 import React, { useRef, useEffect } from 'react';
-import Main from './threeApp/main';
+import Main from '../threeApp/main';
 
 
-export const ThreeContainer = () => {
+export const ThreeContainer = ({cb}) => {
   useEffect(() => {
-    new Main(threeRootElement.current);
+    new Main(threeRootElement.current, cb);
   },[])
   const threeRootElement = useRef();
 

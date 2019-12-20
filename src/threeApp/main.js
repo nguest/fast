@@ -21,8 +21,11 @@ import { createMaterial } from './materials/material';
 import { assetsIndex } from './assetsIndex';
 import { materialsIndex } from './materialsIndex';
 
+// Objects
+import { objectsIndex } from './objectsIndex';
+
 // Managers
-// import Interaction from './managers/interaction';
+import Interaction from './managers/interaction';
 import DatGUI from './managers/datGUI';
 
 // Stats
@@ -33,10 +36,12 @@ import { createStats, updateStatsStart, updateStatsEnd } from './helpers/stats';
 let auxTrans = new Ammo.btTransform();
 
 export default class Main {
-  constructor(container) {
+  constructor(container, cb) {
+
+    console.log({ Ammo })
     this.container = container;
     this.clock = new THREE.Clock();
-    console.log({  Ammo })
+    this.cb = cb;
 
     this.createPhysicsWorld();
 
@@ -48,9 +53,9 @@ export default class Main {
     }
 
     this.renderer = new Renderer(this.scene, container);
-
     this.camera = new Camera(this.renderer.threeRenderer, container);
     this.controls = new Controls(this.camera.threeCamera, this.renderer, container);
+    this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
     this.light = new Light(this.scene);
 
     // Create and place lights in scene
@@ -114,109 +119,51 @@ export default class Main {
     physicsWorld.setGravity(new Ammo.btVector3(...Config.gravity));
     physicsWorld.bodies = [];
     this.physicsWorld = physicsWorld;
-    console.log({ physicsWorld })
+  }
+
+  createObjects = (materials) => {
+    objectsIndex({materials}).forEach((object) => {
+      new Mesh({
+        ...object,
+        type: object.type, 
+        params: object.params,
+        position: object.position,
+        rotation: object.rotation,
+        material: object.material,
+        scene: this.scene,
+        physics: {
+          physicsWorld: this.physicsWorld,
+          mass: object.physics.mass,
+          friction: object.physics.friction,
+          restitution: object.physics.restitution,
+          damping: object.physics.damping,
+        },
+        shadows: object.shadows,
+      });
+    });
   }
 
   createWorld(materials) {
-    console.log({ physicsWorld: this.physicsWorld })
-    const sphere = new Mesh({ 
-      type: 'SphereBufferGeometry', 
-      params: [20,20,10],
-      position: [0, 100, 0],
-      material: materials.redShiny,
-      scene: this.scene,
-      physics: {
-        physicsWorld: this.physicsWorld,
-        mass: 1,
-        friction: 0.8
-      }
-    });
-    
-    const box = new Mesh({ 
-      type: 'BoxBufferGeometry', 
-      params: [150,1,150,1,1,1], 
-      position: [0,-20,0],
-      rotation: [0, 0, 0.1],
-      material: materials.whiteFlat,
-      scene: this.scene,
-      physics: {
-        physicsWorld: this.physicsWorld,
-        mass: 0,
-        friction: 0.8,
-        restitution: 0.5,
-      },
-      shadows: { receive: true, cast: false }, 
-    });
-
-    // const torus = new Mesh({ 
-    //   type: 'TorusKnotBufferGeometry', 
-    //   params: [12, 6, 80, 16 ], 
-    //   position: [50,5,0],
-    //   material: materials.snowShaderMat, 
-    //   scene: this.scene,
-    // });
-
-    // const parametric = new Mesh({ 
-    //   type: 'ParametricBufferGeometry', 
-    //   params: [ klein, 25, 25 ],
-    //   geoRotate: [0.4,0,-0.3],
-    //   position: [-50,0,0],
-    //   scale: [3,3,3],
-    //   material: materials.redShiny,
-    //   scene: this.scene,
-    // });
-
-    // const rock = new Mesh({ 
-    //   type: 'JSON',
-    //   url: './assets/models/rock.json',
-    //   position: [0,0,-50],
-    //   scale: [3,3,3],
-    //   material: materials.snowShaderMat,
-    //   scene: this.scene,
-    // });
-
-      // const ground = new Mesh({ 
-      //   type: 'PlaneBufferGeometry', 
-      //   params: [ 150, 150, 10, 10 ],
-      //   rotation: [-Math.PI/2, 0, 0],
-      //   position: [0,-20,0],
-      //   shadows: { receive: true, cast: false },
-      //   material: materials.whiteFlat,
-      //   scene: this.scene,
-      //   physicsWorld: this.physicsWorld,
-      //   hasPhysics: true,
-      //   mass: 0,
-      // });
-
-//////////////////---------------------------------
-
-    //this.snow = new Snow(this.scene);
-
+    this.createObjects(materials);
+    this.addEventListeners();
     this.animate();
   }
 
   animate() {
     const deltaTime = this.clock.getDelta();
-    const elapsedTime = this.clock.getElapsedTime();
     const rS = this.rS;
 
     //if (Config.isDev) updateStatsStart(rS)
     this.renderer.render(this.scene, this.camera.threeCamera);
     //if (Config.isDev) updateStatsEnd(rS)
     
-    //if (this.snow) this.snow.update(deltaTime);
-
     //TWEEN.update();
     this.controls.update();
-    this.updatePhysics(deltaTime)
-    // RAF
+    this.updatePhysics(deltaTime);
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
   }
 
-
-
   updatePhysics(deltaTime) {
-
     // Step world
     this.physicsWorld.stepSimulation(deltaTime, 10);
   
@@ -234,6 +181,32 @@ export default class Main {
         objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
       }
     }
+  }
+
+  addEventListeners() {
+    this.container.addEventListener('keydown', this.keydown, false);
+  }
+
+  keydown = (e) => {
+    console.log(e.keyCode)
+    switch(e.keyCode) {
+      case 32: // spacebar
+        e.preventDefault();
+        if (this.clock.running) {
+          this.clock.stop();
+          this.showStatus('Paused');
+        } else {
+           this.clock.start();
+           this.showStatus('');
+        }
+        break;
+      default:
+        return null;
+    }
+  }
+
+  showStatus = (message) => {
+    this.cb.setStatus(message);
   }
 }
 

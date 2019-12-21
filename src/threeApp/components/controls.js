@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import Config from '../config';
+import Config from '../sceneConfig/general';
 
 // Controls based on orbit controls
 export default class Controls {

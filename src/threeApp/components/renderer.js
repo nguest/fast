@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import Config from '../config';
+import Config from '../sceneConfig/general';
 
 // Main webGL renderer class
 export default class Renderer {

@@ -1,6 +1,6 @@
-import Keyboard from '../components/keyboard';
+import Keyboard from '../components/Keyboard';
 import { throttle } from '../helpers/helpers';
-import Config from '../config';
+import Config from '../sceneConfig/general';
 
 // Manages all input interactions
 export default class Interaction {

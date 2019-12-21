@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import Config from '../config';
+import Config from '../sceneConfig/general';
 
 // Class that creates and updates the main camera
 export default class Camera {

@@ -76,34 +76,4 @@ export default {
     left: -100
   },
   gravity: [0,-100,0],
-  ambientLight: {
-    enabled: false,
-    color: 0x141414
-  },
-  directionalLight: {
-    enabled: true,
-    color: 0xf0f0f0,
-    intensity: 0.4,
-    x: -75,
-    y: 280,
-    z: 150
-  },
-  pointLight: {
-    enabled: true,
-    color: 0xffffff,
-    intensity: 0.34,
-    distance: 115,
-    x: 0,
-    y: 0,
-    z: 0
-  },
-  hemiLight: {
-    enabled: true,
-    color: 0xc8c8c8,
-    groundColor: 0xffffff,
-    intensity: 0.55,
-    x: 0,
-    y: 0,
-    z: 0
-  },
 };

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { promisifyLoader } from './helpers';
+import { promisifyLoader } from '../helpers/helpers';
 import Ammo from 'ammonext';
 
 export default class Mesh {

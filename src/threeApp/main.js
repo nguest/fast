@@ -4,25 +4,28 @@ import TWEEN from '@tweenjs/tween.js';
 import Ammo from 'ammonext';
 
 // Config
-import Config from './config';
+import Config from './sceneConfig/general';
 
 // Components
-import Renderer from './components/renderer';
-import Camera from './components/camera';
-import Light from './components/light';
-import Controls from './components/controls';
+import Renderer from './components/Renderer';
+import Camera from './components/Camera';
+import Light from './components/Light';
+import Controls from './components/Controls';
+import Mesh from './components/Mesh';
 
 // Helpers
 import { promisifyLoader, klein } from './helpers/helpers';
-import Mesh from './helpers/Mesh';
 
 // Assets & Materials
 import { createMaterial } from './materials/material';
-import { assetsIndex } from './assetsIndex';
-import { materialsIndex } from './materialsIndex';
+import { assetsIndex } from './sceneConfig/assets';
+import { materialsIndex } from './sceneConfig/materials';
+
+// Lights
+import { lightsIndex } from './sceneConfig/lights';
 
 // Objects
-import { objectsIndex } from './objectsIndex';
+import { objectsIndex } from './sceneConfig/objects';
 
 // Managers
 import Interaction from './managers/interaction';
@@ -56,13 +59,7 @@ export default class Main {
     this.camera = new Camera(this.renderer.threeRenderer, container);
     this.controls = new Controls(this.camera.threeCamera, this.renderer, container);
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
-    this.light = new Light(this.scene);
-
-    // Create and place lights in scene
-    const lights = ['ambient', 'directional', 'point', 'hemi'];
-    lights.forEach(light => (
-      this.light.place(light)
-    ));
+    this.light = this.createLights();
 
     if(Config.isDev) {
       this.rS = createStats();
@@ -86,6 +83,15 @@ export default class Main {
     this.texturesAndFiles = { filesPromises, texturesPromises };
 
     return this.texturesAndFiles;
+  }
+
+  createLights() {
+    const lights = lightsIndex.map((light) => {
+      return new Light(light, this.scene);
+    })
+    console.log({ lights })
+    //this.light = new Light(this.scene);
+    return lights;
   }
 
   createMaterials(filesAndTextures) {
@@ -122,14 +128,14 @@ export default class Main {
   }
 
   createObjects = (materials) => {
-    objectsIndex({materials}).forEach((object) => {
+    objectsIndex.forEach((object) => {
       new Mesh({
         ...object,
         type: object.type, 
         params: object.params,
         position: object.position,
         rotation: object.rotation,
-        material: object.material,
+        material: materials[object.material],
         scene: this.scene,
         physics: {
           physicsWorld: this.physicsWorld,

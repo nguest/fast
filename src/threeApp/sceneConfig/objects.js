@@ -1,12 +1,12 @@
-import { calculateFaces, calculateVertices, planeUnwrapUVs } from './custom/geometries/concave';
+import { calculateFaces, calculateVertices, planeUnwrapUVs } from '../custom/geometries/concaveExample1';
 
-export const objectsIndex = ({materials, physicsWorld}) => ([
+export const objectsIndex = [
   { 
     name: 'sphere',
     type: 'SphereBufferGeometry', 
     params: [20,20,10],
     position: [0, 100, -100],
-    material: materials.redShiny,
+    material: 'redShiny',
     physics: {
       mass: 1,
       friction: 0.8
@@ -23,7 +23,7 @@ export const objectsIndex = ({materials, physicsWorld}) => ([
     params: [150,1,150,1,1,1], 
     position: [-70,0,-50],
     rotation: [0, 0, -0.5],
-    material: materials.whiteFlat,
+    material: 'whiteFlat',
     physics: {
       mass: 0,
       friction: 0.8,
@@ -31,17 +31,17 @@ export const objectsIndex = ({materials, physicsWorld}) => ([
     },
     shadows: { 
       receive: true,
-      cast: false
+      cast: true
     }, 
     add: true,
   },
   { 
-    name: 'custom',
+    name: 'concaveExample1',
     type: 'Geometry', 
     params: 'custom', 
     position: [0,-100,0],
     rotation: [0, 0, 0],
-    material: materials.whiteFlat,
+    material: 'whiteFlat',
     physics: {
       mass: 0,
       friction: 0.8,
@@ -56,7 +56,7 @@ export const objectsIndex = ({materials, physicsWorld}) => ([
     calculateUVs: planeUnwrapUVs,
     add: true,
   },
-]);
+];
 
 
     // const torus = new Mesh({ 

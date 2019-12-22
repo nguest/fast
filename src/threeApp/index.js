@@ -1,6 +1,6 @@
 // Global imports
 import * as THREE from 'three';
-import TWEEN from '@tweenjs/tween.js';
+// import TWEEN from '@tweenjs/tween.js';
 import Ammo from 'ammonext';
 
 // Config
@@ -14,7 +14,7 @@ import Controls from './components/Controls';
 import Mesh from './components/Mesh';
 
 // Helpers
-import { promisifyLoader, klein } from './helpers/helpers';
+import { promisifyLoader } from './helpers/helpers';
 
 // Assets & Materials
 import { createMaterial } from './materials/material';
@@ -36,17 +36,19 @@ import { createStats, updateStatsStart, updateStatsEnd } from './helpers/stats';
 
 // -- End of imports
 
-let auxTrans = new Ammo.btTransform();
-
 export default class Main {
-  constructor(container, cb) {
-
-    console.log({ Ammo })
+  constructor(container, cb, state) {
     this.container = container;
-    this.clock = new THREE.Clock();
     this.cb = cb;
+    this.state = state;
+    this.cb.resetObjects = this.resetObjects.bind(this);
 
+    this.initialize();
+  }
+
+  initialize() {
     this.createPhysicsWorld();
+    this.auxTrans = new Ammo.btTransform();
 
     this.scene = new THREE.Scene();
     this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
@@ -55,19 +57,19 @@ export default class Main {
       Config.dpr = window.devicePixelRatio;
     }
 
-    this.renderer = new Renderer(this.scene, container);
-    this.camera = new Camera(this.renderer.threeRenderer, container);
-    this.controls = new Controls(this.camera.threeCamera, this.renderer, container);
+    this.renderer = new Renderer(this.scene, this.container);
+    this.camera = new Camera(this.renderer.threeRenderer, this.container);
+    this.controls = new Controls(this.camera.threeCamera, this.renderer, this.container);
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
+    this.clock = new THREE.Clock();
     this.light = this.createLights();
 
-    if(Config.isDev) {
-      this.rS = createStats();
-      this.gui = new DatGUI(this);
-    }
+    if (Config.isDev) this.gui = new DatGUI(this);
+    if (Config.showStats) this.rS = createStats();
 
     const texturesAndFiles = this.loadAssets();
     this.createMaterials(texturesAndFiles);
+    this.appInitialized = true;
   }
 
   loadAssets() {
@@ -86,11 +88,10 @@ export default class Main {
   }
 
   createLights() {
-    const lights = lightsIndex.map((light) => {
-      return new Light(light, this.scene);
-    })
-    console.log({ lights })
-    //this.light = new Light(this.scene);
+    const lights = lightsIndex.map((light) => (
+      new Light(light, this.scene)
+    ));
+    console.log({ lights });
     return lights;
   }
 
@@ -99,39 +100,44 @@ export default class Main {
     Promise.all([...filesPromises, ...texturesPromises])
       .then((r) => {
         const assets = r.reduce((agg, asset, idx) => {
-          const fileNames = [...Object.keys(assetsIndex.files), ...Object.keys(assetsIndex.textures)]
+          const fileNames = [
+            ...Object.keys(assetsIndex.files),
+            ...Object.keys(assetsIndex.textures),
+          ];
           return {
             ...agg,
             [fileNames[idx]]: asset,
           };
         }, {});
- 
-        const materials = materialsIndex.reduce((agg,materialParams) => ({
-            ...agg,
-            [materialParams.name]: createMaterial(materialParams, assets)
-          }), {});
+
+        const materials = materialsIndex.reduce((agg, materialParams) => ({
+          ...agg,
+          [materialParams.name]: createMaterial(materialParams, assets),
+        }), {});
 
         return this.createWorld(materials);
-      })
+      });
   }
 
   createPhysicsWorld() {
-    let collisionConfiguration  = new Ammo.btDefaultCollisionConfiguration();
-    let dispatcher              = new Ammo.btCollisionDispatcher(collisionConfiguration);
-    let overlappingPairCache    = new Ammo.btDbvtBroadphase();
-    let solver                  = new Ammo.btSequentialImpulseConstraintSolver();
+    const collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
+    const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
+    const overlappingPairCache = new Ammo.btDbvtBroadphase();
+    const solver = new Ammo.btSequentialImpulseConstraintSolver();
 
-    let physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+    const physicsWorld = new Ammo.btDiscreteDynamicsWorld(
+      dispatcher, overlappingPairCache, solver, collisionConfiguration,
+    );
     physicsWorld.setGravity(new Ammo.btVector3(...Config.gravity));
     physicsWorld.bodies = [];
     this.physicsWorld = physicsWorld;
   }
 
   createObjects = (materials) => {
-    objectsIndex.forEach((object) => {
+    this.objects = objectsIndex.map((object) => (
       new Mesh({
         ...object,
-        type: object.type, 
+        type: object.type,
         params: object.params,
         position: object.position,
         rotation: object.rotation,
@@ -145,8 +151,8 @@ export default class Main {
           damping: object.physics.damping,
         },
         shadows: object.shadows,
-      });
-    });
+      })
+    ));
   }
 
   createWorld(materials) {
@@ -157,13 +163,13 @@ export default class Main {
 
   animate() {
     const deltaTime = this.clock.getDelta();
-    const rS = this.rS;
+    const { rS } = this;
 
-    //if (Config.isDev) updateStatsStart(rS)
+    if (Config.showStats) updateStatsStart(rS);
     this.renderer.render(this.scene, this.camera.threeCamera);
-    //if (Config.isDev) updateStatsEnd(rS)
-    
-    //TWEEN.update();
+    if (Config.showStats) updateStatsEnd(rS);
+
+    // TWEEN.update();
     this.controls.update();
     this.updatePhysics(deltaTime);
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
@@ -172,20 +178,48 @@ export default class Main {
   updatePhysics(deltaTime) {
     // Step world
     this.physicsWorld.stepSimulation(deltaTime, 10);
-  
+
     // Update rigid bodies
-    for (let i = 0; i < this.physicsWorld.bodies.length; i++) { 
+    for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
       const objThree = this.physicsWorld.bodies[i];
       const objPhys = objThree.userData.physicsBody;
       const motionState = objPhys.getMotionState();
       if (motionState) {
-        motionState.getWorldTransform(auxTrans);
-        let p = auxTrans.getOrigin();
-        let q = auxTrans.getRotation();
+        motionState.getWorldTransform(this.auxTrans);
+        const p = this.auxTrans.getOrigin();
+        const q = this.auxTrans.getRotation();
 
         objThree.position.set(p.x(), p.y(), p.z());
         objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
       }
+    }
+  }
+
+  resetObjects() {
+    this.objects.forEach((object) => {
+      object.setInitialState();
+    });
+
+    if (this.physicsWorld) {
+      for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
+        const objThree = this.objects[i];
+        const objPhys = objThree.mesh.userData.physicsBody;
+        if (objPhys && objPhys.getMotionState()) {
+          const quat = new THREE.Quaternion().setFromEuler(new THREE.Euler(...objThree.rotation, 'XYZ'));
+          const transform = new Ammo.btTransform();
+          transform.setIdentity();
+          transform.setOrigin(new Ammo.btVector3(...objThree.position));
+          transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+
+          const zeroVector = new Ammo.btVector3(0, 0, 0);
+          objPhys.setLinearVelocity(zeroVector);
+          objPhys.setAngularVelocity(zeroVector);
+          objPhys.setWorldTransform(transform);
+        }
+      }
+      // /reset some internal cached data in the broadphase
+      // this.physicsWorld.getBroadphase().resetPool(this.physicsWorld.getDispatcher());
+      // this.physicsWorld.getConstraintSolver().reset();
     }
   }
 
@@ -194,69 +228,25 @@ export default class Main {
   }
 
   keydown = (e) => {
-    console.log(e.keyCode)
-    switch(e.keyCode) {
-      case 32: // spacebar
-        e.preventDefault();
-        if (this.clock.running) {
-          this.clock.stop();
-          this.showStatus('Paused');
-        } else {
-           this.clock.start();
-           this.showStatus('');
-        }
-        break;
-      default:
-        return null;
+    console.log(e.keyCode);
+    switch (e.keyCode) {
+    case 32: // spacebar
+      e.preventDefault();
+      if (this.clock.running) {
+        this.clock.stop();
+        this.showStatus('Paused');
+      } else {
+        this.clock.start();
+        this.showStatus('');
+      }
+      break;
+    default:
+      return null;
     }
+    return null;
   }
 
   showStatus = (message) => {
     this.cb.setStatus(message);
   }
 }
-
-
-
-
-
-// function createBall(){
-    
-//   let pos = {x: 0, y: 20, z: 0};
-//   let radius = 2;
-//   let quat = {x: 0, y: 0, z: 0, w: 1};
-//   let mass = 1;
-
-//   //threeJS Section
-//   let ball = new THREE.Mesh(new THREE.SphereBufferGeometry(radius), new THREE.MeshPhongMaterial({color: 0xff0505}));
-
-//   ball.position.set(pos.x, pos.y, pos.z);
-  
-//   ball.castShadow = true;
-//   ball.receiveShadow = true;
-
-//   scene.add(ball);
-
-
-//   //Ammojs Section
-//   let transform = new Ammo.btTransform();
-//   transform.setIdentity();
-//   transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
-//   transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
-//   let motionState = new Ammo.btDefaultMotionState( transform );
-
-//   let colShape = new Ammo.btSphereShape( radius );
-//   colShape.setMargin( 0.05 );
-
-//   let localInertia = new Ammo.btVector3( 0, 0, 0 );
-//   colShape.calculateLocalInertia( mass, localInertia );
-
-//   let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
-//   let body = new Ammo.btRigidBody( rbInfo );
-
-
-//   physicsWorld.addRigidBody( body );
-  
-//   ball.userData.physicsBody = body;
-//   rigidBodies.push(ball);
-// }

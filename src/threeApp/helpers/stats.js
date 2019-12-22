@@ -19,23 +19,24 @@ export const createStats = () => (
     fractions: [
       { base: 'frame', steps: [ 'texture', 'setup', 'render' ] }
     ],
-}));
+  }));
 
 export const updateStatsStart = (rS) => {
-    rS('frame').start();
-    //glS.start();
+  rS('frame').start();
+  //glS.start();
 
-    rS('rAF').tick();
-    rS('FPS').frame();
+  rS('rAF').tick();
+  rS('FPS').frame();
 
-    rS('render').start();
-}
+  rS('render').start();
+};
+
 export const updateStatsEnd = (rS) => {
-    rS('render').end(); // render finished
-    rS('frame').end(); // frame finished
+  rS('render').end(); // render finished
+  rS('frame').end(); // frame finished
 
-    // // Local rStats update
-    rS('rStats').start();
-    rS().update();
-    rS('rStats').end();
-}
+  // // Local rStats update
+  rS('rStats').start();
+  rS().update();
+  rS('rStats').end();
+};

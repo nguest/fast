@@ -20,7 +20,7 @@ export default class Animation {
 
   // Call update in loop
   update(delta) {
-    if(this.mixer) {
+    if (this.mixer) {
       this.mixer.update(delta);
     }
   }

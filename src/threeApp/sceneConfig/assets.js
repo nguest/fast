@@ -4,5 +4,5 @@ export const assetsIndex = {
   },
   textures: {
     UVGrid: { name: 'UVGrid', path: './assets/textures/UV_Grid_Sm.png' },
-  }
-}
+  },
+};

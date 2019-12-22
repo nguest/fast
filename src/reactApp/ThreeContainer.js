@@ -1,12 +1,23 @@
-import React, { useRef, useEffect } from 'react';
-import Main from '../threeApp/main';
+import React, { useRef, useEffect, useState } from 'react';
+import { object } from 'prop-types';
+import Main from '../threeApp';
 
 
-export const ThreeContainer = ({cb}) => {
-  useEffect(() => {
-    new Main(threeRootElement.current, cb);
-  },[])
+export const ThreeContainer = ({ cb, state }) => {
   const threeRootElement = useRef();
+  const [main, setMain] = useState(null);
 
-  return <div ref={threeRootElement} />;
-}
+  useEffect(() => {
+    if (!main) {
+      const threeApp = new Main(threeRootElement.current, cb, state);
+      setMain(threeApp);
+    }
+  }, []);
+
+  return <div ref={threeRootElement} className="three-container" />;
+};
+
+ThreeContainer.propTypes = {
+  cb: object,
+  state: object,
+};

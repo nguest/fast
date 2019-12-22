@@ -3,10 +3,9 @@ import { ThreeContainer } from './ThreeContainer';
 import './App.css';
 
 function App() {
-
   const [status, setStatus] = useState(null);
 
-  const cb = { setStatus }
+  const cb = { setStatus, resetObjects: () => {} };
 
   return (
     <div className="App">
@@ -16,9 +15,15 @@ function App() {
       <div className="status-bar">
         { status }
       </div>
+      <button
+        id="reset-button"
+        onClick={() => cb.resetObjects()}
+      >
+        Reset
+      </button>
       <ThreeContainer cb={cb} />
     </div>
   );
-};
+}
 
 export default App;

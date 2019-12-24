@@ -1,28 +1,24 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { object } from 'prop-types';
-import Main from '../../threeApp';
+import React, { useRef } from 'react';
+import { func } from 'prop-types';
+import { Main } from '../../threeApp';
 
 
-export const ThreeContainer = ({ cb, state }) => {
+export const ThreeContainer = ({ setStatus }) => {
   const threeRootElement = useRef();
-  const [main, setMain] = useState(null);
-
-  useEffect(() => {
-    if (!main) {
-      //const threeApp = new Main(threeRootElement.current, cb, state);
-      //setMain(threeApp);
-    }
-  }, []);
-
-  console.log({ threeRootElement })
-
 
   return (
-    <Main cb={cb} ref={threeRootElement}/>
-  )
+    <>
+      <Main ref={threeRootElement} setStatus={setStatus} />
+      <button
+        id="reset-button"
+        onClick={() => threeRootElement.current.resetObjects()}
+      >
+        Reset
+      </button>
+    </>
+  );
 };
 
 ThreeContainer.propTypes = {
-  cb: object,
-  state: object,
+  setStatus: func,
 };

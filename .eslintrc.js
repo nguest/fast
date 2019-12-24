@@ -32,6 +32,7 @@ module.exports = {
     "react/require-default-props": "off",
     "react/jsx-props-no-spreading": "off",
     "react/button-has-type": "off",
+    "react/sort-comp": "off",
     "max-len": ["error", { "code":120 }],
     "no-restricted-globals": "off",
     "import/prefer-default-export": "off",

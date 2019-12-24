@@ -1,6 +1,8 @@
 // Global imports
 import * as THREE from 'three';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import { func } from 'prop-types';
+
 // import TWEEN from '@tweenjs/tween.js';
 import Ammo from 'ammonext';
 
@@ -38,23 +40,9 @@ import { createStats, updateStatsStart, updateStatsEnd } from './helpers/stats';
 
 // -- End of imports
 
-export default class Main extends Component {
-  constructor(props) {
-    super(props);
-    // this.cb = cb;
-    // this.state = state;
-    // this.cb.resetObjects = this.resetObjects.bind(this);
-    this.cb = props.cb;
-
-  }
-
+export class Main extends PureComponent {
   componentDidMount() {
-    
-    // this.container = document.createElement('div');
-    // console.log({ a: this.container })
-    // this.container.className = 'hello'
     this.initialize();
-
   }
 
   initialize() {
@@ -210,11 +198,12 @@ export default class Main extends Component {
   }
 
   resetObjects() {
-    console.log('reset')
+    // reset three objects
     this.objects.forEach((o) => {
       o.setInitialState();
     });
 
+    // reset physics world
     if (this.physicsWorld) {
       for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
         const objThree = this.objects[i];
@@ -249,10 +238,14 @@ export default class Main extends Component {
   }
 
   showStatus = (message) => {
-    this.cb.setStatus(message);
+    this.props.setStatus(message);
   }
 
   render() {
-    return <div className="yo" ref={(ref) => { this.container = ref }}></div>;
+    return <section className="three-canvas-container" ref={(ref) => { this.container = ref; }} />;
   }
 }
+
+Main.propTypes = {
+  setStatus: func,
+};

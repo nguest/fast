@@ -18,7 +18,7 @@ import SkyBox from './components/Skybox';
 import { promisifyLoader } from './helpers/helpers';
 
 // Assets & Materials
-import { createMaterial } from './materials/material';
+import { createMaterial } from './materials';
 import { assetsIndex } from './sceneConfig/assets';
 import { materialsIndex } from './sceneConfig/materials';
 
@@ -54,9 +54,7 @@ export default class Main {
     this.scene = new THREE.Scene();
     this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
 
-    if (window.devicePixelRatio) {
-      Config.dpr = window.devicePixelRatio;
-    }
+    if (window.devicePixelRatio) Config.dpr = window.devicePixelRatio;
 
     this.renderer = new Renderer(this.scene, this.container);
     this.camera = new Camera(this.renderer.threeRenderer, this.container);
@@ -64,6 +62,7 @@ export default class Main {
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
     this.clock = new THREE.Clock();
     this.light = this.createLights();
+    this.skyBox = new SkyBox(this.scene);
 
     if (Config.isDev) this.gui = new DatGUI(this);
     if (Config.showStats) this.rS = createStats();
@@ -156,13 +155,8 @@ export default class Main {
     });
   }
 
-  createSkyBox(materials) {
-    this.skyBox = new SkyBox(this.scene);
-  }
-
   createWorld(materials) {
     this.createObjects(materials);
-    this.createSkyBox(materials);
     this.animate();
   }
 
@@ -227,7 +221,7 @@ export default class Main {
           objPhys.setWorldTransform(transform);
         }
       }
-      // /reset some internal cached data in the broadphase
+      // // reset some internal cached data in the broadphase
       // this.physicsWorld.getBroadphase().resetPool(this.physicsWorld.getDispatcher());
       // this.physicsWorld.getConstraintSolver().reset();
     }

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { object } from 'prop-types';
-import Main from '../threeApp';
+import Main from '../../threeApp';
 
 
 export const ThreeContainer = ({ cb, state }) => {
@@ -13,6 +13,9 @@ export const ThreeContainer = ({ cb, state }) => {
       setMain(threeApp);
     }
   }, []);
+
+  console.log({ main })
+
 
   return <div ref={threeRootElement} className="three-container" />;
 };

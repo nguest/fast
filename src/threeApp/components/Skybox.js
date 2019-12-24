@@ -15,7 +15,6 @@ class SkyBox {
     const path = 'https://threejsfundamentals.org/threejs/resources/images/cubemaps/computer-history-museum/';
     const loader = new THREE.CubeTextureLoader();
     const cubeMap = promisifyLoader(loader).load([
-    //const cubeMap = new THREE.CubeTextureLoader().load([
       // `${path}right.jpg`,
       // `${path}left.jpg`,
       // `${path}top.jpg`,

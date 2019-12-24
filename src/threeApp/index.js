@@ -1,5 +1,6 @@
 // Global imports
 import * as THREE from 'three';
+import React, { Component } from 'react';
 // import TWEEN from '@tweenjs/tween.js';
 import Ammo from 'ammonext';
 
@@ -37,14 +38,23 @@ import { createStats, updateStatsStart, updateStatsEnd } from './helpers/stats';
 
 // -- End of imports
 
-export default class Main {
-  constructor(container, cb, state) {
-    this.container = container;
-    this.cb = cb;
-    this.state = state;
-    this.cb.resetObjects = this.resetObjects.bind(this);
+export default class Main extends Component {
+  constructor(props) {
+    super(props);
+    // this.cb = cb;
+    // this.state = state;
+    // this.cb.resetObjects = this.resetObjects.bind(this);
+    this.cb = props.cb;
 
+  }
+
+  componentDidMount() {
+    
+    // this.container = document.createElement('div');
+    // console.log({ a: this.container })
+    // this.container.className = 'hello'
     this.initialize();
+
   }
 
   initialize() {
@@ -200,6 +210,7 @@ export default class Main {
   }
 
   resetObjects() {
+    console.log('reset')
     this.objects.forEach((o) => {
       o.setInitialState();
     });
@@ -239,5 +250,9 @@ export default class Main {
 
   showStatus = (message) => {
     this.cb.setStatus(message);
+  }
+
+  render() {
+    return <div className="yo" ref={(ref) => { this.container = ref }}></div>;
   }
 }

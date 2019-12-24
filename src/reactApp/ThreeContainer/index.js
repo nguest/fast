@@ -9,15 +9,17 @@ export const ThreeContainer = ({ cb, state }) => {
 
   useEffect(() => {
     if (!main) {
-      const threeApp = new Main(threeRootElement.current, cb, state);
-      setMain(threeApp);
+      //const threeApp = new Main(threeRootElement.current, cb, state);
+      //setMain(threeApp);
     }
   }, []);
 
-  console.log({ main })
+  console.log({ threeRootElement })
 
 
-  return <div ref={threeRootElement} className="three-container" />;
+  return (
+    <Main cb={cb} ref={threeRootElement}/>
+  )
 };
 
 ThreeContainer.propTypes = {

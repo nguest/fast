@@ -5,7 +5,7 @@ import './App.css';
 function App() {
   const [status, setStatus] = useState(null);
 
-  const cb = { setStatus, resetObjects: () => {} };
+  const cb = { setStatus };
 
   return (
     <div className="App">

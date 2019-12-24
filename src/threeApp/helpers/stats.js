@@ -10,20 +10,19 @@ export const createStats = () => (
       calls: { caption: 'Calls (three.js)', over: 3000 },
       raf: { caption: 'Time since last rAF (ms)', average: true, avgMs: 100 },
       rstats: { caption: 'rStats update (ms)', average: true, avgMs: 100 },
-      texture: { caption: 'GenTex', average: true, avgMs: 100 }
+      texture: { caption: 'GenTex', average: true, avgMs: 100 },
     },
     groups: [
-      { caption: 'Framerate', values: [ 'fps', 'raf' ] },
-      { caption: 'Frame Budget', values: [ 'frame', 'texture', 'setup', 'render' ] }
+      { caption: 'Framerate', values: ['fps', 'raf'] },
+      { caption: 'Frame Budget', values: ['frame', 'texture', 'setup', 'render'] },
     ],
     fractions: [
-      { base: 'frame', steps: [ 'texture', 'setup', 'render' ] }
+      { base: 'frame', steps: ['texture', 'setup', 'render'] },
     ],
   }));
 
 export const updateStatsStart = (rS) => {
   rS('frame').start();
-  //glS.start();
 
   rS('rAF').tick();
   rS('FPS').frame();

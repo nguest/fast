@@ -23,7 +23,7 @@ export const calculateVertices = () => {
   // calculate vertices for each centerpoint
   for (let i = 0; i < cp.length; i++) {
     vertices.push(
-      new THREE.Vector3(cp[i].x - 200, cp[i].y + 20, cp[i].z + 0),
+      new THREE.Vector3(cp[i].x - 200, cp[i].y + 100, cp[i].z + 0),
       new THREE.Vector3(cp[i].x - 150, cp[i].y + 6, cp[i].z + 0),
       new THREE.Vector3(cp[i].x + 0, cp[i].y + 0, cp[i].z + 0),
       new THREE.Vector3(cp[i].x + 150, cp[i].y + 6, cp[i].z + 0),

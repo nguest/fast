@@ -63,5 +63,8 @@ export default {
       z: 0,
     },
   },
+  skyBox: {
+    position: [0, 0, 0],
+  },
   gravity: [0, -100, 0],
 };

@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 
-// import Config from '../../config';
-
 export const createMaterial = ({
   name,
   type,
@@ -12,17 +10,18 @@ export const createMaterial = ({
   flatShading = false,
   emissive,
 }, assets) => {
-    const material = new THREE[type]({
-      name,
-      color,
-      flatShading,
-      side: THREE[side],
-      wireframe,
-      emissive,
-      map: assets.UVGrid,
-    });
+  const material = new THREE[type]({
+    name,
+    color,
+    flatShading,
+    side: THREE[side],
+    wireframe,
+    emissive,
+    map: assets[map],
+  });
 
-    material.map.wrapT = material.map.wrapS = THREE.RepeatWrapping;
+  material.map.wrapT = THREE.RepeatWrapping;
+  material.map.wrapS = THREE.RepeatWrapping;
 
-    return material;
+  return material;
 };

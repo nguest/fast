@@ -2,43 +2,45 @@ import * as THREE from 'three';
 import Ammo from 'ammonext';
 
 import { promisifyLoader } from '../helpers/helpers';
+import { GLTFLoader } from '../loaders/GLTFLoader';
+
 
 export default class Mesh {
   constructor({
-    type,
-    url,
+    add,
+    calculateFaces,
+    calculateUVs,
+    calculateVertices,
+    geoRotate,
+    material,
+    name,
     params,
+    physics = {},
     position = [0, 0, 0],
     rotation = [0, 0, 0],
     scale = [1, 1, 1],
-    geoRotate,
-    shadows = { receive: false, cast: true },
-    material,
-    mass,
     scene = this.scene,
-    physics = {},
-    add,
-    name,
-    calculateFaces,
-    calculateVertices,
-    calculateUVs,
+    shadows = { receive: false, cast: true },
+    type,
+    url,
   }) {
+    this.addObjectToScene = add;
+    this.geoRotate = geoRotate;
+    this.material = material;
+    this.name = name;
+    this.params = params;
+    this.physics = physics;
+    this.physicsWorld = physics.physicsWorld;
     this.position = position;
     this.rotation = rotation;
     this.scale = scale;
-    this.geoRotate = geoRotate;
-    this.shadows = shadows;
-    this.material = material;
-    this.mass = mass;
-    this.name = name;
     this.scene = scene;
-    this.physicsWorld = physics.physicsWorld;
-    this.addObjectToScene = add;
-    this.setInitialState = this.setInitialState.bind(this);
+    this.shadows = shadows;
+    this.type = type;
 
     if (!add) return;
 
-    if (type === 'JSON') {
+    if (type === 'GLTF') {
       this.initLoader(url);
     } else {
       const geometry = new THREE[type](...params);
@@ -47,7 +49,7 @@ export default class Mesh {
         // must be custom type
         if (!calculateVertices || !calculateFaces) {
           throw new Error(
-            'calculateVertices and calculateFaces Functions must be defined to calculate custom geometry'
+            'calculateVertices and calculateFaces Functions must be defined to calculate custom geometry',
           );
         }
         const vertices = calculateVertices();
@@ -67,42 +69,44 @@ export default class Mesh {
         geometry.uvsNeedUpdate = true;
       }
 
-      const mesh = this.orientObject(geometry);
-      if (this.physicsWorld) this.calculatePhysics(mesh, params, physics, type);
+      this.orientObject(geometry);
     }
   }
 
-  async initLoader(url) { /* eslint-disable-line */
-    const JSONPromiseLoader = promisifyLoader(new THREE.JSONLoader());
-    const geometry = await JSONPromiseLoader.load(url).catch(() => console.log(`error loading ${url}`));
-    return this.orientObject(geometry);
+  initLoader(url) { /* eslint-disable-line */
+    const loader = new GLTFLoader().setPath(url.path);
+    const gltfScene = promisifyLoader(loader).load(url.file);
+    gltfScene.then((gltf) => {
+      const mesh = gltf.scene.children[0].children.filter((child) => child.type === 'Mesh');
+      return this.orientObject(mesh[0].geometry, mesh[0].material);
+    });
   }
 
-  orientObject(geometry) {
+  orientObject(geometry, loadedMaterial) {
     if (this.geoRotate) {
       geometry.rotateX(this.geoRotate[0]);
       geometry.rotateY(this.geoRotate[1]);
       geometry.rotateZ(this.geoRotate[2]);
     }
-    this.mesh = new THREE.Mesh(geometry, this.material);
+    this.mesh = new THREE.Mesh(geometry, loadedMaterial || this.material);
     this.mesh.position.set(...this.position);
     this.mesh.rotation.set(...this.rotation);
-    this.mesh.scale.set(...this.scale);
+    this.mesh.geometry.scale(...this.scale);
     this.mesh.castShadow = this.shadows.cast;
     this.mesh.receiveShadow = this.shadows.receive;
     this.mesh.name = this.name;
-
     if (this.addObjectToScene) {
       this.setInitialState();
       this.scene.add(this.mesh);
     }
+    if (this.physicsWorld) this.calculatePhysics(this.mesh, this.params, this.physics, this.type);
+
     return this.mesh;
   }
 
   setInitialState() {
     this.mesh.position.set(...this.position);
     this.mesh.rotation.set(...this.rotation);
-    this.mesh.scale.set(...this.scale);
   }
 
   calculatePhysics(mesh, params, physics, type) {
@@ -112,25 +116,24 @@ export default class Mesh {
     transform.setIdentity();
     transform.setOrigin(new Ammo.btVector3(...this.position));
     transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-    let motionState = new Ammo.btDefaultMotionState(transform);
+    const motionState = new Ammo.btDefaultMotionState(transform);
 
     let colShape;
     switch (type) {
     case 'SphereBufferGeometry':
       colShape = new Ammo.btSphereShape(params[0]); break;
     case 'BoxBufferGeometry':
-      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0] * 0.5, params[1] * 0.5, params[2] * 0.5)); break;
+      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0], params[1], params[2])); break;
     case 'PlaneBufferGeometry':
       colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0], params[1], 1)); break;
-    case 'Geometry':
-      colShape = new Ammo.btBvhTriangleMeshShape(concaveGeometryProcessor(mesh.geometry), true, true); break;
-    case 'convextHull':
+    case 'convexHull':
+    case 'GLTF':
       colShape = new Ammo.btConvexHullShape(convexGeometryProcessor(mesh.geometry), true, true); break;
     default:
-      colShape = null;
+      colShape = new Ammo.btBvhTriangleMeshShape(concaveGeometryProcessor(mesh.geometry), true, true); break;
     }
 
-    colShape.setMargin(0.05);
+    colShape.setMargin(0.1);
 
     const localInertia = new Ammo.btVector3(0, 0, 0);
     colShape.calculateLocalInertia(physics.mass, localInertia);
@@ -202,7 +205,7 @@ const concaveGeometryProcessor = (geometry) => {
       vec1,
       vec2,
       vec3,
-      false
+      false,
     );
   }
 
@@ -210,6 +213,8 @@ const concaveGeometryProcessor = (geometry) => {
 };
 
 export const convexGeometryProcessor = (geometry) => {
+  if (!geometry.boundingBox) geometry.computeBoundingBox();
+
   const data = geometry.isBufferGeometry
     ? geometry.attributes.position.array
     : new Float32Array(geometry.faces.length * 9);
@@ -238,7 +243,6 @@ export const convexGeometryProcessor = (geometry) => {
       data[i9 + 8] = vC.z;
     }
   }
-
   const shape = new Ammo.btConvexHullShape();
   const vec1 = new Ammo.btVector3(0, 0, 0);
 

@@ -1,4 +1,4 @@
-import Keyboard from '../components/Keyboard';
+import Keyboard from './Keyboard';
 import { throttle } from '../helpers/helpers';
 import Config from '../sceneConfig/general';
 
@@ -15,10 +15,6 @@ export default class Interaction {
 
     // Instantiate keyboard helper
     this.keyboard = new Keyboard();
-    console.log({ key: this.keyboard, r:this.renderer })
-    this.keyboard.update();
-    this.keyboard.debug();
-
 
     // Listeners
     // Mouse events
@@ -27,21 +23,21 @@ export default class Interaction {
     this.renderer.domElement.addEventListener('mouseover', (event) => this.onMouseOver(event), false);
 
     // Keyboard events
-    this.renderer.domElement.addEventListener('keydown', (event) => {
-      // Only once
-      if(event.repeat) {
-        return;
-      }
+    // this.renderer.domElement.addEventListener('keydown', (event) => {
+    //   // Only once
+    //   if (event.repeat) {
+    //     return;
+    //   }
 
 
-      if(this.keyboard.eventMatches(event, 'escape')) {
-        console.log('Escape pressed');
-      }
+    //   if(this.keyboard.eventMatches(event, 'escape')) {
+    //     console.log('Escape pressed');
+    //   }
 
-      if(this.keyboard.eventMatches(event, 'space')) {
-        console.log('Space pressed');
-      }
-    });
+    //   if(this.keyboard.eventMatches(event, 'space')) {
+    //     console.log('Space pressed');
+    //   }
+    // });
   }
 
   onMouseOver(event) {
@@ -61,7 +57,7 @@ export default class Interaction {
 
     clearTimeout(this.timeout);
 
-    this.timeout = setTimeout(function() {
+    this.timeout = setTimeout(() => {
       Config.isMouseMoving = false;
     }, 200);
 

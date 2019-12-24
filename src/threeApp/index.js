@@ -12,6 +12,7 @@ import Camera from './components/Camera';
 import Light from './components/Light';
 import Controls from './components/Controls';
 import Mesh from './components/Mesh';
+import SkyBox from './components/Skybox';
 
 // Helpers
 import { promisifyLoader } from './helpers/helpers';
@@ -28,7 +29,7 @@ import { lightsIndex } from './sceneConfig/lights';
 import { objectsIndex } from './sceneConfig/objects';
 
 // Managers
-import Interaction from './managers/interaction';
+import Interaction from './managers/Interaction';
 import DatGUI from './managers/datGUI';
 
 // Stats
@@ -88,11 +89,7 @@ export default class Main {
   }
 
   createLights() {
-    const lights = lightsIndex.map((light) => (
-      new Light(light, this.scene)
-    ));
-    console.log({ lights });
-    return lights;
+    return lightsIndex.map((light) => new Light(light, this.scene));
   }
 
   createMaterials(filesAndTextures) {
@@ -134,8 +131,8 @@ export default class Main {
   }
 
   createObjects = (materials) => {
-    this.objects = objectsIndex.map((object) => (
-      new Mesh({
+    this.objects = objectsIndex.map((object) => {
+      const params = {
         ...object,
         type: object.type,
         params: object.params,
@@ -143,21 +140,29 @@ export default class Main {
         rotation: object.rotation,
         material: materials[object.material],
         scene: this.scene,
-        physics: {
+        shadows: object.shadows,
+      };
+
+      if (object.physics) {
+        params.physics = {
           physicsWorld: this.physicsWorld,
           mass: object.physics.mass,
           friction: object.physics.friction,
           restitution: object.physics.restitution,
           damping: object.physics.damping,
-        },
-        shadows: object.shadows,
-      })
-    ));
+        };
+      }
+      return new Mesh(params);
+    });
+  }
+
+  createSkyBox(materials) {
+    this.skyBox = new SkyBox(this.scene);
   }
 
   createWorld(materials) {
     this.createObjects(materials);
-    this.addEventListeners();
+    this.createSkyBox(materials);
     this.animate();
   }
 
@@ -168,8 +173,13 @@ export default class Main {
     if (Config.showStats) updateStatsStart(rS);
     this.renderer.render(this.scene, this.camera.threeCamera);
     if (Config.showStats) updateStatsEnd(rS);
-
     // TWEEN.update();
+    this.interaction.keyboard.update();
+    if (this.interaction.keyboard.down('A')) {
+      console.log('A PRESSED');
+      this.togglePause();
+    }
+
     this.controls.update();
     this.updatePhysics(deltaTime);
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
@@ -177,7 +187,7 @@ export default class Main {
 
   updatePhysics(deltaTime) {
     // Step world
-    this.physicsWorld.stepSimulation(deltaTime, 10);
+    this.physicsWorld.stepSimulation(deltaTime, 1);
 
     // Update rigid bodies
     for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
@@ -196,15 +206,15 @@ export default class Main {
   }
 
   resetObjects() {
-    this.objects.forEach((object) => {
-      object.setInitialState();
+    this.objects.forEach((o) => {
+      o.setInitialState();
     });
 
     if (this.physicsWorld) {
       for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
         const objThree = this.objects[i];
         const objPhys = objThree.mesh.userData.physicsBody;
-        if (objPhys && objPhys.getMotionState()) {
+        if (objPhys) { // && objPhys.getMotionState()) {
           const quat = new THREE.Quaternion().setFromEuler(new THREE.Euler(...objThree.rotation, 'XYZ'));
           const transform = new Ammo.btTransform();
           transform.setIdentity();
@@ -223,27 +233,14 @@ export default class Main {
     }
   }
 
-  addEventListeners() {
-    this.container.addEventListener('keydown', this.keydown, false);
-  }
-
-  keydown = (e) => {
-    console.log(e.keyCode);
-    switch (e.keyCode) {
-    case 32: // spacebar
-      e.preventDefault();
-      if (this.clock.running) {
-        this.clock.stop();
-        this.showStatus('Paused');
-      } else {
-        this.clock.start();
-        this.showStatus('');
-      }
-      break;
-    default:
-      return null;
+  togglePause() {
+    if (this.clock.running) {
+      this.clock.stop();
+      this.showStatus('Paused');
+    } else {
+      this.clock.start();
+      this.showStatus('');
     }
-    return null;
   }
 
   showStatus = (message) => {

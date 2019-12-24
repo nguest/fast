@@ -37,6 +37,7 @@ module.exports = {
     "import/prefer-default-export": "off",
     "new-cap": "off",
     "no-plusplus": "off",
+    "no-use-before-define": "off",
     "no-unused-vars": [
       "error",
       {

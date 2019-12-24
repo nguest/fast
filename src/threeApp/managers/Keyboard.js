@@ -12,9 +12,7 @@
  *       keyboard.pressed("A") -- true as long as key is being pressed
  *       keyboard.up("A")      -- true for one update cycle after key is released
  *
- *  See this.k object data below for names of keys whose state can be polled
  */
-
 
 const k = () => ({
   8: 'backspace',
@@ -59,6 +57,7 @@ export default class Keyboard {
     // bind keyEvents
     document.addEventListener('keydown', this.onKeyDown, false);
     document.addEventListener('keyup', this.onKeyUp, false);
+
     this.status = {};
   }
 
@@ -71,7 +70,6 @@ export default class Keyboard {
 
   onKeyDown = (event) => {
     const key = keyName(event.keyCode);
-    console.log({ key, s: this.status });
     if (!this.status[key]) {
       this.status[key] = { down: false, pressed: false, up: false, updatedPreviously: false };
     }
@@ -79,7 +77,7 @@ export default class Keyboard {
 
   update() {
     Object.keys(this.status).forEach((key) => {
-      // insure that every keypress has "down" status exactly once
+      // ensure that every keypress has "down" status exactly once
       if (!this.status[key].updatedPreviously) {
         this.status[key].down = true;
         this.status[key].pressed = true;
@@ -95,7 +93,7 @@ export default class Keyboard {
         // move on to next key
       }
       // key released
-      if (!this.status[key].pressed) {
+      if (this.status[key] && !this.status[key].pressed) {
         this.status[key].up = true;
       }
     });

@@ -18,6 +18,22 @@ export const objectsIndex = [
     add: true,
   },
   {
+    name: 'sphere2',
+    type: 'SphereBufferGeometry',
+    params: [10, 10, 10],
+    position: [50, 0, -70],
+    material: 'redShiny',
+    physics: {
+      mass: 1,
+      friction: 0.8,
+    },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: true,
+  },
+  {
     name: 'groundPlane',
     type: 'BoxBufferGeometry',
     params: [150, 1, 150, 1, 1, 1],

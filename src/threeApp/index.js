@@ -16,6 +16,7 @@ import Light from './components/Light';
 import Controls from './components/Controls';
 import Mesh from './components/Mesh';
 import SkyBox from './components/Skybox';
+import Forces from './components/Forces';
 
 // Helpers
 import { promisifyLoader } from './helpers/helpers';
@@ -155,6 +156,7 @@ export class Main extends PureComponent {
 
   createWorld(materials) {
     this.createObjects(materials);
+    this.mover = new Forces(this.scene, this.physicsWorld, 'sphere2');
     this.animate();
   }
 
@@ -171,6 +173,12 @@ export class Main extends PureComponent {
       console.log('A PRESSED');
       this.togglePause();
     }
+    if (this.interaction.keyboard.down('C')) {
+      console.log('C pressed')
+      this.mover.applyCentralImpulse(new THREE.Vector3(50,0,0));
+    }
+    this.mover.updateInteraction(this.interaction);
+
 
     this.controls.update();
     this.updatePhysics(deltaTime);

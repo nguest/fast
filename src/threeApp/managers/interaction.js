@@ -1,11 +1,23 @@
-import Keyboard from './Keyboard';
+import { Keyboard } from './Keyboard';
 import { throttle } from '../helpers/helpers';
-import Config from '../sceneConfig/general';
+import { Config } from '../sceneConfig/general';
+
+const onMouseOver = (e) => {
+  e.preventDefault();
+
+  Config.isMouseOver = true;
+};
+
+const onMouseLeave = (e) => {
+  e.preventDefault();
+
+  Config.isMouseOver = false;
+};
+
 
 // Manages all input interactions
-export default class Interaction {
+export class Interaction {
   constructor(renderer, scene, camera, controls) {
-    // Properties
     this.renderer = renderer.threeRenderer;
     this.scene = scene;
     this.camera = camera;
@@ -13,43 +25,14 @@ export default class Interaction {
 
     this.timeout = null;
 
-    // Instantiate keyboard helper
+    // Instantiate keyboard
     this.keyboard = new Keyboard();
 
     // Listeners
     // Mouse events
-    this.renderer.domElement.addEventListener('mousemove', (event) => throttle(this.onMouseMove(event), 250), false);
-    this.renderer.domElement.addEventListener('mouseleave', (event) => this.onMouseLeave(event), false);
-    this.renderer.domElement.addEventListener('mouseover', (event) => this.onMouseOver(event), false);
-
-    // Keyboard events
-    // this.renderer.domElement.addEventListener('keydown', (event) => {
-    //   // Only once
-    //   if (event.repeat) {
-    //     return;
-    //   }
-
-
-    //   if(this.keyboard.eventMatches(event, 'escape')) {
-    //     console.log('Escape pressed');
-    //   }
-
-    //   if(this.keyboard.eventMatches(event, 'space')) {
-    //     console.log('Space pressed');
-    //   }
-    // });
-  }
-
-  onMouseOver(event) {
-    event.preventDefault();
-
-    Config.isMouseOver = true;
-  }
-
-  onMouseLeave(event) {
-    event.preventDefault();
-
-    Config.isMouseOver = false;
+    this.renderer.domElement.addEventListener('mousemove', (e) => throttle(this.onMouseMove(e), 250), false);
+    this.renderer.domElement.addEventListener('mouseleave', (e) => onMouseLeave(e), false);
+    this.renderer.domElement.addEventListener('mouseover', (e) => onMouseOver(e), false);
   }
 
   onMouseMove(event) {

@@ -1,13 +1,12 @@
 import * as THREE from 'three';
 
-import Config from '../sceneConfig/general';
+import { Config } from '../sceneConfig/general';
 
 // Class that creates and updates the main camera
-export default class Camera {
+export class Camera {
   constructor(renderer, container) {
     this.renderer = renderer;
     this.container = container;
-    // Create and position a Perspective Camera
 
     this.threeCamera = new THREE.PerspectiveCamera(
       Config.camera.fov,
@@ -17,7 +16,8 @@ export default class Camera {
     );
     this.threeCamera.position.set(Config.camera.posX, Config.camera.posY, Config.camera.posZ);
     this.threeCamera.up = new THREE.Vector3(0, 1, 0);
-    // Initial sizing
+
+
     this.updateSize();
 
     // Listeners

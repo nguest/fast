@@ -7,15 +7,15 @@ import { func } from 'prop-types';
 import Ammo from 'ammonext';
 
 // Config
-import Config from './sceneConfig/general';
+import { Config } from './sceneConfig/general';
 
 // Components
-import Renderer from './components/Renderer';
-import Camera from './components/Camera';
-import Light from './components/Light';
-import Controls from './components/Controls';
-import Mesh from './components/Mesh';
-import Forces from './components/Forces';
+import { Renderer } from './components/Renderer';
+import { Camera } from './components/Camera';
+import { Light } from './components/Light';
+import { Controls } from './components/Controls';
+import { Mesh } from './components/Mesh';
+import { Forces } from './components/Forces';
 
 // Helpers
 import { promisifyLoader } from './helpers/helpers';
@@ -33,8 +33,8 @@ import { lightsIndex } from './sceneConfig/lights';
 import { objectsIndex } from './sceneConfig/objects';
 
 // Managers
-import Interaction from './managers/Interaction';
-import DatGUI from './managers/datGUI';
+import { Interaction } from './managers/Interaction';
+import { DatGUI } from './managers/DatGUI';
 
 // Stats
 import { createStats, updateStatsStart, updateStatsEnd } from './helpers/stats';
@@ -61,18 +61,9 @@ export class Main extends PureComponent {
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
     this.clock = new THREE.Clock();
     this.light = this.createLights();
-    console.log({ THREE })
     this.manager = new THREE.LoadingManager();
-    this.manager.onLoad = () => console.log('loaded');
-    this.manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
-
-      console.log( 'Started loading file: .\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-    
-    };
-    this.manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-
-      console.log( 'Loading file: .\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-    
+    this.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      this.showStatus(`Loading file: ${itemsLoaded} of ${itemsTotal} files.`);
     };
     // this.skyBox = new SkyBox(this.scene);
 
@@ -168,7 +159,9 @@ export class Main extends PureComponent {
 
   createWorld(materials) {
     this.createObjects(materials);
+
     this.mover = new Forces(this.scene, this.physicsWorld, 'sphere2');
+
     createSkyBoxFrom4x3({
       scene: this.scene,
       boxDimension: 1000,
@@ -176,8 +169,7 @@ export class Main extends PureComponent {
       tileSize: 900,
       manager: this.manager,
     });
-    this.manager.onLoad = () => {
-      console.log('all loaded');
+    this.manager.onLoad = () => { // all managed objects loaded
       this.props.setIsLoading(false);
       if (Config.isDev) this.gui = new DatGUI(this);
       this.animate();
@@ -269,7 +261,7 @@ export class Main extends PureComponent {
   }
 
   render() {
-    return <section className="three-canvas-container" ref={(ref) => { this.container = ref; }} />;
+    return <section ref={(ref) => { this.container = ref; }} />;
   }
 }
 

@@ -5,7 +5,7 @@ import { promisifyLoader } from '../helpers/helpers';
 import { GLTFLoader } from '../loaders/GLTFLoader';
 
 
-export default class Mesh {
+export class Mesh {
   constructor({
     add,
     calculateFaces,
@@ -73,7 +73,7 @@ export default class Mesh {
     }
   }
 
-  initLoader(url) { /* eslint-disable-line */
+  initLoader(url) {
     const loader = new GLTFLoader().setPath(url.path);
     const gltfScene = promisifyLoader(loader).load(url.file);
     gltfScene.then((gltf) => {
@@ -125,7 +125,7 @@ export default class Mesh {
     case 'BoxBufferGeometry':
       colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0], params[1], params[2])); break;
     case 'PlaneBufferGeometry':
-      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0], params[1], 1)); break;
+      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0] * 0.5, params[1] * 0.5, 1)); break;
     case 'convexHull':
     case 'GLTF':
       colShape = new Ammo.btConvexHullShape(convexGeometryProcessor(mesh.geometry), true, true); break;

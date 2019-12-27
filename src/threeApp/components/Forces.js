@@ -2,7 +2,7 @@ import Ammo from 'ammonext';
 // import TWEEN from '@tweenjs/tween.js';
 import * as THREE from 'three';
 
-import Config from '../sceneConfig/general';
+import { Config } from '../sceneConfig/general';
 
 // e.g. physics.applyCentralImpulse(v)
 // applyImpulse
@@ -14,7 +14,7 @@ import Config from '../sceneConfig/general';
 // setLinearFactor
 // setDamping
 
-export default class Forces {
+export class Forces {
   constructor(scene, physicsWorld, name) {
     const mover = physicsWorld.bodies.find((o) => o.name === name);
     this.scene = scene;
@@ -39,7 +39,7 @@ export default class Forces {
     //   this.scene.add( helper );
     // }
 
-    const vN = this.physicsMover.getLinearVelocity();//.clone();
+    const vN = this.physicsMover.getLinearVelocity(); // .clone();
     vN.normalize();
     console.log({ vN })
 
@@ -78,17 +78,18 @@ export default class Forces {
   }
 
   updateInteraction(interaction) {
-    if (interaction.keyboard.pressed('Q')) {
-      this.applyCentralImpulse(new Ammo.btVector3(0, 0, -5));
+    const f = 100;
+    if (interaction.keyboard.down('W')) {
+      this.applyCentralImpulse(new Ammo.btVector3(0, 0, -f));
     }
-    if (interaction.keyboard.pressed('C')) {
-      this.applyCentralImpulse(new Ammo.btVector3(0, 0, 5));
+    if (interaction.keyboard.down('S')) {
+      this.applyCentralImpulse(new Ammo.btVector3(0, 0, f));
     }
-    if (interaction.keyboard.pressed('Z')) {
-      this.applyCentralImpulse(new Ammo.btVector3(-5, 0, 0));
+    if (interaction.keyboard.down('A')) {
+      this.applyCentralImpulse(new Ammo.btVector3(-f, 0, 0));
     }
-    if (interaction.keyboard.pressed('X')) {
-      this.applyCentralImpulse(new Ammo.btVector3(5, 0, 0));
+    if (interaction.keyboard.down('D')) {
+      this.applyCentralImpulse(new Ammo.btVector3(f, 0, 0));
     }
   }
 }

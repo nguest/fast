@@ -8,7 +8,7 @@ export const createMaterial = ({
   side,
   wireframe = false,
   flatShading = false,
-  emissive,
+  emissive = 0x000000,
 }, assets) => {
   const material = new THREE[type]({
     name,

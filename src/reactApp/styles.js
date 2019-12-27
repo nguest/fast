@@ -36,13 +36,6 @@ export const styles = {
     padding: 10,
     color: 'white',
     backgroundColor: 'black',
-  },
-  '#reset-button': {
-    position: 'absolute',
-    bottom: 10,
-    left: 10,
-    padding: 10,
-    /* color: white;
-    background-color: black; */
+    zIndex: 10,
   },
 };

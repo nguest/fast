@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import Config from '../sceneConfig/general';
 import { promisifyLoader } from '../helpers/helpers';
 
-class SkyBox {
+export class SkyBox {
   constructor(scene) {
     this.scene = scene;
     this.loadAssets();
@@ -54,5 +54,3 @@ class SkyBox {
     return this.skyBox;
   }
 }
-
-export default SkyBox;

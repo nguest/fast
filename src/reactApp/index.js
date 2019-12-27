@@ -5,7 +5,7 @@ import { ThreeContainer } from './ThreeContainer';
 
 import { styles } from './styles';
 
-function App() {
+export const App = () => {
   const [status, setStatus] = useState(null);
 
   return (
@@ -19,6 +19,4 @@ function App() {
       <ThreeContainer setStatus={setStatus} />
     </div>
   );
-}
-
-export default App;
+};

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 // Sets up and places all lights in scene
-export default class Light {
+export class Light {
   constructor(params, scene) {
     this.scene = scene;
     this.params = params;

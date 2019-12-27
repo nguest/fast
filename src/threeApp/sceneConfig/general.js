@@ -1,7 +1,7 @@
 import TWEEN from '@tweenjs/tween.js';
 
 // This object contains the state of the app
-export default {
+export const Config = {
   isDev: true,
   showStats: true,
   isLoaded: false,
@@ -31,7 +31,7 @@ export default {
     },
   },
   fog: {
-    color: 0x444444,
+    color: 0xaaaaaa,
     near: 0.0008,
   },
   camera: {

@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { func } from 'prop-types';
 import { jsx } from '@emotion/core';
 import { Main } from '../../threeApp';
-import { Loader } from '../Loader'
+import { Loader } from '../Loader';
 
 import { styles } from './styles';
 

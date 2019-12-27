@@ -52,7 +52,7 @@ const keyName = (keyCode) => (
 );
 
 // initialization
-export default class Keyboard {
+export class Keyboard {
   constructor() {
     // bind keyEvents
     document.addEventListener('keydown', this.onKeyDown, false);

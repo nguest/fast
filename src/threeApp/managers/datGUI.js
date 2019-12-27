@@ -1,9 +1,9 @@
 import * as dat from 'dat.gui';
 
-import Config from '../sceneConfig/general';
+import { Config } from '../sceneConfig/general';
 
 // Manages all dat.GUI interactions
-export default class DatGUI {
+export class DatGUI {
   constructor(main) {
     const gui = new dat.GUI();
 
@@ -30,7 +30,6 @@ export default class DatGUI {
     const cameraAspectGui = cameraFolder.add(Config.camera, 'aspect', 0, 4).name('Camera Aspect');
     cameraAspectGui.onChange((value) => {
       this.controls.enableRotate = false;
-
       this.camera.aspect = value;
     });
     cameraAspectGui.onFinishChange(() => {
@@ -50,7 +49,6 @@ export default class DatGUI {
     cameraFogNearGui.onFinishChange(() => {
       this.controls.enableRotate = true;
     });
-
 
     /* Controls */
     const controlsFolder = gui.addFolder('Controls');

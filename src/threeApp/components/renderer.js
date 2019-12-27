@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
-import Config from '../sceneConfig/general';
+import { Config } from '../sceneConfig/general';
 
 // Main webGL renderer class
-export default class Renderer {
+export class Renderer {
   constructor(scene, container) {
     // Properties
     this.scene = scene;
@@ -14,7 +14,7 @@ export default class Renderer {
 
     // Set clear color to fog to enable fog or to hex color for no fog
     this.threeRenderer.setClearColor(scene.fog.color);
-    this.threeRenderer.setPixelRatio(window.devicePixelRatio); // For retina
+    this.threeRenderer.setPixelRatio(window.devicePixelRatio);
 
     // Appends canvas
     container.appendChild(this.threeRenderer.domElement);

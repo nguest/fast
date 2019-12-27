@@ -26,8 +26,8 @@ export const lightsIndex = [
         right: 200,
         bottom: -200,
         left: -200,
-      }
-    }
+      },
+    },
   },
   {
     name: 'pointLight',

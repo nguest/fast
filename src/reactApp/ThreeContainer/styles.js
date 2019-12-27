@@ -1,20 +1,13 @@
 
 export const styles = {
-  statusBar: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    padding: 10,
-    color: 'white',
-    backgroundColor: 'black',
-  },
   resetButton: {
     position: 'absolute',
     bottom: 10,
     left: 10,
     padding: 10,
-    /* color: white;
-    background-color: black; */
+    borderWidth: 0,
+    color: 'white',
+    backgroundColor: 'black',
   },
   loadingScreen: {
     background: 'darkgrey',

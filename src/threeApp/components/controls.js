@@ -1,8 +1,8 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import Config from '../sceneConfig/general';
+import { Config } from '../sceneConfig/general';
 
 // Controls based on orbit controls
-export default class Controls {
+export class Controls {
   constructor(camera, container) {
     // Orbit controls first needs to pass in THREE to constructor
     const orbitControls = new OrbitControls(camera, container.container);
@@ -14,9 +14,6 @@ export default class Controls {
 
   init() {
     this.threeControls.target.set(...Config.camera.lookAt);
-
-    //   Config.controls.target.x, Config.controls.target.y, Config.controls.target.z
-    // );
     this.threeControls.autoRotate = Config.controls.autoRotate;
     this.threeControls.autoRotateSpeed = Config.controls.autoRotateSpeed;
     this.threeControls.rotateSpeed = Config.controls.rotateSpeed;

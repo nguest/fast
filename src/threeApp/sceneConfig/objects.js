@@ -47,7 +47,7 @@ export const objectsIndex = [
     },
     shadows: {
       receive: true,
-      cast: true,
+      cast: false,
     },
     add: true,
   },

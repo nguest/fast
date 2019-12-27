@@ -1,20 +1,21 @@
-import { jsx, css, keyframes } from '@emotion/core';
+import { css, keyframes } from '@emotion/core';
 
 const bounce = keyframes`
-      0%, 75%, 100%{
-        -webkit-transform: translateY(0);
-        -ms-transform: translateY(0);
-        -o-transform: translateY(0);
-        transform: translateY(0);
-      }
-    
-      25%{
-        -webkit-transform: translateY(-20px);
-        -ms-transform: translateY(-20px);
-        -o-transform: translateY(-20px);
-        transform: translateY(-20px);
-      }
-    }`;
+  0%, 75%, 100%{
+    -webkit-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+  }
+
+  25%{
+    -webkit-transform: translateY(-20px);
+    -ms-transform: translateY(-20px);
+    -o-transform: translateY(-20px);
+    transform: translateY(-20px);
+  }
+}`;
+
 export const styles = {
   loader: {
     span: {

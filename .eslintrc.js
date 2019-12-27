@@ -16,7 +16,7 @@ module.exports = {
   },
   extends: "airbnb",
   ignorePatterns: [
-    "webpack.config.js",
+    "/config/",
     "node_modules/"
   ],
   rules: {

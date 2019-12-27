@@ -37,11 +37,12 @@ export default {
   camera: {
     fov: 45,
     near: 2,
-    far: 1000,
+    far: 2000,
     aspect: 1,
     posX: 0,
-    posY: 130,
+    posY: 260,
     posZ: 200,
+    lookAt: [0, 150, 0],
   },
   controls: {
     autoRotate: false,

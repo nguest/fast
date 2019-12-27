@@ -10,8 +10,6 @@ class SkyBox {
   }
 
   loadAssets() {
-    console.log({ cc:THREE.CubeTextureLoader })
-    //const path = './assets/textures/skybox/';
     const path = 'https://threejsfundamentals.org/threejs/resources/images/cubemaps/computer-history-museum/';
     const loader = new THREE.CubeTextureLoader();
     const cubeMap = promisifyLoader(loader).load([
@@ -33,7 +31,6 @@ class SkyBox {
   }
 
   createBackground(cubeMap) {
-    console.log({ cubeMap })
     cubeMap.minFilter = THREE.LinearFilter;
 
     this.scene.background = cubeMap;

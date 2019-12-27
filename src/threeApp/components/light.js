@@ -15,6 +15,7 @@ export default class Light {
       this.light.position.set(...this.params.position);
     }
     this.light.visible = this.params.visible;
+    this.light.name = this.params.type;
 
     if (this.params.addToScene) {
       this.addLight();

@@ -16,7 +16,7 @@ export default class Camera {
       Config.camera.far,
     );
     this.threeCamera.position.set(Config.camera.posX, Config.camera.posY, Config.camera.posZ);
-
+    this.threeCamera.up = new THREE.Vector3(0, 1, 0);
     // Initial sizing
     this.updateSize();
 

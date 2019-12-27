@@ -13,9 +13,10 @@ export default class Controls {
   }
 
   init() {
-    this.threeControls.target.set(
-      Config.controls.target.x, Config.controls.target.y, Config.controls.target.z
-    );
+    this.threeControls.target.set(...Config.camera.lookAt);
+
+    //   Config.controls.target.x, Config.controls.target.y, Config.controls.target.z
+    // );
     this.threeControls.autoRotate = Config.controls.autoRotate;
     this.threeControls.autoRotateSpeed = Config.controls.autoRotateSpeed;
     this.threeControls.rotateSpeed = Config.controls.rotateSpeed;

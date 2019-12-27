@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/core": "7.7.4",
+    "@emotion/core": "^10.0.27",
     "@jpweeks/rstats": "^1.2.0",
     "@svgr/webpack": "4.3.3",
     "@testing-library/jest-dom": "^4.2.4",

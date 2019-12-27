@@ -15,11 +15,11 @@ import Camera from './components/Camera';
 import Light from './components/Light';
 import Controls from './components/Controls';
 import Mesh from './components/Mesh';
-import SkyBox from './components/Skybox';
 import Forces from './components/Forces';
 
 // Helpers
 import { promisifyLoader } from './helpers/helpers';
+import { createSkyBoxFrom4x3 } from './helpers/skyBoxHelper';
 
 // Assets & Materials
 import { createMaterial } from './materials';
@@ -61,9 +61,21 @@ export class Main extends PureComponent {
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
     this.clock = new THREE.Clock();
     this.light = this.createLights();
-    this.skyBox = new SkyBox(this.scene);
+    console.log({ THREE })
+    this.manager = new THREE.LoadingManager();
+    this.manager.onLoad = () => console.log('loaded');
+    this.manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
 
-    if (Config.isDev) this.gui = new DatGUI(this);
+      console.log( 'Started loading file: .\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+    
+    };
+    this.manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+
+      console.log( 'Loading file: .\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+    
+    };
+    // this.skyBox = new SkyBox(this.scene);
+
     if (Config.showStats) this.rS = createStats();
 
     const texturesAndFiles = this.loadAssets();
@@ -72,12 +84,12 @@ export class Main extends PureComponent {
   }
 
   loadAssets() {
-    const FilePromiseLoader = promisifyLoader(new THREE.FileLoader());
+    const FilePromiseLoader = promisifyLoader(new THREE.FileLoader(this.manager));
     const filesPromises = Object.values(assetsIndex.files).map((file) => (
       FilePromiseLoader.load(file.path)
     ));
 
-    const TexturePromiseLoader = promisifyLoader(new THREE.TextureLoader());
+    const TexturePromiseLoader = promisifyLoader(new THREE.TextureLoader(this.manager));
     const texturesPromises = Object.values(assetsIndex.textures).map((texture) => (
       TexturePromiseLoader.load(texture.path)
     ));
@@ -157,7 +169,19 @@ export class Main extends PureComponent {
   createWorld(materials) {
     this.createObjects(materials);
     this.mover = new Forces(this.scene, this.physicsWorld, 'sphere2');
-    this.animate();
+    createSkyBoxFrom4x3({
+      scene: this.scene,
+      boxDimension: 1000,
+      imageFile: './assets/textures/skybox1.png',
+      tileSize: 900,
+      manager: this.manager,
+    });
+    this.manager.onLoad = () => {
+      console.log('all loaded');
+      this.props.setIsLoading(false);
+      if (Config.isDev) this.gui = new DatGUI(this);
+      this.animate();
+    };
   }
 
   animate() {
@@ -169,16 +193,11 @@ export class Main extends PureComponent {
     if (Config.showStats) updateStatsEnd(rS);
     // TWEEN.update();
     this.interaction.keyboard.update();
-    if (this.interaction.keyboard.down('A')) {
-      console.log('A PRESSED');
+    if (this.interaction.keyboard.down('space')) {
+      console.log('space PRESSED');
       this.togglePause();
     }
-    if (this.interaction.keyboard.down('C')) {
-      console.log('C pressed')
-      this.mover.applyCentralImpulse(new THREE.Vector3(50,0,0));
-    }
     this.mover.updateInteraction(this.interaction);
-
 
     this.controls.update();
     this.updatePhysics(deltaTime);
@@ -187,7 +206,7 @@ export class Main extends PureComponent {
 
   updatePhysics(deltaTime) {
     // Step world
-    this.physicsWorld.stepSimulation(deltaTime, 1);
+    this.physicsWorld.stepSimulation(deltaTime, 10);
 
     // Update rigid bodies
     for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
@@ -255,5 +274,6 @@ export class Main extends PureComponent {
 }
 
 Main.propTypes = {
+  setIsLoading: func,
   setStatus: func,
 };

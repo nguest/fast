@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Global } from '@emotion/core';
-import App from './reactApp';
+import { App } from './reactApp';
 import * as serviceWorker from './serviceWorker';
 import { styles } from './reactApp/styles';
 

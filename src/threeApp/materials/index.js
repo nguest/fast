@@ -22,6 +22,5 @@ export const createMaterial = ({
 
   material.map.wrapT = THREE.RepeatWrapping;
   material.map.wrapS = THREE.RepeatWrapping;
-
   return material;
 };

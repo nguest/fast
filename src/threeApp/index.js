@@ -47,7 +47,7 @@ export class Main extends PureComponent {
   }
 
   initialize() {
-    this.createPhysicsWorld();
+    //this.createPhysicsWorld();
     this.auxTrans = new Ammo.btTransform();
 
     this.scene = new THREE.Scene();
@@ -68,6 +68,10 @@ export class Main extends PureComponent {
     // this.skyBox = new SkyBox(this.scene);
 
     if (Config.showStats) this.rS = createStats();
+    if (Config.isDev) {
+      const axesHelper = new THREE.AxesHelper(150);
+      this.scene.add(axesHelper);
+    }
 
     const texturesAndFiles = this.loadAssets();
     this.createMaterials(texturesAndFiles);
@@ -159,8 +163,8 @@ export class Main extends PureComponent {
 
   createWorld(materials) {
     this.createObjects(materials);
-
-    this.mover = new Forces(this.scene, this.physicsWorld, 'sphere2');
+    console.log({ s: this.scene })
+    //this.mover = new Forces(this.scene, this.physicsWorld, 'sphere2');
 
     createSkyBoxFrom4x3({
       scene: this.scene,
@@ -189,10 +193,10 @@ export class Main extends PureComponent {
       console.log('space PRESSED');
       this.togglePause();
     }
-    this.mover.updateInteraction(this.interaction);
+    //this.mover.updateInteraction(this.interaction);
 
     this.controls.update();
-    this.updatePhysics(deltaTime);
+    //this.updatePhysics(deltaTime);
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
   }
 

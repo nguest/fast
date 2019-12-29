@@ -43,6 +43,7 @@ export class Mesh {
     if (type === 'GLTF') {
       this.initLoader(url);
     } else {
+      console.log('p',params)
       const geometry = new THREE[type](...params);
 
       if (params === 'custom') {

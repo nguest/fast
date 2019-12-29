@@ -1,6 +1,6 @@
 export const materialsIndex = [
   {
-    name: 'redShiny',
+    name: 'redMapped',
     type: 'MeshPhongMaterial',
     color: 0xff0000,
     map: 'UVGrid',
@@ -15,5 +15,23 @@ export const materialsIndex = [
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000022,
+  },
+  {
+    name: 'wireFrame',
+    type: 'MeshPhongMaterial',
+    color: 0xff0000,
+    map: 'UVGrid',
+    side: 'FrontSide',
+    wireframe: true,
+    emissive: 0x000000,
+  },
+  {
+    name: 'asphalt',
+    type: 'MeshPhongMaterial',
+    color: 0xffffff,
+    map: 'Asphalt',
+    side: 'FrontSide',
+    wireframe: false,
+    emissive: 0x000000,
   },
 ];

@@ -11,6 +11,7 @@ export class Mesh {
     calculateFaces,
     calculateUVs,
     calculateVertices,
+    customFunction,
     geoRotate,
     material,
     name,
@@ -37,16 +38,19 @@ export class Mesh {
     this.scene = scene;
     this.shadows = shadows;
     this.type = type;
+    this.customFunction = customFunction;
 
     if (!add) return;
 
     if (type === 'GLTF') {
       this.initLoader(url);
     } else {
-      console.log('p',params)
-      const geometry = new THREE[type](...params);
+      const geometry = THREE[type] && new THREE[type](...params);
 
       if (params === 'custom') {
+        if (customFunction) {
+          return this.createCustom(physics.physicsWorld);
+        }
         // must be custom type
         if (!calculateVertices || !calculateFaces) {
           throw new Error(
@@ -144,10 +148,21 @@ export class Mesh {
     body.setFriction(physics.friction || 0);
     body.setRestitution(physics.restitution || 1);
     body.setDamping(physics.damping || 0, physics.damping || 0);
-
+    console.log({ a: this.physicsWorld })
     this.physicsWorld.addRigidBody(body, 1, 1);
     mesh.userData.physicsBody = body;
     this.physicsWorld.bodies.push(mesh);
+  }
+
+
+  createCustom(physicsWorld) {
+    console.log('yeah')
+    return this.customFunction({
+      pos: new THREE.Vector3(...this.position),
+     // quat: new THREE.Quaternion().setFromEuler(new THREE.Euler(...this.rotation, 'XYZ')),
+      physicsWorld,
+      scene: this.scene,
+    });
   }
 }
 

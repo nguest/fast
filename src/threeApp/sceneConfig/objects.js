@@ -1,7 +1,9 @@
-import { calculateFaces, calculateVertices, planeUnwrapUVs } from '../custom/geometries/concaveExample1';
-import { crossSection, centerLine, UVGenerator, BoundingUVGenerator } from '../custom/geometries/track';
-
 import * as THREE from 'three';
+
+import { calculateFaces, calculateVertices, planeUnwrapUVs } from '../custom/geometries/concaveExample1';
+import { crossSection, centerLine, UVGenerator } from '../custom/geometries/track';
+
+import { createVehicle } from '../custom/geometries/vehicle';
 
 export const objectsIndex = [
   {
@@ -63,7 +65,7 @@ export const objectsIndex = [
     name: 'box',
     type: 'BoxBufferGeometry',
     params: [1.8, 0.8, 4.5, 1, 1, 1],
-    position: [0, 0.55, 0],
+    position: [0, 0.55, 10],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
     material: 'mappedFlat',
@@ -91,6 +93,26 @@ export const objectsIndex = [
       },
     ],
     position: [0, 0.1, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'mappedFlat',//wireFrame',//,//'asphalt',
+    physics: {
+      mass: 0,
+      friction: 0.8,
+      restitution: 0.5,
+    },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: true,
+  },
+  {
+    name: 'vehicle',
+    type: 'custom',
+    params: 'custom',
+    customFunction: createVehicle,
+    position: [0, 10, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
     material: 'mappedFlat',//wireFrame',//,//'asphalt',

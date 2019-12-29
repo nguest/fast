@@ -38,6 +38,7 @@ import { DatGUI } from './managers/DatGUI';
 
 // Stats
 import { createStats, updateStatsStart, updateStatsEnd } from './helpers/stats';
+import { updateVehicle } from './custom/geometries/vehicle';
 
 // -- End of imports
 
@@ -47,7 +48,7 @@ export class Main extends PureComponent {
   }
 
   initialize() {
-    //this.createPhysicsWorld();
+    this.createPhysicsWorld();
     this.auxTrans = new Ammo.btTransform();
 
     this.scene = new THREE.Scene();
@@ -193,6 +194,8 @@ export class Main extends PureComponent {
       console.log('space PRESSED');
       this.togglePause();
     }
+    console.log({ p: this.physicsWorld.bodies })
+    updateVehicle(deltaTime, this.physicsWorld.bodies[4]);
     //this.mover.updateInteraction(this.interaction);
 
     this.controls.update();

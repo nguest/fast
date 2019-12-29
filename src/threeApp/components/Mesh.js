@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import Ammo from 'ammonext';
+//import Ammo from 'ammo.js';
+//import * as Ammo from '../ammo';
 
 import { promisifyLoader } from '../helpers/helpers';
 import { GLTFLoader } from '../loaders/GLTFLoader';
@@ -39,7 +41,7 @@ export class Mesh {
     this.shadows = shadows;
     this.type = type;
     this.customFunction = customFunction;
-
+    console.log({2: Ammo})
     if (!add) return;
 
     if (type === 'GLTF') {
@@ -130,7 +132,7 @@ export class Mesh {
     case 'BoxBufferGeometry':
       colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0], params[1], params[2])); break;
     case 'PlaneBufferGeometry':
-      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0] * 0.5, params[1] * 0.5, 1)); break;
+      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0] * 0.5, params[1] * 0.5, 0.2)); break;
     case 'convexHull':
     case 'GLTF':
       colShape = new Ammo.btConvexHullShape(convexGeometryProcessor(mesh.geometry), true, true); break;
@@ -138,7 +140,7 @@ export class Mesh {
       colShape = new Ammo.btBvhTriangleMeshShape(concaveGeometryProcessor(mesh.geometry), true, true); break;
     }
 
-    colShape.setMargin(0.1);
+    //colShape.setMargin(0.1);
 
     const localInertia = new Ammo.btVector3(0, 0, 0);
     colShape.calculateLocalInertia(physics.mass, localInertia);
@@ -149,7 +151,7 @@ export class Mesh {
     body.setRestitution(physics.restitution || 1);
     body.setDamping(physics.damping || 0, physics.damping || 0);
     console.log({ a: this.physicsWorld })
-    this.physicsWorld.addRigidBody(body, 1, 1);
+    this.physicsWorld.addRigidBody(body);
     mesh.userData.physicsBody = body;
     this.physicsWorld.bodies.push(mesh);
   }

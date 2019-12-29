@@ -1811,6 +1811,11 @@ alphanum-sort@^1.0.0:
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
   integrity sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=
 
+ammo.js@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/ammo.js/-/ammo.js-0.0.10.tgz#afd16e7186dd3cf784374464f3a4e58f37776950"
+  integrity sha1-r9FucYbdPPeEN0Rk86Tljzd3aVA=
+
 ammonext@^0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/ammonext/-/ammonext-0.0.3.tgz#016bc4f683b0e0b3ec26caaa5ce3f0cf60fcd563"

@@ -5,6 +5,7 @@ import { func } from 'prop-types';
 
 // import TWEEN from '@tweenjs/tween.js';
 import Ammo from 'ammonext';
+//import Ammo from 'ammo.js';
 
 // Config
 import { Config } from './sceneConfig/general';
@@ -194,12 +195,12 @@ export class Main extends PureComponent {
       console.log('space PRESSED');
       this.togglePause();
     }
-    console.log({ p: this.physicsWorld.bodies })
-    updateVehicle(deltaTime, this.physicsWorld.bodies[4]);
+    //console.log({ p: this.physicsWorld.bodies })
+    //updateVehicle(deltaTime, this.physicsWorld.bodies[4], );
     //this.mover.updateInteraction(this.interaction);
 
     this.controls.update();
-    //this.updatePhysics(deltaTime);
+    this.updatePhysics(deltaTime);
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
   }
 
@@ -209,17 +210,23 @@ export class Main extends PureComponent {
 
     // Update rigid bodies
     for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
-      const objThree = this.physicsWorld.bodies[i];
-      const objPhys = objThree.userData.physicsBody;
-      const motionState = objPhys.getMotionState();
-      if (motionState) {
-        motionState.getWorldTransform(this.auxTrans);
-        const p = this.auxTrans.getOrigin();
-        const q = this.auxTrans.getRotation();
-
-        objThree.position.set(p.x(), p.y(), p.z());
-        objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
+      if (this.physicsWorld.bodies[i].name === 'chassisMesh') {
+        //console.log('update vehicle')
+        updateVehicle(deltaTime, this.physicsWorld.bodies[i], this.interaction);
+      } else {
+        const objThree = this.physicsWorld.bodies[i];
+        const objPhys = objThree.userData.physicsBody;
+        const motionState = objPhys.getMotionState();
+        if (motionState) {
+          motionState.getWorldTransform(this.auxTrans);
+          const p = this.auxTrans.getOrigin();
+          const q = this.auxTrans.getRotation();
+  
+          objThree.position.set(p.x(), p.y(), p.z());
+          //objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
+        }
       }
+      
     }
   }
 

@@ -1,23 +1,21 @@
 import * as THREE from 'three';
-//import {Ammo} from '../../ammo';
 import * as Ammo from 'ammonext';
-//import Ammo from 'ammo.js';
-
-//createVehicle(new THREE.Vector3(0, 4, -20), ZERO_QUATERNION);
-
-console.log({ Ammo })
 
 // - Global variables -
 const DISABLE_DEACTIVATION = 4;
 const TRANSFORM_AUX = new Ammo.btTransform();
 const ZERO_QUATERNION = new THREE.Quaternion(0, 0, 0, 1);
-const materialInteractive = new THREE.MeshPhongMaterial({ color: 0x990000 });
+const materialInteractive = new THREE.MeshPhongMaterial({
+  color: 0x222222,
+  shininess: 50,
+  specular: 0x555555,
+});
 
 let engineForce = 0;
 let vehicleSteering = 0;
 let breakingForce = 0;
 
-const steeringIncrement = 0.04;
+const steeringIncrement = 0.001;
 const steeringClamp = 0.5;
 const maxEngineForce = 2000;
 const maxBreakingForce = 100;
@@ -41,35 +39,40 @@ const createWheelMesh = ({ radius, width, scene }) => {
     ),
     materialInteractive,
   ));
+  mesh.castShadow = true;
+
   scene.add(mesh);
   return mesh;
 };
 
-const createChassisMesh = ({ w, h, l, scene }) => {
+const createChassisMesh = ({ w, h, l, material, scene }) => {
   const shape = new THREE.BoxGeometry(w, h, l, 1, 1, 1);
-  const mesh = new THREE.Mesh(shape, materialInteractive);
-  scene.add(mesh);
-  return mesh;
+  const mesh = new THREE.Mesh(shape, material);
+  mesh.castShadow = true;
+  const chassis = new THREE.Object3D();
+  chassis.add(mesh);
+  scene.add(chassis);
+
+  return chassis;
 };
 
-export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, scene }) => {
+export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, material, scene }) => {
   // Vehicle constants
-  console.log('create', ZERO_QUATERNION);
   const chassisW = 1.8;
   const chassisH = 0.6;
-  const chassisL = 4;
-  const massVehicle = 100;
+  const chassisL = 4.3;
+  const massVehicle = 1000;
 
-  const wheelAxisPositionBack = -1.0;
-  const wheelRadiusBack = 0.4;
+  const wheelAxisPositionBack = -1.2;
+  const wheelRadiusBack = 0.34;
   const wheelWidthBack = 0.3;
-  const wheelHalfTrackBack = 1.0;
-  const wheelAxisHeightBack = 0.3;//0.3;
+  const wheelHalfTrackBack = 0.75;
+  const wheelAxisHeightBack = 0.3;// 0.3;
 
-  const wheelAxisFrontPosition = 1.7;
-  const wheelHalfTrackFront = 1.0;
-  const wheelRadiusFront = 0.35;
-  const wheelWidthFront = 0.2;
+  const wheelAxisFrontPosition = 1.15;
+  const wheelHalfTrackFront = 0.75;
+  const wheelRadiusFront = 0.33;
+  const wheelWidthFront = 0.3;
   const wheelAxisHeightFront = 0.3;
 
 
@@ -83,7 +86,7 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, scene
   const friction = 1000;
   const suspensionStiffness = 50.0;
   const suspensionDamping = 2.3;
-  const suspensionCompression = 4;//1.4;
+  const suspensionCompression = 4;// 1.4;
   const suspensionRestLength = 0.5;
   const rollInfluence = 0.2;
 
@@ -93,7 +96,6 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, scene
   // const maxBreakingForce = 100;
 
   // Chassis
-  //const geometry = new Ammo.btBoxShape(new Ammo.btVector3(chassisW * 0.1, chassisH * 0.1, chassisL * 0.1));
   const geometry = new Ammo.btBoxShape(new Ammo.btVector3(chassisW * 0.5, chassisH * 0.5, chassisL * 0.5));
 
   const transform = new Ammo.btTransform();
@@ -108,8 +110,10 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, scene
   );
   body.setActivationState(DISABLE_DEACTIVATION);
   physicsWorld.addRigidBody(body);
-  const chassisMesh = createChassisMesh({ w: chassisW, h: chassisH, l: chassisL, scene });
-
+  const chassisMesh = createChassisMesh({ w: chassisW, h: chassisH, l: chassisL, material, scene });
+  // const chassisMesh = scene.children.find(c => c.name === 'car');
+  // console.log({ scene, chassisMesh })
+  // scene.add(chassisMesh);
   // Raycast Vehicle
   // let engineForce = 0;
   // let vehicleSteering = 0;
@@ -130,7 +134,6 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, scene
   const wheelAxleCS = new Ammo.btVector3(-1, 0, 0);
 
   const addWheel = (isFront, position, radius, width, index) => {
-    console.log({isFront, position, radius, width, index})
     const wheelInfo = vehicle.addWheel(
       position,
       wheelDirectionCS0,
@@ -149,10 +152,9 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, scene
     wheelInfo.set_m_frictionSlip(friction);
     wheelInfo.set_m_rollInfluence(rollInfluence);
 
-    wheelMeshes[index] = createWheelMesh({ radius, width, scene });
+    wheelMeshes[index] = createWheelMesh({ radius, width, material, scene });
   };
-console.log({ wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition })
-console.log({ wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack })
+
   addWheel(true, new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
   addWheel(true, new Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
   addWheel(false, new Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
@@ -160,28 +162,25 @@ console.log({ wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack })
 
   vehicle.name = 'vehicle';
   chassisMesh.name = 'chassisMesh';
-
-  //syncList.push(sync);
+  console.log({ e: chassisMesh })
   chassisMesh.userData.physicsBody = vehicle;
-
   physicsWorld.bodies.push(chassisMesh);
+  return chassisMesh;
 };
 
 // Sync keybord actions and physics and graphics
-export const updateVehicle = (dt, chassisMesh, interaction) => {
+export const updateVehicle = (dt, chassisMesh, interaction, showStatus) => {
   const vehicle = chassisMesh.userData.physicsBody;
   const speed = vehicle.getCurrentSpeedKmHour();
-  //const speed =  vehicle.getRigidBody().getLinearVelocity().length() * 9.8
+  // const speed =  vehicle.getRigidBody().getLinearVelocity().length() * 9.8
 
-  //console.log({ r: interaction.keyboard.pressed('A') })
-  const actions = {}
-  //speedometer.innerHTML = `${(speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1)} km/h`;
+
+  if (speed > 1.0) showStatus(`${(speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1)} km/h`);
 
   breakingForce = 0;
   engineForce = 0;
 
-  //if (actions.acceleration) {
-  if(interaction.keyboard.pressed('W')) {
+  if (interaction.keyboard.pressed('W')) {
     if (speed < -1) breakingForce = maxBreakingForce;
     else engineForce = maxEngineForce;
   }
@@ -212,7 +211,7 @@ export const updateVehicle = (dt, chassisMesh, interaction) => {
 
   let tm; let p; let q; let i;
   const n = vehicle.getNumWheels();
-  //console.log({ vehicle })
+
   for (i = 0; i < n; i++) {
     vehicle.updateWheelTransform(i, true);
     tm = vehicle.getWheelTransformWS(i);
@@ -222,25 +221,12 @@ export const updateVehicle = (dt, chassisMesh, interaction) => {
     wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w());
   }
 
-  p = null;
-  q = null
   tm = vehicle.getRigidBody();
-  const motionState = tm.getMotionState()
-  //if (motionState) {
-    motionState.getWorldTransform(TRANSFORM_AUX);
-    p = TRANSFORM_AUX.getOrigin();
-    q = TRANSFORM_AUX.getRotation();
-    console.log(p.x(), p.y(), p.z())
-   // console.log(p.y())
-  
+  const motionState = tm.getMotionState();
+  motionState.getWorldTransform(TRANSFORM_AUX);
+  p = TRANSFORM_AUX.getOrigin();
+  q = TRANSFORM_AUX.getRotation();
 
-  //}
-  //  tm = vehicle.getChassisWorldTransform();
-    // p = motionState.getOrigin();
-    // q = motionState.getRotation();
-    chassisMesh.position.set(p.x(), p.y(), p.z());
-    chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
-
-
-
+  chassisMesh.position.set(p.x(), p.y(), p.z());
+  chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
 };

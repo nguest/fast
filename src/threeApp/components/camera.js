@@ -4,17 +4,28 @@ import { Config } from '../sceneConfig/general';
 
 // Class that creates and updates the main camera
 export class Camera {
-  constructor(renderer, container) {
+  constructor(renderer, container, followObj) {
     this.renderer = renderer;
     this.container = container;
 
-    this.threeCamera = new THREE.PerspectiveCamera(
-      Config.camera.fov,
-      window.innerWidth / window.innerHeight,
-      Config.camera.near,
-      Config.camera.far,
-    );
-    this.threeCamera.position.set(Config.camera.posX, Config.camera.posY, Config.camera.posZ);
+    if (followObj) {
+      this.threeCamera = new THREE.PerspectiveCamera(
+        Config.followCam.fov,
+        window.innerWidth / window.innerHeight,
+        Config.followCam.near,
+        Config.followCam.far,
+      );
+      const camPosition = followObj.position.clone().add(new THREE.Vector3(...Config.followCam.position));
+      this.threeCamera.position.copy(camPosition);
+    } else {
+      this.threeCamera = new THREE.PerspectiveCamera(
+        Config.camera.fov,
+        window.innerWidth / window.innerHeight,
+        Config.camera.near,
+        Config.camera.far,
+      );
+      this.threeCamera.position.set(...Config.camera.position);
+    }
     this.threeCamera.up = new THREE.Vector3(0, 1, 0);
 
 

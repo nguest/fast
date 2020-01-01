@@ -32,7 +32,6 @@ export class SkyBox {
 
   createBackground(cubeMap) {
     cubeMap.minFilter = THREE.LinearFilter;
-
     this.scene.background = cubeMap;
   }
 

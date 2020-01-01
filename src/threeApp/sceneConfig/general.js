@@ -14,7 +14,7 @@ export const Config = {
   easing: TWEEN.Easing.Quadratic.InOut,
   duration: 500,
   renderer: {
-    antialias: true,
+    antialias: false,
     alpha: true,
   },
   container: {
@@ -32,24 +32,31 @@ export const Config = {
   },
   fog: {
     color: 0xaaaaaa,
-    near: 0.0008,
+    near: 0.001,
   },
   camera: {
     fov: 45,
     near: 2,
     far: 2000,
     aspect: 1,
-    posX: 30,
-    posY: 40,
-    posZ: 20,
+    position: [30, 40, 20],
     lookAt: [0, 0, 0],
   },
+  followCam: {
+    fov: 15,
+    near: 2,
+    far: 2000,
+    aspect: 1,
+    position: [0, 2.5, -30],
+  },
+  useBasicMaterials: false,
+  useFollowCam: true,
   controls: {
     autoRotate: false,
     autoRotateSpeed: -0.5,
     rotateSpeed: 0.5,
     zoomSpeed: 0.8,
-    minDistance: 10,
+    minDistance: 3,
     maxDistance: 1000,
     minPolarAngle: -Math.PI / 2,
     maxPolarAngle: Math.PI / 2,
@@ -67,5 +74,5 @@ export const Config = {
   skyBox: {
     position: [0, 0, 0],
   },
-  gravity: [0, -100, 0],
+  gravity: [0, -10, 0],
 };

@@ -1,32 +1,22 @@
 import * as THREE from 'three';
 
 import { calculateFaces, calculateVertices, planeUnwrapUVs } from '../custom/geometries/concaveExample1';
-import { crossSection, centerLine, UVGenerator } from '../custom/geometries/track';
+import { trackCrossSection, trackUVGenerator } from '../custom/geometries/track';
+import { trackKerbCrossSection } from '../custom/geometries/trackKerb';
+import { grassCrossSection } from '../custom/geometries/grass';
+import { barrierCrossSection } from '../custom/geometries/barriers';
+
+import { centerLine } from '../custom/geometries/centerLine';
+
 
 import { createVehicle } from '../custom/geometries/vehicle';
 
 export const objectsIndex = [
   {
-    name: 'sphere2',
-    type: 'SphereBufferGeometry',
-    params: [10, 10, 10],
-    position: [50, 130, -70],
-    material: 'redShiny',
-    physics: {
-      mass: 1,
-      friction: 0.8,
-    },
-    shadows: {
-      receive: true,
-      cast: true,
-    },
-    add: false,
-  },
-  {
     name: 'groundPlane',
     type: 'PlaneBufferGeometry',
-    params: [100, 100, 1, 1],
-    position: [0, -0.5, 0],
+    params: [1000, 1000, 1, 1],
+    position: [0, -0.1, 0],
     rotation: [-Math.PI * 0.5, 0, 0],
     material: 'mappedFlat',
     physics: {
@@ -38,64 +28,128 @@ export const objectsIndex = [
       receive: true,
       cast: false,
     },
-    add: true,
-  },
-  {
-    name: 'concaveExample1',
-    type: 'Geometry',
-    params: 'custom',
-    position: [0, 1, 0],
-    rotation: [0, 0, 0],
-    material: 'redMapped',//'wireFrame',//'redMapped',
-    physics: {
-      mass: 0,
-      friction: 0.8,
-      restitution: 0.5,
-    },
-    shadows: {
-      receive: true,
-      cast: true,
-    },
-    calculateVertices,
-    calculateFaces,
-    calculateUVs: planeUnwrapUVs,
-    add: false,
-  },
-  {
-    name: 'box',
-    type: 'BoxBufferGeometry',
-    params: [1.8, 0.8, 4.5, 1, 1, 1],
-    position: [-10, 0.55, 10],
-    rotation: [0, 0, 0],
-    scale: [1, 1, 1],
-    material: 'mappedFlat',
-    physics: {
-      mass: 0,
-      friction: 0.8,
-      restitution: 0.5,
-    },
-    shadows: {
-      receive: true,
-      cast: true,
-    },
     add: false,
   },
   {
     name: 'track',
     type: 'ExtrudeGeometry',
     params: [
-      crossSection,
+      trackCrossSection,
       {
-        steps: 50,
+        steps: 100,
         depth: 0,
-        UVGenerator,
+        UVGenerator: trackUVGenerator,
         extrudePath: centerLine,
       },
     ],
-    position: [0, 0.1, 0],
+    position: [0, 0.0, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'mappedFlat',//wireFrame',//,//'asphalt',
+    material: 'road',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    physics: {
+      mass: 0,
+      friction: 1,
+      restitution: 0.5,
+    },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: true,
+  },
+  {
+    name: 'trackKerb',
+    type: 'ExtrudeGeometry',
+    params: [
+      trackKerbCrossSection,
+      {
+        steps: 50,
+        depth: 0,
+        UVGenerator: trackUVGenerator,
+        extrudePath: centerLine,
+        renderEndCaps: false,
+        autoCloseShape: false,
+      },
+    ],
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'mappedRed',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    physics: {
+      mass: 0,
+      friction: 1,
+      restitution: 0.5,
+    },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: true,
+  },
+  {
+    name: 'grass',
+    type: 'ExtrudeGeometry',
+    params: [
+      grassCrossSection,
+      {
+        steps: 50,
+        depth: 0,
+        UVGenerator: trackUVGenerator,
+        extrudePath: centerLine,
+      },
+    ],
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'grass',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    physics: {
+      mass: 0,
+      friction: 1,
+      restitution: 0.5,
+    },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: true,
+  },
+  {
+    name: 'barriers',
+    type: 'ExtrudeGeometry',
+    params: [
+      barrierCrossSection,
+      {
+        steps: 50,
+        depth: 0,
+        UVGenerator: trackUVGenerator,
+        extrudePath: centerLine,
+      },
+    ],
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'metalPlate',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    physics: {
+      mass: 0,
+      friction: 1,
+      restitution: 0.5,
+    },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: true,
+  },
+  {
+    name: 'rufrt12s',
+    type: 'GLTF',
+    url: {
+      path: 'assets/objects/ruf_rt-12s/',
+      file: 'scene.gltf',
+    },
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    scale: [0.2, 0.2, 0.2],
     physics: {
       mass: 0,
       friction: 0.8,
@@ -105,7 +159,7 @@ export const objectsIndex = [
       receive: true,
       cast: true,
     },
-    add: false,
+    add: true,
   },
   {
     name: 'vehicle',
@@ -113,9 +167,9 @@ export const objectsIndex = [
     params: 'custom',
     customFunction: createVehicle,
     position: [2, 0.5, 0],
-    rotation: [0, 0, 0],
+    rotation: [0, Math.PI, 0],
     scale: [1, 1, 1],
-    material: 'mappedFlat',//wireFrame',//,//'asphalt',
+    material: 'wireFrame',//wireFrame',//,//'asphalt',
     physics: {
       mass: 0,
       friction: 0.8,
@@ -127,16 +181,30 @@ export const objectsIndex = [
     },
     add: true,
   },
-  // {
-  //   name: 'duck',
-  //   type: 'GLTF',
-  //   url: {
-  //     path: 'assets/objects/duck/',
-  //     file: 'Duck.gltf',
+
+   // {
+  //   name: 'sphere2',
+  //   type: 'SphereBufferGeometry',
+  //   params: [10, 10, 10],
+  //   position: [50, 130, -70],
+  //   material: 'redShiny',
+  //   physics: {
+  //     mass: 1,
+  //     friction: 0.8,
   //   },
-  //   position: [0, 100, -105],
+  //   shadows: {
+  //     receive: true,
+  //     cast: true,
+  //   },
+  //   add: false,
+  // },
+  // {
+  //   name: 'concaveExample1',
+  //   type: 'Geometry',
+  //   params: 'custom',
+  //   position: [0, 1, 0],
   //   rotation: [0, 0, 0],
-  //   scale: [0.2, 0.2, 0.2],
+  //   material: 'redMapped',//'wireFrame',//'redMapped',
   //   physics: {
   //     mass: 0,
   //     friction: 0.8,
@@ -146,6 +214,28 @@ export const objectsIndex = [
   //     receive: true,
   //     cast: true,
   //   },
-  //   add: true,
+  //   calculateVertices,
+  //   calculateFaces,
+  //   calculateUVs: planeUnwrapUVs,
+  //   add: false,
+  // },
+   // {
+  //   name: 'box',
+  //   type: 'BoxBufferGeometry',
+  //   params: [1.8, 0.8, 4.5, 1, 1, 1],
+  //   position: [-10, 0.55, 10],
+  //   rotation: [0, 0, 0],
+  //   scale: [1, 1, 1],
+  //   material: 'mappedFlat',
+  //   physics: {
+  //     mass: 0,
+  //     friction: 0.8,
+  //     restitution: 0.5,
+  //   },
+  //   shadows: {
+  //     receive: true,
+  //     cast: true,
+  //   },
+  //   add: false,
   // },
 ];

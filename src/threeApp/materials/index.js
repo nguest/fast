@@ -1,26 +1,42 @@
 import * as THREE from 'three';
 
 export const createMaterial = ({
-  name,
-  type,
   color,
-  map,
-  side,
-  wireframe = false,
-  flatShading = false,
   emissive = 0x000000,
+  flatShading = false,
+  map,
+  name,
+  normalMap,
+  shininess,
+  side,
+  specular,
+  type,
+  wireframe = false,
 }, assets) => {
   const material = new THREE[type]({
-    name,
     color,
-    flatShading,
-    side: THREE[side],
-    wireframe,
     emissive,
-    map: assets[map],
+    flatShading,
+    name,
+    shininess,
+    side: THREE[side],
+    specular,
+    wireframe,
   });
-
-  material.map.wrapT = THREE.RepeatWrapping;
-  material.map.wrapS = THREE.RepeatWrapping;
+  if (map) {
+    material.map = assets[map.name];
+    material.map.wrapT = THREE[map.wrapping] || THREE.RepeatWrapping;
+    material.map.wrapS = THREE[map.wrapping] || THREE.RepeatWrapping;
+    if (map.repeat) material.map.repeat.set(...map.repeat);
+    if (map.offset) material.map.repeat.set(...map.offset);
+  }
+  if (normalMap) {
+    material.normalMap = assets[normalMap.name];
+    material.normalMap.wrapT = THREE[normalMap.wrapping] || THREE.RepeatWrapping;
+    material.normalMap.wrapS = THREE[normalMap.wrapping] || THREE.RepeatWrapping;
+    if (normalMap.repeat) material.normalMap.repeat.set(...normalMap.repeat);
+    if (normalMap.offset) material.normalMap.repeat.set(...normalMap.offset);
+    if (normalMap.normalScale) material.normalScale.set(...normalMap.normalScale);
+  }
   return material;
 };

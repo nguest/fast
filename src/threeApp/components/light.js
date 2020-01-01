@@ -11,11 +11,15 @@ export class Light {
 
   createLight() {
     this.light = new THREE[this.params.type]({ ...this.params });
+    console.log({ ppp: this.params })
     if (this.params.position) {
       this.light.position.set(...this.params.position);
     }
+    this.light.intensity = this.params.intensity;
     this.light.visible = this.params.visible;
     this.light.name = this.params.type;
+    this.light.penumbra = this.params.penumbra;
+    this.light.angle = this.params.angle;
 
     if (this.params.addToScene) {
       this.addLight();

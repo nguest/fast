@@ -15,12 +15,18 @@ export class DatGUI {
     /* Global */
     gui.close();
 
+    gui.useLocalStorage = true;
+    gui.remember(Config);
+
     /* Camera */
     const cameraFolder = gui.addFolder('Camera');
+    cameraFolder.open();
+    cameraFolder.add(Config, 'useFollowCam').name('Follow Cam').onChange((value) => {
+      Config.useFollowCam = value;
+    });
     const cameraFOVGui = cameraFolder.add(Config.camera, 'fov', 0, 180).name('Camera FOV');
     cameraFOVGui.onChange((value) => {
       this.controls.enableRotate = false;
-
       this.camera.fov = value;
     });
     cameraFOVGui.onFinishChange(() => {

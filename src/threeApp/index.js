@@ -148,6 +148,7 @@ export class Main extends PureComponent {
         material: materials[object.material],
         scene: this.scene,
         shadows: object.shadows,
+        manager: this.manager,
       };
 
       if (object.physics) {
@@ -165,7 +166,6 @@ export class Main extends PureComponent {
 
   createWorld(materials) {
     this.createObjects(materials);
-    console.log({ s: this.scene })
     //this.mover = new Forces(this.scene, this.physicsWorld, 'sphere2');
 
     createSkyBoxFrom4x3({
@@ -175,9 +175,16 @@ export class Main extends PureComponent {
       tileSize: 900,
       manager: this.manager,
     });
+
     this.manager.onLoad = () => { // all managed objects loaded
       this.props.setIsLoading(false);
       if (Config.isDev) this.gui = new DatGUI(this);
+      console.log('ALL OBJECTS LOADED');
+      this.followObj = this.scene.children.find((o) => o.name === 'chassisMesh');
+      const car = this.scene.children.find((o) => o.name === 'car');
+      car.position.set(0, -0.5, 0)
+      this.followObj.add(car);
+      this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
       this.animate();
     };
   }
@@ -187,7 +194,14 @@ export class Main extends PureComponent {
     const { rS } = this;
 
     if (Config.showStats) updateStatsStart(rS);
-    this.renderer.render(this.scene, this.camera.threeCamera);
+    if (Config.useFollowCam) {
+      this.updateFollowCam();
+      this.renderer.render(this.scene, this.followCam.threeCamera);
+    } else {
+      this.renderer.render(this.scene, this.camera.threeCamera);
+    }
+
+
     if (Config.showStats) updateStatsEnd(rS);
     // TWEEN.update();
     this.interaction.keyboard.update();
@@ -198,10 +212,25 @@ export class Main extends PureComponent {
     //console.log({ p: this.physicsWorld.bodies })
     //updateVehicle(deltaTime, this.physicsWorld.bodies[4], );
     //this.mover.updateInteraction(this.interaction);
-
+    this.updateShadowCamera()
     this.controls.update();
     this.updatePhysics(deltaTime);
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
+  }
+
+  updateShadowCamera() {
+    const posn = this.followObj.position.add(new THREE.Vector3(...lightsIndex[1].position));
+    this.light[1].position.set(posn.x, posn.y, posn.z);
+    this.light[1].target = this.followObj;
+  }
+
+  updateFollowCam() {
+    const relativeCameraOffset = new THREE.Vector3(...Config.followCam.position);
+
+    const cameraOffset = relativeCameraOffset.applyMatrix4(this.followObj.matrixWorld);
+    this.followCam.threeCamera.position.copy(cameraOffset);
+    const { x, y, z } = this.followObj.position;
+    this.followCam.threeCamera.lookAt(x, y, z);
   }
 
   updatePhysics(deltaTime) {
@@ -212,7 +241,7 @@ export class Main extends PureComponent {
     for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
       if (this.physicsWorld.bodies[i].name === 'chassisMesh') {
         //console.log('update vehicle')
-        updateVehicle(deltaTime, this.physicsWorld.bodies[i], this.interaction);
+        updateVehicle(deltaTime, this.physicsWorld.bodies[i], this.interaction, this.showStatus);
       } else {
         const objThree = this.physicsWorld.bodies[i];
         const objPhys = objThree.userData.physicsBody;

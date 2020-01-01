@@ -5,6 +5,7 @@ import Ammo from 'ammonext';
 
 import { promisifyLoader } from '../helpers/helpers';
 import { GLTFLoader } from '../loaders/GLTFLoader';
+import { ExtrudeBufferGeometry } from '../helpers/ExtrudeGeometry';
 
 
 export class Mesh {
@@ -15,6 +16,7 @@ export class Mesh {
     calculateVertices,
     customFunction,
     geoRotate,
+    manager,
     material,
     name,
     params,
@@ -29,6 +31,7 @@ export class Mesh {
   }) {
     this.addObjectToScene = add;
     this.geoRotate = geoRotate;
+    this.manager = manager;
     this.material = material;
     this.name = name;
     this.params = params;
@@ -41,13 +44,18 @@ export class Mesh {
     this.shadows = shadows;
     this.type = type;
     this.customFunction = customFunction;
-    console.log({2: Ammo})
+
     if (!add) return;
 
     if (type === 'GLTF') {
       this.initLoader(url);
     } else {
-      const geometry = THREE[type] && new THREE[type](...params);
+      let geometry = THREE[type] && new THREE[type](...params);
+
+      // use custom extrude function
+      if (type === 'ExtrudeGeometry' || type === 'ExtrudeBufferGeometry') {
+        geometry = new ExtrudeBufferGeometry(...params);
+      }
 
       if (params === 'custom') {
         if (customFunction) {
@@ -81,13 +89,37 @@ export class Mesh {
   }
 
   initLoader(url) {
-    const loader = new GLTFLoader().setPath(url.path);
+
+    console.log({ 'this.manager':this.manager })
+    const loader = new GLTFLoader(this.manager).setPath(url.path);
     const gltfScene = promisifyLoader(loader).load(url.file);
     gltfScene.then((gltf) => {
-      const mesh = gltf.scene.children[0].children.filter((child) => child.type === 'Mesh');
-      return this.orientObject(mesh[0].geometry, mesh[0].material);
+      console.log({ gltf })
+      gltf.scene.traverse((child) => {
+        if (child.isMesh) {
+          if (child.name === 'gum001_carpaint_0') {
+           // child.material.color = new THREE.Color(0x0000ff);
+            console.log({ child })
+
+            child.castShadow = true;
+          }
+        }
+      })
+      //debugger;
+      // const mesh = gltf.scene.children[0].children.filter((child) => child.type === 'Mesh');
+      // return this.orientObject(mesh[0].geometry, mesh[0].material);
+      if (this.addObjectToScene) {
+        gltf.scene.children[0].position.set(0, 0, 0);
+
+        gltf.scene.children[0].scale.setScalar(0.01);
+        //gltf.scene.children[0].rotation.set(0, 0, -Math.PI);
+        gltf.scene.children[0].name = 'car';
+        //this.setInitialState();
+        this.scene.add(gltf.scene.children[0]);
+      }
     });
   }
+
 
   orientObject(geometry, loadedMaterial) {
     if (this.geoRotate) {
@@ -96,6 +128,32 @@ export class Mesh {
       geometry.rotateZ(this.geoRotate[2]);
     }
     this.mesh = new THREE.Mesh(geometry, loadedMaterial || this.material);
+    this.mesh.material.vertexColors = THREE.VertexColors;
+
+    //this.mesh.geometry.attributes
+    const vCount = this.mesh.geometry.attributes.position.count;
+    //const colors = new Array(vCount * 3).fill('').map(c => Math.random());
+    let colors = [];
+    for (let i = 0; i < vCount; i++) {
+      const rand = Math.random() * 0.25 + 0.75;
+      if (
+        (i) % 36 === 0
+        || (i+1) % 36 === 0
+        || (i+4) % 36 === 0
+        //|| (i - 5) % 36 === 0
+
+
+      ) {
+        colors.push(0.75, 0.75, 0.75);
+      } else {
+        colors.push(1,1,1)
+      }
+      //colors.push(rand, rand, rand);
+    }
+    console.log({ colors })
+    this.mesh.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ));//.onUpload( disposeArray ) );
+    console.log({ h: this.mesh.geometry.attributes })
+
     this.mesh.position.set(...this.position);
     this.mesh.rotation.set(...this.rotation);
     this.mesh.geometry.scale(...this.scale);
@@ -150,7 +208,6 @@ export class Mesh {
     body.setFriction(physics.friction || 0);
     body.setRestitution(physics.restitution || 1);
     body.setDamping(physics.damping || 0, physics.damping || 0);
-    console.log({ a: this.physicsWorld })
     this.physicsWorld.addRigidBody(body);
     mesh.userData.physicsBody = body;
     this.physicsWorld.bodies.push(mesh);
@@ -158,13 +215,15 @@ export class Mesh {
 
 
   createCustom(physicsWorld) {
-    console.log('yeah')
-    return this.customFunction({
+    this.mesh = this.customFunction({
       pos: new THREE.Vector3(...this.position),
-     // quat: new THREE.Quaternion().setFromEuler(new THREE.Euler(...this.rotation, 'XYZ')),
+      quat: new THREE.Quaternion().setFromEuler(new THREE.Euler(...this.rotation, 'XYZ')),
       physicsWorld,
       scene: this.scene,
+      material: this.material,
     });
+    console.log({ M: this.mesh })
+    return this;
   }
 }
 

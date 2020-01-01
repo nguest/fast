@@ -41,7 +41,6 @@ export class Forces {
 
     const vN = this.physicsMover.getLinearVelocity(); // .clone();
     vN.normalize();
-    console.log({ vN })
 
     // this.arrowHelper = new THREE.ArrowHelper( vN, origin, length, hex );
     // this.scene.add( this.arrowHelper );

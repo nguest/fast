@@ -1,23 +1,13 @@
 import * as THREE from 'three';
 
-export const crossSection = new THREE.Shape();
-crossSection.moveTo(0, -10);
-crossSection.lineTo(-0.1, 0);
-crossSection.lineTo(0, 10);
+export const trackCrossSection = new THREE.Shape();
+trackCrossSection.moveTo(0, 8);
+//trackCrossSection.lineTo(0, 0);
+trackCrossSection.lineTo(0, -8);
 
-export const centerLine = new THREE.CatmullRomCurve3([
-  new THREE.Vector3(0, 0, 0),
-  new THREE.Vector3(0, 0, -50),
-  new THREE.Vector3(-5, 0, -150),
-  new THREE.Vector3(50, 0, -200),
-  new THREE.Vector3(0, 0, -250),
-  new THREE.Vector3(-100, 0, -250),
-  new THREE.Vector3(-150, 0, -200),
-  new THREE.Vector3(-100, 0, -40),
-]);
 
-export const UVGenerator = {
-  generateTopUV( geometry, vertices, indexA, indexB, indexC ) {
+export const trackUVGenerator = {
+  generateTopUV(geometry, vertices, indexA, indexB, indexC) {
     console.log({ geometry, vertices });
     const aX = vertices[indexA * 3];
     const aY = vertices[indexA * 3 + 1];
@@ -64,7 +54,6 @@ export const UVGenerator = {
       new THREE.Vector2(1, 1),
       new THREE.Vector2(1, 0),
       new THREE.Vector2(0, 0),
-
     ];
   },
 };

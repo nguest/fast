@@ -166,7 +166,6 @@ export class Main extends PureComponent {
 
   createWorld(materials) {
     this.createObjects(materials);
-    //this.mover = new Forces(this.scene, this.physicsWorld, 'sphere2');
 
     createSkyBoxFrom4x3({
       scene: this.scene,
@@ -178,11 +177,10 @@ export class Main extends PureComponent {
 
     this.manager.onLoad = () => { // all managed objects loaded
       this.props.setIsLoading(false);
+      this.showStatus('ALL OBJECTS LOADED');
       if (Config.isDev) this.gui = new DatGUI(this);
-      console.log('ALL OBJECTS LOADED');
       this.followObj = this.scene.children.find((o) => o.name === 'chassisMesh');
-      const car = this.scene.children.find((o) => o.name === 'car');
-      car.position.set(0, -0.5, 0)
+      const car = this.updateCar();
       this.followObj.add(car);
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
       this.animate();
@@ -209,10 +207,8 @@ export class Main extends PureComponent {
       console.log('space PRESSED');
       this.togglePause();
     }
-    //console.log({ p: this.physicsWorld.bodies })
-    //updateVehicle(deltaTime, this.physicsWorld.bodies[4], );
-    //this.mover.updateInteraction(this.interaction);
-    this.updateShadowCamera()
+
+    this.updateShadowCamera();
     this.controls.update();
     this.updatePhysics(deltaTime);
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
@@ -240,7 +236,6 @@ export class Main extends PureComponent {
     // Update rigid bodies
     for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
       if (this.physicsWorld.bodies[i].name === 'chassisMesh') {
-        //console.log('update vehicle')
         updateVehicle(deltaTime, this.physicsWorld.bodies[i], this.interaction, this.showStatus);
       } else {
         const objThree = this.physicsWorld.bodies[i];
@@ -250,13 +245,31 @@ export class Main extends PureComponent {
           motionState.getWorldTransform(this.auxTrans);
           const p = this.auxTrans.getOrigin();
           const q = this.auxTrans.getRotation();
-  
+
           objThree.position.set(p.x(), p.y(), p.z());
-          //objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
+          objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
         }
       }
-      
     }
+  }
+
+  updateCar() {
+    const car = this.scene.children.find((o) => o.name === 'car');
+    console.log({ car })
+    let rim;
+    car.traverse((child) => {
+      if (child.isMesh) {
+        //console.log('xxx', child.name, child)
+        if (child.name === 'ty_rims_0') {
+          child.position.set(0, 4, 0)
+          rim = child;
+          child = null;
+        }
+      }
+    });
+    console.log({ rim })
+    car.position.set(0, -0.5, 0);
+    return car;
   }
 
   resetObjects() {

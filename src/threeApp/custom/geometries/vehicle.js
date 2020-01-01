@@ -26,7 +26,7 @@ const BACK_LEFT = 2;
 const BACK_RIGHT = 3;
 const wheelMeshes = [];
 
-const createWheelMesh = ({ radius, width, scene }) => {
+const createWheelMesh = ({ radius, width, index, scene }) => {
   const t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
   t.rotateZ(Math.PI / 2);
   const mesh = new THREE.Mesh(t, materialInteractive);
@@ -39,6 +39,7 @@ const createWheelMesh = ({ radius, width, scene }) => {
     ),
     materialInteractive,
   ));
+  mesh.name = `wheel_${index}`;
   mesh.castShadow = true;
 
   scene.add(mesh);
@@ -48,7 +49,7 @@ const createWheelMesh = ({ radius, width, scene }) => {
 const createChassisMesh = ({ w, h, l, material, scene }) => {
   const shape = new THREE.BoxGeometry(w, h, l, 1, 1, 1);
   const mesh = new THREE.Mesh(shape, material);
-  mesh.castShadow = true;
+  // mesh.castShadow = true;
   const chassis = new THREE.Object3D();
   chassis.add(mesh);
   scene.add(chassis);
@@ -152,7 +153,7 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
     wheelInfo.set_m_frictionSlip(friction);
     wheelInfo.set_m_rollInfluence(rollInfluence);
 
-    wheelMeshes[index] = createWheelMesh({ radius, width, material, scene });
+    wheelMeshes[index] = createWheelMesh({ radius, width, material, index, scene });
   };
 
   addWheel(true, new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
@@ -162,7 +163,6 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
 
   vehicle.name = 'vehicle';
   chassisMesh.name = 'chassisMesh';
-  console.log({ e: chassisMesh })
   chassisMesh.userData.physicsBody = vehicle;
   physicsWorld.bodies.push(chassisMesh);
   return chassisMesh;

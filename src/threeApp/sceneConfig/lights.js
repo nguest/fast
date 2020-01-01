@@ -12,7 +12,7 @@ export const lightsIndex = [
     addToScene: true,
     color: 0xfff0f0,
     intensity: 5.0,
-    position: [20, 10, -80],
+    position: [40, 10, -30],
     castShadow: true,
     helperEnabled: true,
     target: [0, 0, 0],

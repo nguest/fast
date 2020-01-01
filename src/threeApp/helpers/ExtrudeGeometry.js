@@ -156,7 +156,6 @@ function ExtrudeBufferGeometry(shapes, options) {
     let hl; // looping of holes
 
     const shapePoints = shape.extractPoints(curveSegments);
-    console.log({ shapePoints })
 
     let vertices = shapePoints.shape;
     const { holes } = shapePoints;
@@ -179,7 +178,7 @@ function ExtrudeBufferGeometry(shapes, options) {
 
 
     const faces = ShapeUtils.triangulateShape(vertices, holes);
-    console.log({ faces })
+
     /* Vertices */
 
     const contour = vertices; // vertices has all points but contour has only points of circumference

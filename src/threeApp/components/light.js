@@ -11,7 +11,6 @@ export class Light {
 
   createLight() {
     this.light = new THREE[this.params.type]({ ...this.params });
-    console.log({ ppp: this.params })
     if (this.params.position) {
       this.light.position.set(...this.params.position);
     }

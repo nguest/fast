@@ -166,7 +166,7 @@ export const objectsIndex = [
     type: 'custom',
     params: 'custom',
     customFunction: createVehicle,
-    position: [2, 0.5, 0],
+    position: [0, 0.5, 0],
     rotation: [0, Math.PI, 0],
     scale: [1, 1, 1],
     material: 'wireFrame',//wireFrame',//,//'asphalt',

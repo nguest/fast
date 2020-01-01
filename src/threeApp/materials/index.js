@@ -7,9 +7,9 @@ export const createMaterial = ({
   map,
   name,
   normalMap,
-  shininess,
+  shininess = 30,
   side,
-  specular,
+  specular = 0x000000,
   type,
   wireframe = false,
 }, assets) => {

@@ -25,13 +25,13 @@ export const styles = {
       borderRadius: '100%',
       backgroundColor: 'white',
       margin: '35px 5px',
-      '&:nth-child(1)': {
+      '&:nth-of-type(1)': {
         animation: css`${bounce} 1s ease-in-out infinite`,
       },
-      '&:nth-child(2)': {
+      '&:nth-of-type(2)': {
         animation: css`${bounce} 1s ease-in-out 0.33s infinite`,
       },
-      '&:nth-child(3)': {
+      '&:nth-of-type(3)': {
         animation: css`${bounce} 1s ease-in-out 0.66s infinite`,
       },
     },

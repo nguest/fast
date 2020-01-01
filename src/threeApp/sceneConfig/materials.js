@@ -30,19 +30,20 @@ export const materialsIndex = [
   },
   {
     name: 'road',
-    type: 'MeshPhongMaterial',
+    type: 'MeshStandardMaterial',
     color: 0xffffff,
+    roughness: 1,
     map: {
       name: 'Road_Map',
       wrapping: 'MirroredRepeatWrapping',
       repeat: [2, 1],
     },
-    normalMap: {
-      name: 'Road_Normal',
-      wrapping: 'MirroredRepeatWrapping',
-      repeat: [2, 1],
-      normalScale: [0.4, 0.4],
-    },
+    // normalMap: {
+    //   name: 'Road_Normal',
+    //   wrapping: 'MirroredRepeatWrapping',
+    //   repeat: [2, 1],
+    //   normalScale: [0.4, 0.4],
+    // },
     shininess: 20,
     specular: 0x555555,
     side: 'FrontSide',

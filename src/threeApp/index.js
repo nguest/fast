@@ -17,6 +17,7 @@ import { Light } from './components/Light';
 import { Controls } from './components/Controls';
 import { Mesh } from './components/Mesh';
 import { Forces } from './components/Forces';
+import { createInstancedMesh } from './custom/geometries/trees';
 
 // Helpers
 import { promisifyLoader } from './helpers/helpers';
@@ -162,12 +163,14 @@ export class Main extends PureComponent {
       }
       return new Mesh(params);
     });
+    createInstancedMesh({ scene: this.scene });
+    console.log({ eee: this.scene })
   }
 
   createWorld(materials) {
     this.createObjects(materials);
 
-    createSkyBoxFrom4x3({
+    const envCube = createSkyBoxFrom4x3({
       scene: this.scene,
       boxDimension: 1000,
       imageFile: './assets/textures/skybox1.png',
@@ -180,7 +183,7 @@ export class Main extends PureComponent {
       this.showStatus('ALL OBJECTS LOADED');
       if (Config.isDev) this.gui = new DatGUI(this);
       this.followObj = this.scene.children.find((o) => o.name === 'chassisMesh');
-      const car = this.updateCar();
+      const car = this.updateCar(envCube);
       this.followObj.add(car);
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
       this.animate();
@@ -253,7 +256,7 @@ export class Main extends PureComponent {
     }
   }
 
-  updateCar() {
+  updateCar(envCube) {
     const car = this.scene.children.find((o) => o.name === 'car');
     console.log({ car })
     let rim;
@@ -261,11 +264,17 @@ export class Main extends PureComponent {
       if (child.isMesh) {
         //console.log('xxx', child.name, child)
         if (child.name === 'ty_rims_0') {
-          child.position.set(0, 4, 0)
+          child.position.set(0, 4, 0);
           rim = child;
-          child = null;
+        }
+        if (child.name === 'gum012_glass_0') {
+          console.log({ x:child.material.envMap, envCube })
+
+          child.material.envMap = envCube;
+          console.log({ x:child.material.envMap })
         }
       }
+
     });
     console.log({ rim })
     car.position.set(0, -0.5, 0);

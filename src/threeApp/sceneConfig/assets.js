@@ -12,5 +12,10 @@ export const assetsIndex = {
     Road_Normal: { name: 'Road_Normal', path: './assets/textures/road_normal.jpg' },
     Metalplate_Map: { name: 'Metalplate_Map', path: './assets/textures/metalplate_map.jpg' },
     Metalplate_Normal: { name: 'Metalplate_Normal', path: './assets/textures/metalplate_normal.jpg' },
+    Wheel_Map: { name: 'Wheel_Map', path: './assets/textures/wheel_map.jpg' },
+    Tree_Map: { name: 'Tree_Map', path: './assets/textures/tree_map.png' },
+  },
+  SkyBox: {
+    One: { name: 'One', path: './assets/textures/skybox1.png', type: '4x3' },
   },
 };

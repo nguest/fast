@@ -24,11 +24,14 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, imageFile, tileSize =
   const tileWidth = tileSize;
   const tileHeight = tileSize;
   const IpImage = new Image();
-  IpImage.onload = sliceImage;
   IpImage.src = imageFile; // horizontal cross of 6 WYSIWYG tiles in a 4x3 = 12 tile layout.
 
+  const callback = (arr) => {
+    console.log({arr});
+    return arr;
+  }
 
-  function sliceImage() { // cut up source image into 12 separate image tiles, numbered 0..11
+  IpImage.onload = () => { // sliceImage; // cut up source image into 12 separate image tiles, numbered 0..11
     const imagePieces = [];
 
     for (let i = 0; i < numCols; ++i) {
@@ -71,6 +74,10 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, imageFile, tileSize =
     skyBox.name = 'SkyBox';
     skyBox.scale.set(1, 1, 1);
     scene.add(skyBox);
-    return skyBox;
-  }
+    console.log({ skyBoxMaterialArray })
+    return callback(skyBoxMaterialArray);
+  };
+  //return skyBoxMaterialArray;
+  //return skyBoxMaterialArray;
+
 };

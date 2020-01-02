@@ -1,8 +1,5 @@
 import * as THREE from 'three';
 import Ammo from 'ammonext';
-//import Ammo from 'ammo.js';
-//import * as Ammo from '../ammo';
-
 import { promisifyLoader } from '../helpers/helpers';
 import { GLTFLoader } from '../loaders/GLTFLoader';
 import { ExtrudeBufferGeometry } from '../helpers/ExtrudeGeometry';
@@ -95,6 +92,8 @@ export class Mesh {
       gltf.scene.traverse((child) => {
         //console.log(child.name, child.material);// &&  child.material.map)
         if (child.isMesh) {
+
+         // child.material = new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0xffffff });
 
           if (child.name === 'gum001_carpaint_0') { // body
             // child.material.color = new THREE.Color(0x0000ff);

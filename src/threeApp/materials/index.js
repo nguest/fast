@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 
 export const createMaterial = ({
+  bumpMap,
   color,
   emissive = 0x000000,
+  envMap,
   flatShading = false,
   map,
   name,
@@ -37,6 +39,17 @@ export const createMaterial = ({
     if (normalMap.repeat) material.normalMap.repeat.set(...normalMap.repeat);
     if (normalMap.offset) material.normalMap.repeat.set(...normalMap.offset);
     if (normalMap.normalScale) material.normalScale.set(...normalMap.normalScale);
+  }
+  if (bumpMap) {
+    material.bumpMap = assets[bumpMap.name];
+    material.bumpMap.wrapT = THREE[bumpMap.wrapping] || THREE.RepeatWrapping;
+    material.bumpMap.wrapS = THREE[bumpMap.wrapping] || THREE.RepeatWrapping;
+    if (bumpMap.repeat) material.normalMap.repeat.set(...bumpMap.repeat);
+    if (bumpMap.offset) material.normalMap.repeat.set(...bumpMap.offset);
+   // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
+  }
+  if (envMap) {
+    material.envMap = assets[envMap.name];
   }
   return material;
 };

@@ -143,6 +143,7 @@ export const objectsIndex = [
   {
     name: 'rufrt12s',
     type: 'GLTF',
+    link: 'https://sketchfab.com/3d-models/ruf-rt-12s-f215e8aa71da449095f4e7dceb373893',
     url: {
       path: 'assets/objects/ruf_rt-12s/',
       file: 'scene.gltf',
@@ -167,7 +168,7 @@ export const objectsIndex = [
     params: 'custom',
     customFunction: createVehicle,
     position: [0, 0.5, 0],
-    rotation: [0, Math.PI, 0],
+    rotation: [0, -Math.PI, 0],
     scale: [1, 1, 1],
     material: 'wireFrame',//wireFrame',//,//'asphalt',
     physics: {
@@ -181,22 +182,46 @@ export const objectsIndex = [
     },
     add: true,
   },
+  {
+    name: 'wheel',
+    type: 'GLTF',
+    link: 'https://sketchfab.com/3d-models/ruf-rt-12s-f215e8aa71da449095f4e7dceb373893',
+    url: {
+      path: 'assets/objects/',
+      file: 'wheel.glb',
+    },
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    //scale: [q,q,q],
+    // physics: {
+    //   mass: 0,
+    //   friction: 0.8,
+    //   restitution: 0.5,
+    // },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: true,
+  },
 
-   // {
-  //   name: 'sphere2',
-  //   type: 'SphereBufferGeometry',
-  //   params: [10, 10, 10],
-  //   position: [50, 130, -70],
-  //   material: 'redShiny',
-  //   physics: {
-  //     mass: 1,
-  //     friction: 0.8,
-  //   },
+  // {
+  //   name: 'wheel',
+  //   //type: 'CircleBufferGeometry',
+  //   type: 'RingBufferGeometry',
+  //   params: [1, 0.8, 24],
+  //   position: [0, 2, 5],
+  //   rotation: [0, Math.PI / 4, 0],
+  //   material: 'wheel',
+  //   // physics: {
+  //   //   mass: 1,
+  //   //   friction: 0.8,
+  //   // },
   //   shadows: {
   //     receive: true,
   //     cast: true,
   //   },
-  //   add: false,
+  //   add: true,
   // },
   // {
   //   name: 'concaveExample1',

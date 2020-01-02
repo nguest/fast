@@ -85,6 +85,30 @@ export const materialsIndex = [
     },
     shininess: 50,
     specular: 0xaaaaaa,
+    side: 'DoubleSide',
+    wireframe: false,
+    emissive: 0x000000,
+  },
+  {
+    name: 'wheel',
+    type: 'MeshPhongMaterial',
+    color: 0xffffff,
+    map: {
+      name: 'Wheel_Map',
+      wrapping: 'RepeatWrapping',
+      repeat: [1, 1],
+      offset: [-0.1, 0]
+    },
+    // bumpMap: {
+    //   name: 'Wheel_Map',
+    // },
+    // normalMap: {
+    //   name: 'Metalplate_Normal',
+    //   wrapping: 'RepeatWrapping',
+    //   repeat: [1, 20],
+    // },
+    shininess: 50,
+    specular: 0xaaaaaa,
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,

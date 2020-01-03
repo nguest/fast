@@ -176,6 +176,10 @@ export class Mesh {
     return this.mesh;
   }
 
+  getMesh() {
+    return this.mesh;
+  }
+
   setInitialState() {
     this.mesh.position.set(...this.position);
     this.mesh.rotation.set(...this.rotation);

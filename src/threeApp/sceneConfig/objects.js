@@ -4,7 +4,7 @@ import { calculateFaces, calculateVertices, planeUnwrapUVs } from '../custom/geo
 import { trackCrossSection, trackUVGenerator } from '../custom/geometries/track';
 import { trackKerbCrossSection } from '../custom/geometries/trackKerb';
 import { grassCrossSection } from '../custom/geometries/grass';
-import { barrierCrossSection } from '../custom/geometries/barriers';
+import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 
 import { centerLine } from '../custom/geometries/centerLine';
 
@@ -117,11 +117,11 @@ export const objectsIndex = [
     name: 'barriers',
     type: 'ExtrudeGeometry',
     params: [
-      barrierCrossSection,
+      barriersCrossSection,
       {
         steps: 50,
         depth: 0,
-        UVGenerator: trackUVGenerator,
+        UVGenerator: barriersUVGenerator,
         extrudePath: centerLine,
       },
     ],
@@ -135,8 +135,8 @@ export const objectsIndex = [
       restitution: 0.5,
     },
     shadows: {
-      receive: true,
-      cast: true,
+      receive: false,
+      cast: false,
     },
     add: true,
   },

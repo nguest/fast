@@ -17,7 +17,7 @@ let breakingForce = 0;
 
 const steeringIncrement = 0.001;
 const steeringClamp = 0.5;
-const maxEngineForce = 2000;
+const maxEngineForce = 3000;
 const maxBreakingForce = 100;
 
 const FRONT_LEFT = 0;

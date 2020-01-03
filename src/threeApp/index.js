@@ -161,10 +161,10 @@ export class Main extends PureComponent {
           damping: object.physics.damping,
         };
       }
-      return new Mesh(params);
+      return new Mesh(params).getMesh();
     });
+    console.log({ 4: this.objects })
     createInstancedMesh({ scene: this.scene });
-    console.log({ eee: this.scene })
   }
 
   createWorld(materials) {
@@ -181,11 +181,12 @@ export class Main extends PureComponent {
     this.manager.onLoad = () => { // all managed objects loaded
       this.props.setIsLoading(false);
       this.showStatus('ALL OBJECTS LOADED');
-      if (Config.isDev) this.gui = new DatGUI(this);
       this.followObj = this.scene.children.find((o) => o.name === 'chassisMesh');
       const car = this.updateCar(envCube);
       this.followObj.add(car);
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
+      if (Config.isDev) this.gui = new DatGUI(this);
+
       this.animate();
     };
   }
@@ -228,6 +229,7 @@ export class Main extends PureComponent {
 
     const cameraOffset = relativeCameraOffset.applyMatrix4(this.followObj.matrixWorld);
     this.followCam.threeCamera.position.copy(cameraOffset);
+    //this.followCam.threeCamera.add( this.followObj);
     const { x, y, z } = this.followObj.position;
     this.followCam.threeCamera.lookAt(x, y, z);
   }
@@ -264,19 +266,15 @@ export class Main extends PureComponent {
       if (child.isMesh) {
         //console.log('xxx', child.name, child)
         if (child.name === 'ty_rims_0') {
-          child.position.set(0, 4, 0);
-          rim = child;
+          //child.position.set(0, 4, 0);
+          //rim = child;
         }
         if (child.name === 'gum012_glass_0') {
-          console.log({ x:child.material.envMap, envCube })
-
           child.material.envMap = envCube;
-          console.log({ x:child.material.envMap })
         }
       }
 
     });
-    console.log({ rim })
     car.position.set(0, -0.5, 0);
     return car;
   }

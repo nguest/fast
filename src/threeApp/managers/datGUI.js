@@ -10,7 +10,7 @@ export class DatGUI {
     this.camera = main.camera.threeCamera;
     this.controls = main.controls;
     this.light = main.light;
-    this.meshes = main.scene.children.filter((child) => child.constructor.name === 'Mesh');
+    this.meshes = main.scene.children.filter((child) => child.isMesh || child.type === 'Object3D');
 
     /* Global */
     gui.close();

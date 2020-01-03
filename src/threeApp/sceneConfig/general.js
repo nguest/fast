@@ -39,7 +39,7 @@ export const Config = {
     near: 2,
     far: 2000,
     aspect: 1,
-    position: [30, 40, 20],
+    position: [-30, 20, 20],
     lookAt: [0, 0, 0],
   },
   followCam: {
@@ -47,7 +47,7 @@ export const Config = {
     near: 2,
     far: 2000,
     aspect: 1,
-    position: [0, 2.5, -30],
+    position: [0, 1.5, -20],
   },
   useBasicMaterials: false,
   useFollowCam: true,

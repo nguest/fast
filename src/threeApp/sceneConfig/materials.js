@@ -76,7 +76,7 @@ export const materialsIndex = [
     map: {
       name: 'Metalplate_Map',
       wrapping: 'RepeatWrapping',
-      repeat: [1, 20],
+      repeat: [10, 1],
     },
     normalMap: {
       name: 'Metalplate_Normal',

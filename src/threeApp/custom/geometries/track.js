@@ -1,9 +1,10 @@
 import * as THREE from 'three';
+import { trackParams } from './trackParams';
 
 export const trackCrossSection = new THREE.Shape();
-trackCrossSection.moveTo(0, 8);
+trackCrossSection.moveTo(0, trackParams.trackHalfWidth);
 //trackCrossSection.lineTo(0, 0);
-trackCrossSection.lineTo(0, -8);
+trackCrossSection.lineTo(0, -trackParams.trackHalfWidth);
 
 
 export const trackUVGenerator = {

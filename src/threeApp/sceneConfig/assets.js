@@ -1,6 +1,6 @@
 export const assetsIndex = {
-  files: {
-    fragShader: { name: 'fragShader', path: './app/assets/meshphong_frag.js' },
+  images: {
+    Skybox: { name: 'Skybox', path: './assets/textures/skybox4.png' },
   },
   textures: {
     UVGrid: { name: 'UVGrid', path: './assets/textures/UV_Grid_Sm.png' },
@@ -14,6 +14,8 @@ export const assetsIndex = {
     Metalplate_Normal: { name: 'Metalplate_Normal', path: './assets/textures/metalplate_normal.jpg' },
     Wheel_Map: { name: 'Wheel_Map', path: './assets/textures/wheel_map.jpg' },
     Tree_Map: { name: 'Tree_Map', path: './assets/textures/tree_map.png' },
+    GuardRails_Map: { name: 'GuardRails_Map', path: './assets/textures/guardrails_map.jpg' },
+    GuardRails_Normal: { name: 'GuardRails_Normal', path: './assets/textures/guardrails_normal.jpg' },
   },
   SkyBox: {
     One: { name: 'One', path: './assets/textures/skybox1.png', type: '4x3' },

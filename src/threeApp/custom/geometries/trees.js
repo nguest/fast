@@ -22,7 +22,7 @@ export const createInstancedMesh = ({ scene }) => {
     instanceOffset[i3 + 1] = translatePoints[i].y;
     instanceOffset[i3 + 2] = translatePoints[i].z;
 
-    const scale = Math.random() + 0.5;
+    const scale = Math.random() * 0.5 + 0.75;
     instanceScale[i3 + 0] = scale;
     instanceScale[i3 + 1] = scale;
     instanceScale[i3 + 2] = scale;
@@ -72,7 +72,7 @@ export const createInstancedMesh = ({ scene }) => {
     vec4 diffuseColor = texture2D( map, vUv );
     if ( diffuseColor.a < 0.1 ) discard; //!!! THIS WAS THE LINE NEEDED TO SOLVE THE ISSUE
    // if (length(diffuseColor.xyz) > 0.8) discard;
-    gl_FragColor = vec4( diffuseColor.xyz * diffuseColor.w, diffuseColor.w );
+    gl_FragColor = vec4( diffuseColor.xyz * pow(diffuseColor.w, 0.5), diffuseColor.w );
     // multiplying color by alpha helps white borders on transparent pngs
   
   }

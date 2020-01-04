@@ -45,7 +45,7 @@ export class Mesh {
     if (!add) return;
 
     if (type === 'GLTF') {
-      this.initLoader(url);
+      this.initLoader(url, manager);
     } else {
       let geometry = THREE[type] && new THREE[type](...params);
 
@@ -85,10 +85,12 @@ export class Mesh {
     }
   }
 
-  initLoader(url) {
-    const loader = new GLTFLoader(this.manager).setPath(url.path);
+  initLoader(url, manager) {
+    const loader = new GLTFLoader(manager).setPath(url.path);
     const gltfScene = promisifyLoader(loader).load(url.file);
-    gltfScene.then((gltf) => {
+    loader.load(url.file, (gltf) => {
+    //gltfScene.then((gltf) => {
+      console.log({ gltf })
       gltf.scene.traverse((child) => {
         //console.log(child.name, child.material);// &&  child.material.map)
         if (child.isMesh) {
@@ -107,7 +109,11 @@ export class Mesh {
             //child.material.emissive = new THREE.Color(0xffffff);
           }
           if (child.name === 'gum012_glass_0') { // glass
-            child.material = new THREE.MeshPhongMaterial({ color: 0x000011, specular: 0xffffff });
+            child.material = new THREE.MeshPhongMaterial({
+              color: 0x666666,
+              specular: 0xffffff,
+              reflectivity: 1,
+            });
           }
           if (child.name === 'gum004_details_opaque_0') { // grill
 
@@ -116,11 +122,13 @@ export class Mesh {
             child.material.emissive = new THREE.Color(0x550000);
           }
         }
+        //console.log({ a: child })
+
       });
-      console.log({ a: gltfScene.child })
       // const mesh = gltf.scene.children[0].children.filter((child) => child.type === 'Mesh');
       // return this.orientObject(mesh[0].geometry, mesh[0].material);
       if (this.addObjectToScene) {
+        console.log('addtoscene', gltf.scene.children[0])
         gltf.scene.children[0].position.set(0, 0, 0);
         gltf.scene.children[0].scale.setScalar(0.01);
         gltf.scene.children[0].name = 'car';

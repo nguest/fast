@@ -43,11 +43,11 @@ export const Config = {
     lookAt: [0, 0, 0],
   },
   followCam: {
-    fov: 15,
+    fov: 45,
     near: 2,
     far: 2000,
     aspect: 1,
-    position: [0, 1.5, -20],
+    position: [0, 1.5, -7],
   },
   useBasicMaterials: false,
   useFollowCam: true,

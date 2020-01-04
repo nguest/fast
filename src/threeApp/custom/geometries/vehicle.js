@@ -169,12 +169,12 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
 };
 
 // Sync keybord actions and physics and graphics
-export const updateVehicle = (dt, chassisMesh, interaction, showStatus) => {
+export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showStatus) => {
   const vehicle = chassisMesh.userData.physicsBody;
   const speed = vehicle.getCurrentSpeedKmHour();
   // const speed =  vehicle.getRigidBody().getLinearVelocity().length() * 9.8
 
-
+  //console.log({ chassisMesh })
   if (speed > 1.0) showStatus(`${(speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1)} km/h`);
 
   breakingForce = 0;
@@ -183,10 +183,13 @@ export const updateVehicle = (dt, chassisMesh, interaction, showStatus) => {
   if (interaction.keyboard.pressed('W')) {
     if (speed < -1) breakingForce = maxBreakingForce;
     else engineForce = maxEngineForce;
+    setBrakeLights(brakeLights, false);
   }
   if (interaction.keyboard.pressed('S')) {
-    if (speed > 1) breakingForce = maxBreakingForce;
+    console.log({ speed });
+    if (speed > 1 || speed < -20) breakingForce = maxBreakingForce;
     else engineForce = -maxEngineForce / 2;
+    setBrakeLights(brakeLights, true);
   }
   if (interaction.keyboard.pressed('A')) {
     if (vehicleSteering < steeringClamp) vehicleSteering += steeringIncrement;
@@ -229,4 +232,9 @@ export const updateVehicle = (dt, chassisMesh, interaction, showStatus) => {
 
   chassisMesh.position.set(p.x(), p.y(), p.z());
   chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
+};
+
+const setBrakeLights = (brakeLights, state) => {
+  const color = new THREE.Color(state ? 0xff0000 : 0x550000);
+  brakeLights.material.emissive = color;
 };

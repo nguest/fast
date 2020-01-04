@@ -1,5 +1,5 @@
 import { CatmullRomCurve3, Vector3 } from 'three';
-import { centerLine } from './centerLine';
+import { trackParams } from './trackParams';
 // export const centerLine = new CatmullRomCurve3([
 //   new Vector3(0, 0, 40),
 //   new Vector3(0, 0, 0),
@@ -12,10 +12,8 @@ import { centerLine } from './centerLine';
 
 export const getTreeline = () => {
   const pointsCount = 150;
-  console.log({ centerLine })
-  centerLine.getTangentAt(0.5);
-  const { binormals } = centerLine.computeFrenetFrames(pointsCount);
-  const positions = centerLine.getSpacedPoints(pointsCount);
+  const { binormals } = trackParams.centerLine.computeFrenetFrames(pointsCount);
+  const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
   const treeLine = [];
   for (let i = 0; i < pointsCount; i++) {
     const left = positions[i].clone().add(binormals[i].clone().multiplyScalar(18))

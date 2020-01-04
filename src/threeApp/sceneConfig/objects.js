@@ -6,7 +6,7 @@ import { trackKerbCrossSection } from '../custom/geometries/trackKerb';
 import { grassCrossSection } from '../custom/geometries/grass';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 
-import { centerLine } from '../custom/geometries/centerLine';
+import { trackParams } from '../custom/geometries/trackParams';
 
 
 import { createVehicle } from '../custom/geometries/vehicle';
@@ -39,7 +39,7 @@ export const objectsIndex = [
         steps: 100,
         depth: 0,
         UVGenerator: trackUVGenerator,
-        extrudePath: centerLine,
+        extrudePath: trackParams.centerLine,
       },
     ],
     position: [0, 0.0, 0],
@@ -66,7 +66,7 @@ export const objectsIndex = [
         steps: 50,
         depth: 0,
         UVGenerator: trackUVGenerator,
-        extrudePath: centerLine,
+        extrudePath: trackParams.centerLine,
         renderEndCaps: false,
         autoCloseShape: false,
       },
@@ -95,13 +95,13 @@ export const objectsIndex = [
         steps: 50,
         depth: 0,
         UVGenerator: trackUVGenerator,
-        extrudePath: centerLine,
+        extrudePath: trackParams.centerLine,
       },
     ],
     position: [0, 0, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'grass',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    material: 'grass',
     physics: {
       mass: 0,
       friction: 1,
@@ -122,13 +122,13 @@ export const objectsIndex = [
         steps: 50,
         depth: 0,
         UVGenerator: barriersUVGenerator,
-        extrudePath: centerLine,
+        extrudePath: trackParams.centerLine,
       },
     ],
     position: [0, 0, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'metalPlate',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    material: 'guardRails',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
     physics: {
       mass: 0,
       friction: 1,
@@ -182,28 +182,28 @@ export const objectsIndex = [
     },
     add: true,
   },
-  {
-    name: 'wheel',
-    type: 'GLTF',
-    link: 'https://sketchfab.com/3d-models/ruf-rt-12s-f215e8aa71da449095f4e7dceb373893',
-    url: {
-      path: 'assets/objects/',
-      file: 'wheel.glb',
-    },
-    position: [0, 0, 0],
-    rotation: [0, 0, 0],
-    //scale: [q,q,q],
-    // physics: {
-    //   mass: 0,
-    //   friction: 0.8,
-    //   restitution: 0.5,
-    // },
-    shadows: {
-      receive: true,
-      cast: true,
-    },
-    add: true,
-  },
+  // {
+  //   name: 'wheel',
+  //   type: 'GLTF',
+  //   link: 'https://sketchfab.com/3d-models/ruf-rt-12s-f215e8aa71da449095f4e7dceb373893',
+  //   url: {
+  //     path: 'assets/objects/',
+  //     file: 'wheel.glb',
+  //   },
+  //   position: [0, 0, 0],
+  //   rotation: [0, 0, 0],
+  //   //scale: [q,q,q],
+  //   // physics: {
+  //   //   mass: 0,
+  //   //   friction: 0.8,
+  //   //   restitution: 0.5,
+  //   // },
+  //   shadows: {
+  //     receive: true,
+  //     cast: true,
+  //   },
+  //   add: true,
+  // },
 
   // {
   //   name: 'wheel',

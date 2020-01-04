@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const createSkyBoxFrom4x3 = ({ scene, boxDimension, imageFile, tileSize = 1024, manager }) => {
+export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, imageFile, tileSize = 1024, manager }) => {
   /* adapted from https://stackoverflow.com/questions/25193649/make-three-js-skybox-from-tilemap/25224912#25224912
 
   assume any source image is tiled 4 columns(x) by 3 rows(y)
@@ -23,40 +23,34 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, imageFile, tileSize =
 
   const tileWidth = tileSize;
   const tileHeight = tileSize;
-  const IpImage = new Image();
-  IpImage.src = imageFile; // horizontal cross of 6 WYSIWYG tiles in a 4x3 = 12 tile layout.
+  // image is horizontal cross of 6 WYSIWYG tiles in a 4x3 = 12 tile layout.
 
-  const callback = (arr) => {
-    console.log({arr});
-    return arr;
+  const imagePieces = [];
+
+  for (let i = 0; i < numCols; ++i) {
+    for (let j = 0; j < numRows; ++j) {
+      const tileCanvas = document.createElement('canvas');
+      tileCanvas.width = tileWidth;
+      tileCanvas.height = tileHeight;
+
+      const tileContext = tileCanvas.getContext('2d');
+
+      tileContext.drawImage(
+        image,
+        i * tileWidth,
+        j * tileHeight,
+        tileWidth,
+        tileHeight,
+        0,
+        0,
+        tileCanvas.width,
+        tileCanvas.height,
+      );
+
+      imagePieces.push(tileCanvas.toDataURL());
+    }
   }
 
-  IpImage.onload = () => { // sliceImage; // cut up source image into 12 separate image tiles, numbered 0..11
-    const imagePieces = [];
-
-    for (let i = 0; i < numCols; ++i) {
-      for (let j = 0; j < numRows; ++j) {
-        const tileCanvas = document.createElement('canvas');
-        tileCanvas.width = tileWidth;
-        tileCanvas.height = tileHeight;
-
-        const tileContext = tileCanvas.getContext('2d');
-
-        tileContext.drawImage(
-          IpImage,
-          i * tileWidth,
-          j * tileHeight,
-          tileWidth,
-          tileHeight,
-          0,
-          0,
-          tileCanvas.width,
-          tileCanvas.height,
-        );
-
-        imagePieces.push(tileCanvas.toDataURL());
-      }
-    }
 
     // Required sequence of tile view directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
     const imagePieceIdx = [7, 1, 3, 5, 4, 10];
@@ -75,8 +69,8 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, imageFile, tileSize =
     skyBox.scale.set(1, 1, 1);
     scene.add(skyBox);
     console.log({ skyBoxMaterialArray })
-    return callback(skyBoxMaterialArray);
-  };
+    return skyBoxMaterialArray;
+  //};
   //return skyBoxMaterialArray;
   //return skyBoxMaterialArray;
 

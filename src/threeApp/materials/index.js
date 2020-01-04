@@ -29,6 +29,7 @@ export const createMaterial = ({
     material.map = assets[map.name];
     material.map.wrapT = THREE[map.wrapping] || THREE.RepeatWrapping;
     material.map.wrapS = THREE[map.wrapping] || THREE.RepeatWrapping;
+    material.map.preMultiplyAlpha = true;
     if (map.repeat) material.map.repeat.set(...map.repeat);
     if (map.offset) material.map.repeat.set(...map.offset);
   }
@@ -46,6 +47,8 @@ export const createMaterial = ({
     material.bumpMap.wrapS = THREE[bumpMap.wrapping] || THREE.RepeatWrapping;
     if (bumpMap.repeat) material.normalMap.repeat.set(...bumpMap.repeat);
     if (bumpMap.offset) material.normalMap.repeat.set(...bumpMap.offset);
+    if (bumpMap.bumpScale) material.bumpScale = bumpMap.bumpScale;
+
    // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
   }
   if (envMap) {

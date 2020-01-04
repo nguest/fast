@@ -82,16 +82,16 @@ export class Main extends PureComponent {
   }
 
   loadAssets() {
-    const FilePromiseLoader = promisifyLoader(new THREE.FileLoader(this.manager));
-    const filesPromises = Object.values(assetsIndex.files).map((file) => (
-      FilePromiseLoader.load(file.path)
+    const ImagePromiseLoader = promisifyLoader(new THREE.ImageBitmapLoader(this.manager));
+    const imagePromises = Object.values(assetsIndex.images).map((file) => (
+      ImagePromiseLoader.load(file.path)
     ));
 
     const TexturePromiseLoader = promisifyLoader(new THREE.TextureLoader(this.manager));
     const texturesPromises = Object.values(assetsIndex.textures).map((texture) => (
       TexturePromiseLoader.load(texture.path)
     ));
-    this.texturesAndFiles = { filesPromises, texturesPromises };
+    this.texturesAndFiles = { imagePromises, texturesPromises };
 
     return this.texturesAndFiles;
   }
@@ -101,12 +101,12 @@ export class Main extends PureComponent {
   }
 
   createMaterials(filesAndTextures) {
-    const { filesPromises, texturesPromises } = filesAndTextures;
-    Promise.all([...filesPromises, ...texturesPromises])
+    const { imagePromises, texturesPromises } = filesAndTextures;
+    Promise.all([...imagePromises, ...texturesPromises])
       .then((r) => {
         const assets = r.reduce((agg, asset, idx) => {
           const fileNames = [
-            ...Object.keys(assetsIndex.files),
+            ...Object.keys(assetsIndex.images),
             ...Object.keys(assetsIndex.textures),
           ];
           return {
@@ -119,8 +119,7 @@ export class Main extends PureComponent {
           ...agg,
           [materialParams.name]: createMaterial(materialParams, assets),
         }), {});
-
-        return this.createWorld(materials);
+        return this.createWorld(materials, assets);
       });
   }
 
@@ -163,28 +162,30 @@ export class Main extends PureComponent {
       }
       return new Mesh(params).getMesh();
     });
-    console.log({ 4: this.objects })
     createInstancedMesh({ scene: this.scene });
   }
 
-  createWorld(materials) {
+  createWorld(materials, assets) {
     this.createObjects(materials);
 
     const envCube = createSkyBoxFrom4x3({
       scene: this.scene,
       boxDimension: 1000,
       imageFile: './assets/textures/skybox1.png',
-      tileSize: 900,
+      image: assets.Skybox,
+      tileSize: 1024,
       manager: this.manager,
     });
-
     this.manager.onLoad = () => { // all managed objects loaded
       this.props.setIsLoading(false);
       this.showStatus('ALL OBJECTS LOADED');
+      console.info('ALL OBJECTS LOADED');
       this.followObj = this.scene.children.find((o) => o.name === 'chassisMesh');
-      const car = this.updateCar(envCube);
-      this.followObj.add(car);
+      let car = this.scene.children.find((o) => o.name === 'car');
+      car = this.decorateCar(car, envCube);
+      if (this.followObj.children.length === 1) this.followObj.add(car);
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
+
       if (Config.isDev) this.gui = new DatGUI(this);
 
       this.animate();
@@ -228,7 +229,9 @@ export class Main extends PureComponent {
     const relativeCameraOffset = new THREE.Vector3(...Config.followCam.position);
 
     const cameraOffset = relativeCameraOffset.applyMatrix4(this.followObj.matrixWorld);
-    this.followCam.threeCamera.position.copy(cameraOffset);
+    //this.followCam.threeCamera.position.copy(cameraOffset);
+    this.followCam.threeCamera.position.copy(new THREE.Vector3(cameraOffset.x, Config.followCam.position[1], cameraOffset.z));
+
     //this.followCam.threeCamera.add( this.followObj);
     const { x, y, z } = this.followObj.position;
     this.followCam.threeCamera.lookAt(x, y, z);
@@ -241,7 +244,7 @@ export class Main extends PureComponent {
     // Update rigid bodies
     for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
       if (this.physicsWorld.bodies[i].name === 'chassisMesh') {
-        updateVehicle(deltaTime, this.physicsWorld.bodies[i], this.interaction, this.showStatus);
+        updateVehicle(deltaTime, this.physicsWorld.bodies[i], this.interaction, this.brakeLights, this.showStatus);
       } else {
         const objThree = this.physicsWorld.bodies[i];
         const objPhys = objThree.userData.physicsBody;
@@ -258,13 +261,9 @@ export class Main extends PureComponent {
     }
   }
 
-  updateCar(envCube) {
-    const car = this.scene.children.find((o) => o.name === 'car');
-    console.log({ car })
-    let rim;
+  decorateCar(car, envCube) {
     car.traverse((child) => {
       if (child.isMesh) {
-        //console.log('xxx', child.name, child)
         if (child.name === 'ty_rims_0') {
           //child.position.set(0, 4, 0);
           //rim = child;
@@ -272,8 +271,10 @@ export class Main extends PureComponent {
         if (child.name === 'gum012_glass_0') {
           child.material.envMap = envCube;
         }
+        if (child.name === 'gum_details_glossy_0') {
+          this.brakeLights = child;
+        }
       }
-
     });
     car.position.set(0, -0.5, 0);
     return car;

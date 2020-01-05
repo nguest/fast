@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { trackParams } from './trackParams';
 
 const barrierCrossSection1 = new THREE.Shape();
-barrierCrossSection1.moveTo(-0.25, -(trackParams.trackHalfWidth + trackParams.vergeWidth));
-barrierCrossSection1.lineTo(-1.5, -(trackParams.trackHalfWidth + trackParams.vergeWidth));
+barrierCrossSection1.moveTo(-(trackParams.trackHalfWidth + trackParams.vergeWidth), 0.25);
+barrierCrossSection1.lineTo(-(trackParams.trackHalfWidth + trackParams.vergeWidth), 1.5);
 const barrierCrossSection2 = new THREE.Shape();
-barrierCrossSection2.moveTo(-0.25, (trackParams.trackHalfWidth + trackParams.vergeWidth));
-barrierCrossSection2.lineTo(-1.5, (trackParams.trackHalfWidth + trackParams.vergeWidth));
+barrierCrossSection2.moveTo((trackParams.trackHalfWidth + trackParams.vergeWidth), 0.25);
+barrierCrossSection2.lineTo((trackParams.trackHalfWidth + trackParams.vergeWidth), 1.5);
 
 export const barriersCrossSection = [barrierCrossSection1, barrierCrossSection2];
 

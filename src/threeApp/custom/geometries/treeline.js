@@ -12,17 +12,17 @@ import { trackParams } from './trackParams';
 
 export const getTreeline = () => {
   const pointsCount = 150;
-  const { binormals } = trackParams.centerLine.computeFrenetFrames(pointsCount);
+  const { normals } = trackParams.centerLine.computeFrenetFrames(pointsCount);
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
   const treeLine = [];
   for (let i = 0; i < pointsCount; i++) {
-    const left = positions[i].clone().add(binormals[i].clone().multiplyScalar(trackParams.treeDistance));
-    const right = positions[i].clone().add(binormals[i].clone().multiplyScalar(-trackParams.treeDistance));
+    const left = positions[i].clone().add(normals[i].clone().multiplyScalar(trackParams.treeDistance));
+    const right = positions[i].clone().add(normals[i].clone().multiplyScalar(-trackParams.treeDistance));
 
     treeLine.push(left, right);
   }
   //const treeLine = positions.map((p, idx) => p.sub(binormals[idx].multiplyScalar(14)))
-  console.log({ positions, binormals })
+  console.log({ positions, normals })
 
   return treeLine;
 }

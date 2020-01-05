@@ -232,7 +232,7 @@ export class Main extends PureComponent {
 
     const cameraOffset = relativeCameraOffset.applyMatrix4(this.followObj.matrixWorld);
     //this.followCam.threeCamera.position.copy(cameraOffset);
-    this.followCam.threeCamera.position.copy(new THREE.Vector3(cameraOffset.x, Config.followCam.position[1], cameraOffset.z));
+    this.followCam.threeCamera.position.copy(new THREE.Vector3(cameraOffset.x, cameraOffset.y, cameraOffset.z));
 
     //this.followCam.threeCamera.add( this.followObj);
     const { x, y, z } = this.followObj.position;

@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 
 const trackKerbCrossSection1 = new THREE.Shape();
-trackKerbCrossSection1.moveTo(-0.2, -11);
-trackKerbCrossSection1.lineTo(0, -10);
+trackKerbCrossSection1.moveTo(-11, -0.2);
+trackKerbCrossSection1.lineTo(-10, 0);
 
 const trackKerbCrossSection2 = new THREE.Shape();
-trackKerbCrossSection2.moveTo(-0.2, 11);
-trackKerbCrossSection2.lineTo(0, 10);
+trackKerbCrossSection2.moveTo(11, -0.2);
+trackKerbCrossSection2.lineTo(10, 0);
 
 const test = new THREE.Shape();
 test.moveTo(-5, 0);

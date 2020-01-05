@@ -14,4 +14,5 @@ export const trackParams = {
   centerLine,
   trackHalfWidth: 5,
   vergeWidth: 3,
+  treeDistance: 10.5,
 };

@@ -172,9 +172,7 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
 export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showStatus) => {
   const vehicle = chassisMesh.userData.physicsBody;
   const speed = vehicle.getCurrentSpeedKmHour();
-  // const speed =  vehicle.getRigidBody().getLinearVelocity().length() * 9.8
 
-  //console.log({ chassisMesh })
   if (speed > 1.0) showStatus(`${(speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1)} km/h`);
 
   breakingForce = 0;
@@ -186,11 +184,16 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
     setBrakeLights(brakeLights, false);
   }
   if (interaction.keyboard.pressed('S')) {
-    console.log({ speed });
     if (speed > 1 || speed < -20) breakingForce = maxBreakingForce;
     else engineForce = -maxEngineForce / 2;
+  }
+  if (interaction.keyboard.down('S')) {
     setBrakeLights(brakeLights, true);
   }
+  if (interaction.keyboard.up('S')) {
+    setBrakeLights(brakeLights, false);
+  }
+
   if (interaction.keyboard.pressed('A')) {
     if (vehicleSteering < steeringClamp) vehicleSteering += steeringIncrement;
   } else if (interaction.keyboard.pressed('D')) {

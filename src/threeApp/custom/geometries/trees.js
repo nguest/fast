@@ -30,10 +30,10 @@ export const createInstancedMesh = ({ scene }) => {
   console.log({ translatePoints });
 
   treeGeo.setAttribute('instanceOffset',
-    new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset), 3, 1));
+    new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset), 3, false));
   
     treeGeo.setAttribute('instanceScale',
-    new THREE.InstancedBufferAttribute(new Float32Array(instanceScale), 3, 1));
+    new THREE.InstancedBufferAttribute(new Float32Array(instanceScale), 3, false));
 
   const vertexShader = `
   precision highp float;
@@ -70,7 +70,7 @@ export const createInstancedMesh = ({ scene }) => {
   void main() {
   
     vec4 diffuseColor = texture2D( map, vUv );
-    if ( diffuseColor.a < 0.1 ) discard; //!!! THIS WAS THE LINE NEEDED TO SOLVE THE ISSUE
+    if ( diffuseColor.a < 0.5 ) discard; //!!! THIS WAS THE LINE NEEDED TO SOLVE THE ISSUE
    // if (length(diffuseColor.xyz) > 0.8) discard;
     gl_FragColor = vec4( diffuseColor.xyz * pow(diffuseColor.w, 0.5), diffuseColor.w );
     // multiplying color by alpha helps white borders on transparent pngs
@@ -122,7 +122,6 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
 }
 
 const insertAttributesAndFunctions = (shader) => {
-  console.log({ y: shader.vertexShader })
   shader.vertexShader = shader.vertexShader
     .replace('void main() {', `
       attribute vec3 ${INSTANCE_POSITION};
@@ -139,7 +138,6 @@ const overrideLogic = (shader) => {
   shader.vertexShader = shader.vertexShader
     .replace('#include <project_vertex>', OVERRIDE_PROJECT_VERTEX);
 };
-
 
 const OVERRIDE_PROJECT_VERTEX = `
   vec4 mvPosition = modelViewMatrix * vec4(getInstancePosition(transformed), 1.0);

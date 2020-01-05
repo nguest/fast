@@ -39,6 +39,12 @@ export const materialsIndex = [
       wrapping: 'MirroredRepeatWrapping',
       repeat: [2, 1],
     },
+    lightMap: {
+      name: 'LightMap_Map',
+      repeat: [0.25, 0.25],
+      lightMapIntensity: 1,//0.1,
+      //wrapping: 'MirroredRepeatWrapping',
+    },
     // normalMap: {
     //   name: 'Road_Normal',
     //   wrapping: 'MirroredRepeatWrapping',
@@ -50,6 +56,7 @@ export const materialsIndex = [
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,
+    transparent: true,
   },
   {
     name: 'grass',
@@ -65,11 +72,16 @@ export const materialsIndex = [
       repeat: [15, 15],
       normalScale: [0.2, 0.2],
     },
-    bumpMap: {
-      name: 'UVGrid',
-      repeat: [15, 15],
-      bumpScale: 2,
+    lightMap: {
+      name: 'LightMap_Map',
+      repeat: [1, 1],
+      lightMapIntensity: 0.1,
     },
+    // bumpMap: {
+    //   name: 'UVGrid',
+    //   repeat: [15, 15],
+    //   bumpScale: 2,
+    // },
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,

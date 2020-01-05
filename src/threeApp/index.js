@@ -82,7 +82,9 @@ export class Main extends PureComponent {
   }
 
   loadAssets() {
-    const ImagePromiseLoader = promisifyLoader(new THREE.ImageBitmapLoader(this.manager));
+    const imageLoader = new THREE.ImageBitmapLoader(this.manager);
+    imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
+    const ImagePromiseLoader = promisifyLoader(imageLoader);
     const imagePromises = Object.values(assetsIndex.images).map((file) => (
       ImagePromiseLoader.load(file.path)
     ));
@@ -187,7 +189,7 @@ export class Main extends PureComponent {
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
 
       if (Config.isDev) this.gui = new DatGUI(this);
-
+      console.log({ a: this.scene })
       this.animate();
     };
   }
@@ -267,6 +269,20 @@ export class Main extends PureComponent {
         if (child.name === 'ty_rims_0') {
           //child.position.set(0, 4, 0);
           //rim = child;
+        }
+        if (child.name === 'gum001_carpaint_0') { // body
+          // child.material.color = new THREE.Color(0x0000ff);
+          //child.material.emissive = new THREE.Color(0x550000);
+          child.material.reflectivity = 1;
+          child.material.envMap = envCube;
+          //child.material.roughness = 0;//.48608993902439024
+
+          child.material.clearcoat = 1.0,
+					child.material.clearcoatRoughness = 0.1;
+          child.material.roughness = 0.5;
+          child.material.metalness = 0.9;
+          //child.material.metalness= 1;//0.41634908536585363
+          console.log({ matttt: child.material })
         }
         if (child.name === 'gum012_glass_0') {
           child.material.envMap = envCube;

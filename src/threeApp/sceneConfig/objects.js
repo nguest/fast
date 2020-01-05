@@ -56,6 +56,7 @@ export const objectsIndex = [
       cast: true,
     },
     add: true,
+    uv2Params: [1, 0.1],
   },
   {
     name: 'trackKerb',
@@ -125,7 +126,7 @@ export const objectsIndex = [
         extrudePath: trackParams.centerLine,
       },
     ],
-    position: [0, 0, 0],
+    position: [0, -0.3, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
     material: 'guardRails',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
@@ -135,8 +136,8 @@ export const objectsIndex = [
       restitution: 0.5,
     },
     shadows: {
-      receive: false,
-      cast: false,
+      receive: true,
+      cast: true,
     },
     add: true,
   },

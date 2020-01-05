@@ -25,6 +25,7 @@ export class Mesh {
     shadows = { receive: false, cast: true },
     type,
     url,
+    uv2Params,
   }) {
     this.addObjectToScene = add;
     this.geoRotate = geoRotate;
@@ -52,7 +53,24 @@ export class Mesh {
       // use custom extrude function
       if (type === 'ExtrudeGeometry' || type === 'ExtrudeBufferGeometry') {
         geometry = new ExtrudeBufferGeometry(...params);
+        let uv;
+        if (uv2Params) {
+          uv = geometry.attributes.uv.array.map((x, i) => {
+            if (i % 2 === 0) return x * uv2Params[0];
+            return x * uv2Params[1];
+          });
+        } else {
+          uv = geometry.attributes.uv.array;
+        }
+        geometry.setAttribute('uv2', new THREE.BufferAttribute(uv, 2));
       }
+
+      // return [
+      //   new THREE.Vector2(0, 1),
+      //   new THREE.Vector2(1, 1),
+      //   new THREE.Vector2(1, 0),
+      //   new THREE.Vector2(0, 0),
+      // ];
 
       if (params === 'custom') {
         if (customFunction) {

@@ -16,8 +16,8 @@ export const getTreeline = () => {
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
   const treeLine = [];
   for (let i = 0; i < pointsCount; i++) {
-    const left = positions[i].clone().add(normals[i].clone().multiplyScalar(trackParams.treeDistance));
-    const right = positions[i].clone().add(normals[i].clone().multiplyScalar(-trackParams.treeDistance));
+    const left = positions[i].clone().add(normals[i].clone().multiplyScalar(trackParams.treeDistance * trackParams.widthFactor[i].x));
+    const right = positions[i].clone().add(normals[i].clone().multiplyScalar(-trackParams.treeDistance * trackParams.widthFactor[i].x));
 
     treeLine.push(left, right);
   }

@@ -32,7 +32,7 @@ export const createInstancedMesh = ({ scene }) => {
   treeGeo.setAttribute('instanceOffset',
     new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset), 3, false));
   
-    treeGeo.setAttribute('instanceScale',
+  treeGeo.setAttribute('instanceScale',
     new THREE.InstancedBufferAttribute(new Float32Array(instanceScale), 3, false));
 
   const vertexShader = `

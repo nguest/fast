@@ -100,6 +100,8 @@ function ExtrudeBufferGeometry(shapes, options) {
     let bevelSegments = options.bevelSegments !== undefined ? options.bevelSegments : 3;
     const autoCloseShape = options.autoCloseShape !== undefined ? options.autoCloseShape : false;
     const renderLidFaces = options.renderLidFaces !== undefined ? options.renderLidFaces : false;
+    const widthFactor = options.widthFactor !== undefined ? options.widthFactor : 1;
+    const includeSegments = options.includeSegments !== undefined ? options.includeSegments : [[0, 1]];
 
     const { extrudePath } = options;
 
@@ -133,7 +135,7 @@ function ExtrudeBufferGeometry(shapes, options) {
 
       splineTube = extrudePath.computeFrenetFrames(steps, false);
 
-      // console.log(splineTube, 'splineTube', splineTube.normals.length, 'steps', steps, 'extrudePts', extrudePts.length);
+      console.log(splineTube, 'splineTube', splineTube.normals.length, 'steps', steps, 'extrudePts', extrudePts.length);
 
       binormal = new Vector3();
       normal = new Vector3();
@@ -192,7 +194,6 @@ function ExtrudeBufferGeometry(shapes, options) {
 
     function scalePt2(pt, vec, size) {
       if (!vec) console.error('THREE.ExtrudeGeometry: vec does not exist');
-
       return vec.clone().multiplyScalar(size).add(pt);
     }
 
@@ -312,7 +313,6 @@ function ExtrudeBufferGeometry(shapes, options) {
     const holesMovements = [];
     let oneHoleMovements; let
       verticesMovements = contourMovements.concat();
-
     for (h = 0, hl = holes.length; h < hl; h++) {
       ahole = holes[h];
 
@@ -365,7 +365,6 @@ function ExtrudeBufferGeometry(shapes, options) {
     bs = bevelSize + bevelOffset;
 
     // Back facing vertices
-
     for (i = 0; i < vlen; i++) {
       vert = bevelEnabled ? scalePt2(vertices[i], verticesMovements[i], bs) : vertices[i];
 
@@ -396,13 +395,17 @@ function ExtrudeBufferGeometry(shapes, options) {
           v(vert.x, vert.y, depth / steps * s);
         } else {
           // v( vert.x, vert.y + extrudePts[ s - 1 ].y, extrudePts[ s - 1 ].x );
+          // get extrusion widthFactor and multiply vert.x
+          const w = widthFactor.length ? widthFactor[s].x : widthFactor;
 
-          normal.copy(splineTube.normals[s]).multiplyScalar(vert.x);
+          normal.copy(splineTube.normals[s]).multiplyScalar(vert.x * w);
           binormal.copy(splineTube.binormals[s]).multiplyScalar(vert.y);
 
           position2.copy(extrudePts[s]).add(normal).add(binormal);
-
+          //if (s < 10 || s > 20) {
           v(position2.x, position2.y, position2.z);
+
+          //}
         }
       }
     }
@@ -411,35 +414,35 @@ function ExtrudeBufferGeometry(shapes, options) {
     // Add bevel segments planes
 
     // for ( b = 1; b <= bevelSegments; b ++ ) {
-    for (b = bevelSegments - 1; b >= 0; b--) {
-      t = b / bevelSegments;
-      z = bevelThickness * Math.cos(t * Math.PI / 2);
-      bs = bevelSize * Math.sin(t * Math.PI / 2) + bevelOffset;
+    // for (b = bevelSegments - 1; b >= 0; b--) {
+    //   t = b / bevelSegments;
+    //   z = bevelThickness * Math.cos(t * Math.PI / 2);
+    //   bs = bevelSize * Math.sin(t * Math.PI / 2) + bevelOffset;
 
-      // contract shape
+    //   // contract shape
 
-      for (i = 0, il = contour.length; i < il; i++) {
-        vert = scalePt2(contour[i], contourMovements[i], bs);
-        v(vert.x, vert.y, depth + z);
-      }
+    //   for (i = 0, il = contour.length; i < il; i++) {
+    //     vert = scalePt2(contour[i], contourMovements[i], bs);
+    //     v(vert.x, vert.y, depth + z);
+    //   }
 
-      // expand holes
+    //   // expand holes
 
-      for (h = 0, hl = holes.length; h < hl; h++) {
-        ahole = holes[h];
-        oneHoleMovements = holesMovements[h];
+    //   for (h = 0, hl = holes.length; h < hl; h++) {
+    //     ahole = holes[h];
+    //     oneHoleMovements = holesMovements[h];
 
-        for (i = 0, il = ahole.length; i < il; i++) {
-          vert = scalePt2(ahole[i], oneHoleMovements[i], bs);
+    //     for (i = 0, il = ahole.length; i < il; i++) {
+    //       vert = scalePt2(ahole[i], oneHoleMovements[i], bs);
 
-          if (!extrudeByPath) {
-            v(vert.x, vert.y, depth + z);
-          } else {
-            v(vert.x, vert.y + extrudePts[steps - 1].y, extrudePts[steps - 1].x + z);
-          }
-        }
-      }
-    }
+    //       if (!extrudeByPath) {
+    //         v(vert.x, vert.y, depth + z);
+    //       } else {
+    //         v(vert.x, vert.y + extrudePts[steps - 1].y, extrudePts[steps - 1].x + z);
+    //       }
+    //     }
+    //   }
+    // }
 
     /* Faces */
 
@@ -519,6 +522,7 @@ function ExtrudeBufferGeometry(shapes, options) {
     }
 
     function sidewalls(contour, layeroffset) {
+      console.log({ layeroffset })
       let j; let k;
       i = contour.length;
 
@@ -534,17 +538,36 @@ function ExtrudeBufferGeometry(shapes, options) {
         let s = 0;
         const sl = steps + bevelSegments * 2;
 
-        for (s = 0; s < sl; s++) {
-          const slen1 = vlen * s;
-          const slen2 = vlen * (s + 1);
+        for (let i = 0; i < includeSegments.length; i++) {
+          const segStart = parseInt(includeSegments[i][0] * steps)
+          const segEnd = parseInt(includeSegments[i][1] * steps)
+          console.log({ segStart, segEnd })
+          for (let s = segStart; s < segEnd; s++) {
+           // for (s = 0; s < sl; s++) {
+              const slen1 = vlen * s;
+              const slen2 = vlen * (s + 1);
+              const a = layeroffset + j + slen1;
+              const b = layeroffset + k + slen1;
+              const c = layeroffset + k + slen2;
+              const d = layeroffset + j + slen2;
 
-          const a = layeroffset + j + slen1;
-          const b = layeroffset + k + slen1;
-          const c = layeroffset + k + slen2;
-          const d = layeroffset + j + slen2;
+              f4(a, b, c, d);
 
-          f4(a, b, c, d);
+            //}
+          }
+
         }
+        // all segments
+        // for (s = 0; s < sl; s++) {
+        //   const slen1 = vlen * s;
+        //   const slen2 = vlen * (s + 1);
+        //   const a = layeroffset + j + slen1;
+        //   const b = layeroffset + k + slen1;
+        //   const c = layeroffset + k + slen2;
+        //   const d = layeroffset + j + slen2;
+
+        //   f4(a, b, c, d);
+        // }
       }
     }
 

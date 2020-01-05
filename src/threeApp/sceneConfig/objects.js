@@ -36,10 +36,11 @@ export const objectsIndex = [
     params: [
       trackCrossSection,
       {
-        steps: 100,
+        steps: trackParams.steps,
         depth: 0,
         UVGenerator: trackUVGenerator,
         extrudePath: trackParams.centerLine,
+        widthFactor: trackParams.widthFactor,
       },
     ],
     position: [0, 0.0, 0],
@@ -64,7 +65,7 @@ export const objectsIndex = [
     params: [
       trackKerbCrossSection,
       {
-        steps: 50,
+        steps: trackParams.steps,
         depth: 0,
         UVGenerator: trackUVGenerator,
         extrudePath: trackParams.centerLine,
@@ -93,10 +94,11 @@ export const objectsIndex = [
     params: [
       grassCrossSection,
       {
-        steps: 50,
+        steps: trackParams.steps,
         depth: 0,
         UVGenerator: trackUVGenerator,
         extrudePath: trackParams.centerLine,
+        widthFactor: trackParams.widthFactor,
       },
     ],
     position: [0, 0, 0],
@@ -120,10 +122,12 @@ export const objectsIndex = [
     params: [
       barriersCrossSection,
       {
-        steps: 50,
+        steps: trackParams.steps,
         depth: 0,
         UVGenerator: barriersUVGenerator,
         extrudePath: trackParams.centerLine,
+        widthFactor: trackParams.widthFactor,
+        includeSegments: [[0, 0.05], [0.1, 0.2]]
       },
     ],
     position: [0, -0.3, 0],
@@ -138,6 +142,7 @@ export const objectsIndex = [
     shadows: {
       receive: true,
       cast: true,
+
     },
     add: true,
   },
@@ -168,7 +173,7 @@ export const objectsIndex = [
     type: 'custom',
     params: 'custom',
     customFunction: createVehicle,
-    position: [0, 0.5, 0],
+    position: [0, 5, 0],
     rotation: [0, -Math.PI, 0],
     scale: [1, 1, 1],
     material: 'wireFrame',//wireFrame',//,//'asphalt',

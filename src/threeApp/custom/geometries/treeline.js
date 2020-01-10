@@ -1,28 +1,15 @@
-import { CatmullRomCurve3, Vector3 } from 'three';
 import { trackParams } from './trackParams';
-// export const centerLine = new CatmullRomCurve3([
-//   new Vector3(0, 0, 40),
-//   new Vector3(0, 0, 0),
-//   new Vector3(-5, 0, -150),
-//   new Vector3(50, 0, -400),
-//   new Vector3(0, 0, -850),
-//   new Vector3(-100, 0, -850),
-//   new Vector3(-150, 0, -1200),
-// ]);
 
 export const getTreeline = () => {
-  const pointsCount = 150;
-  const { normals } = trackParams.centerLine.computeFrenetFrames(pointsCount);
+  const pointsCount = 2000;
+  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(pointsCount);
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
-  const treeLine = [];
+  const treeLineLeft = [];
   for (let i = 0; i < pointsCount; i++) {
-    const left = positions[i].clone().add(normals[i].clone().multiplyScalar(trackParams.treeDistance * trackParams.widthFactor[i].x));
-    const right = positions[i].clone().add(normals[i].clone().multiplyScalar(-trackParams.treeDistance * trackParams.widthFactor[i].x));
-
-    treeLine.push(left, right);
+    treeLineLeft.push(
+      positions[i].add(binormals[i].clone().multiplyScalar(trackParams.treeDistance * trackParams.widthFactor[i].x))
+    );
   }
-  //const treeLine = positions.map((p, idx) => p.sub(binormals[idx].multiplyScalar(14)))
-  console.log({ positions, normals })
 
-  return treeLine;
-}
+  return { treeLineLeft, binormals, normals, tangents };
+};

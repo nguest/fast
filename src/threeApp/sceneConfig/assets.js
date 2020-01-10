@@ -17,7 +17,7 @@ export const assetsIndex = {
     GuardRails_Map: { name: 'GuardRails_Map', path: './assets/textures/guardrails_map.jpg' },
     GuardRails_Normal: { name: 'GuardRails_Normal', path: './assets/textures/guardrails_normal.jpg' },
     LightMap_Map: { name: 'LightMap_Map', path: './assets/textures/lightmap.jpg' },
-
+    Forest_Map: { name: 'Forest_Map', path: './assets/textures/forest.png' },
   },
   SkyBox: {
     One: { name: 'One', path: './assets/textures/skybox1.png', type: '4x3' },

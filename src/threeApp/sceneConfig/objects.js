@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { calculateFaces, calculateVertices, planeUnwrapUVs } from '../custom/geometries/concaveExample1';
 import { trackCrossSection, trackUVGenerator } from '../custom/geometries/track';
 import { trackKerbCrossSection } from '../custom/geometries/trackKerb';
-import { grassCrossSection } from '../custom/geometries/grass';
+import { grassCrossSection, treesCrossSection } from '../custom/geometries/grass';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 
 import { trackParams } from '../custom/geometries/trackParams';
@@ -117,6 +117,34 @@ export const objectsIndex = [
     add: true,
   },
   {
+    name: 'treesBg',
+    type: 'ExtrudeGeometry',
+    params: [
+      treesCrossSection,
+      {
+        steps: trackParams.steps,
+        depth: 0,
+        UVGenerator: barriersUVGenerator,
+        extrudePath: trackParams.centerLine,
+        widthFactor: trackParams.widthFactor,
+      },
+    ],
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'forest',
+    // physics: {
+    //   mass: 0,
+    //   friction: 1,
+    //   restitution: 0.5,
+    // },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: false,
+  },
+  {
     name: 'barriers',
     type: 'ExtrudeGeometry',
     params: [
@@ -127,7 +155,7 @@ export const objectsIndex = [
         UVGenerator: barriersUVGenerator,
         extrudePath: trackParams.centerLine,
         widthFactor: trackParams.widthFactor,
-        includeSegments: [[0, 0.05], [0.1, 0.2]]
+        //includeSegments: [[0, 0.05], [0.1, 0.2]]
       },
     ],
     position: [0, -0.3, 0],
@@ -174,7 +202,7 @@ export const objectsIndex = [
     params: 'custom',
     customFunction: createVehicle,
     position: [0, 5, 0],
-    rotation: [0, -Math.PI, 0],
+    rotation: [0, 1.9, 0],
     scale: [1, 1, 1],
     material: 'wireFrame',//wireFrame',//,//'asphalt',
     physics: {

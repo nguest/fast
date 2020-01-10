@@ -2,58 +2,40 @@ import * as THREE from 'three';
 import { getTreeline } from './treeline';
 
 export const createInstancedMesh = ({ scene }) => {
-  const treeGeo1 = new THREE.InstancedBufferGeometry().copy(new THREE.PlaneBufferGeometry(4, 7, 1, 1));
-  const treeGeo2 = new THREE.InstancedBufferGeometry().copy(new THREE.PlaneBufferGeometry(4, 6, 1, 1));
+  const treeHeight = 7;
+  const treeGeo1 = new THREE.InstancedBufferGeometry().copy(new THREE.PlaneBufferGeometry(7, treeHeight, 1, 1));
 
-  //treeGeo.rotateY(-Math.PI / 4);
-  treeGeo1.translate(0, 3.0, 0);
-  treeGeo2.translate(0, 2.5, 0);
-
-  const translatePoints = getTreeline();
-  console.log({ translatePoints })
-  const treeCount = 300;
+  const { treeLineLeft, binormals } = getTreeline();
+  const treeCount = 2000;
   const instanceOffset = [];
   const instanceScale = [];
-  // for (let i = 0, i3 = 0, l = treeCount; i < l; i++, i3 += 3) {
-  //   translateArray[i3 + 0] = Math.random() * 10 - 1;
-  //   translateArray[i3 + 1] = 1;
-  //   translateArray[i3 + 2] = Math.random() * 10 - 1;
-  // }
-  const instanceOffset2 = [];
+  const instanceQuaternion = [];
 
-
-  for (let i = 0, i3 = 0, l = treeCount; i < l; i++, i3 += 3) {
-    instanceOffset[i3 + 0] = translatePoints[i].x;
-    instanceOffset[i3 + 1] = translatePoints[i].y;
-    instanceOffset[i3 + 2] = translatePoints[i].z;
+  for (let i = 0; i < treeCount; i++) {
+    const quaternion = new THREE.Quaternion();
+    quaternion.setFromUnitVectors(
+      new THREE.Vector3(1, 0, 0),
+      new THREE.Vector3(binormals[i].x, 0, binormals[i].z)
+    );
+    quaternion.normalize();
 
     const scale = Math.random() * 0.5 + 0.75;
-    instanceScale[i3 + 0] = scale;
-    instanceScale[i3 + 1] = scale;
-    instanceScale[i3 + 2] = scale;
 
-    //
-    if (Math.random() > 0.5) {
-      instanceOffset2[i3 + 0] = translatePoints[i].x;
-      instanceOffset2[i3 + 1] = translatePoints[i].y;
-      instanceOffset2[i3 + 2] = translatePoints[i].z + 2;
-    }
-
+    instanceOffset.push(
+      treeLineLeft[i].x,
+      treeLineLeft[i].y + scale * treeHeight * 0.5,
+      treeLineLeft[i].z,
+    );
+    instanceQuaternion.push(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+    instanceScale.push(scale, scale, scale);
   }
-  console.log({ translatePoints });
 
   treeGeo1.setAttribute('instanceOffset',
     new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset), 3, false));
-  
   treeGeo1.setAttribute('instanceScale',
     new THREE.InstancedBufferAttribute(new Float32Array(instanceScale), 3, false));
-
-
-  treeGeo2.setAttribute('instanceOffset',
-  new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset2), 3, false));
-
-treeGeo2.setAttribute('instanceScale',
-  new THREE.InstancedBufferAttribute(new Float32Array(instanceScale), 3, false));
+  treeGeo1.setAttribute('instanceQuaternion',
+    new THREE.InstancedBufferAttribute(new Float32Array(instanceQuaternion), 4, false));
 
   const vertexShader = `
   precision highp float;
@@ -70,14 +52,37 @@ treeGeo2.setAttribute('instanceScale',
   
   varying vec2 vUv;
 
+  vec3 applyTransform( vec3 position, vec3 translation, vec4 quaternion, vec3 scale ) {
+    position *= scale;
+    position += 2.0 * cross( quaternion.xyz, cross( quaternion.xyz, position ) + quaternion.w * position );
+    return position + translation;
+  }
   
   void main() {
   
     vUv = uv;
-    vec3 transform =  position * instanceScale;
-    transform = transform + instanceOffset;// + position);
 
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(transform, 1.0 );
+    vec4 orientation = instanceQuaternion;
+
+    vec3 vPosition = position;
+
+    vec3 vcV = cross( orientation.xyz, vPosition );
+
+    vPosition = vcV * ( 2.0 * orientation.w ) + ( cross( orientation.xyz, vcV ) * 2.0 + vPosition );
+
+    //vec3 transform =  position * instanceScale;
+   // vec3 transform = position;
+
+    //transform = transform + instanceOffset;// + position);
+    //transform = transform + 2.0 * cross( instanceQuaternion.xyz, cross( instanceQuaternion.xyz, transform ) + instanceQuaternion.w * transform );
+
+    
+    //vec3 transform = applyTransform(position, instanceOffset, instanceQuaternion, instanceScale);
+
+    //gl_Position = projectionMatrix * modelViewMatrix * vec4(transform, 1.0 );
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(instanceOffset + vPosition, 1.0 );
+
+    //vPosition
   
   }
   `;
@@ -100,10 +105,11 @@ treeGeo2.setAttribute('instanceScale',
 
   // const imageLoader = new THREE.ImageBitmapLoader(this.manager);
   // imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
-  const map1 = new THREE.TextureLoader().load('./assets/textures/pinetree1_map.png');
-  const map2 = new THREE.TextureLoader().load('./assets/textures/tree2_map.png');
+  //const map1 = new THREE.TextureLoader().load('./assets/textures/pinetree1_map.png');
+  const map1 = new THREE.TextureLoader().load('./assets/textures/tree_map_2.png');
 
  //const map = new THREE.TextureLoader().load('./assets/textures/tree_map.png');
+
   const material1 = new THREE.RawShaderMaterial({
     uniforms: {
       map: { value: map1 },
@@ -115,20 +121,20 @@ treeGeo2.setAttribute('instanceScale',
     depthFunc: THREE.LessDepth,
   });
 
-  const material2 = new THREE.RawShaderMaterial({
-    uniforms: {
-      map: { value: map2 },
-    },
-    vertexShader,
-    fragmentShader,
-    side: THREE.DoubleSide,
-    // transparent: true, // not required!
-    depthFunc: THREE.LessDepth,
-  });
+  // const material2 = new THREE.RawShaderMaterial({
+  //   uniforms: {
+  //     map: { value: map2 },
+  //   },
+  //   vertexShader,
+  //   fragmentShader,
+  //   side: THREE.DoubleSide,
+  //   // transparent: true, // not required!
+  //   depthFunc: THREE.LessDepth,
+  // });
 
 
   const mesh1 = new THREE.Mesh(treeGeo1, material1);
-  const mesh2 = new THREE.Mesh(treeGeo2, material2);
+  //const mesh2 = new THREE.Mesh(treeGeo2, material2);
 
 
   const customDepthMaterial1 = new InstancesDepthMaterial({
@@ -136,24 +142,24 @@ treeGeo2.setAttribute('instanceScale',
     map: map1,
     alphaTest: 0.5,
   });
-  const customDepthMaterial2 = new InstancesDepthMaterial({
-    depthPacking: THREE.RGBADepthPacking,
-    map: map2,
-    alphaTest: 0.5,
-  });
+  // const customDepthMaterial2 = new InstancesDepthMaterial({
+  //   depthPacking: THREE.RGBADepthPacking,
+  //   map: map2,
+  //   alphaTest: 0.5,
+  // });
 
   mesh1.customDepthMaterial = customDepthMaterial1;
   mesh1.name = 'trees1';
   mesh1.frustumCulled = false; // this is probably not best: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
   mesh1.castShadow = true;
 
-  mesh2.customDepthMaterial = customDepthMaterial2;
-  mesh2.name = 'trees1';
-  mesh2.frustumCulled = false; // this is probably not best: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
-  mesh2.castShadow = true;
+  // mesh2.customDepthMaterial = customDepthMaterial2;
+  // mesh2.name = 'trees1';
+  // mesh2.frustumCulled = false; // this is probably not best: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+  // mesh2.castShadow = true;
 
   scene.add(mesh1);
-  scene.add(mesh2);
+  //scene.add(mesh2);
 };
 
 export const INSTANCE_POSITION = 'instanceOffset';

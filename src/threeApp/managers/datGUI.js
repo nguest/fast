@@ -43,6 +43,10 @@ export class DatGUI {
 
       this.controls.enableRotate = true;
     });
+    cameraFolder.add(Config.fog, 'enable').name('Fog').onChange((value) => {
+      main.scene.fog.density = 0;
+      //console.log({ ms: main.scene.fog })
+    });
     const cameraFogColorGui = cameraFolder.addColor(Config.fog, 'color').name('Fog Color');
     cameraFogColorGui.onChange((value) => {
       main.scene.fog.color.setHex(value);

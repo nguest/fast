@@ -41,6 +41,7 @@ import { DatGUI } from './managers/DatGUI';
 // Stats
 import { createStats, updateStatsStart, updateStatsEnd } from './helpers/stats';
 import { updateVehicle } from './custom/geometries/vehicle';
+import { createTree } from './custom/geometries/treetest';
 
 // -- End of imports
 
@@ -64,6 +65,8 @@ export class Main extends PureComponent {
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
     this.clock = new THREE.Clock();
     this.light = this.createLights();
+    this.clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 1);// Config.followCam.clipDistance);
+    this.renderer.clippingPlanes = [this.clippingPlane];
     this.manager = new THREE.LoadingManager();
     this.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
       this.showStatus(`Loading file: ${itemsLoaded} of ${itemsTotal} files.`);
@@ -165,14 +168,17 @@ export class Main extends PureComponent {
       return new Mesh(params).getMesh();
     });
     createInstancedMesh({ scene: this.scene });
+    createTree(this.scene);
+
   }
 
   createWorld(materials, assets) {
     this.createObjects(materials);
 
+
     const envCube = createSkyBoxFrom4x3({
       scene: this.scene,
-      boxDimension: 1000,
+      boxDimension: 10000,
       imageFile: './assets/textures/skybox1.png',
       image: assets.Skybox,
       tileSize: 1024,
@@ -201,6 +207,7 @@ export class Main extends PureComponent {
     if (Config.showStats) updateStatsStart(rS);
     if (Config.useFollowCam) {
       this.updateFollowCam();
+      this.updateClipping();
       this.renderer.render(this.scene, this.followCam.threeCamera);
     } else {
       this.renderer.render(this.scene, this.camera.threeCamera);
@@ -215,7 +222,7 @@ export class Main extends PureComponent {
       this.togglePause();
     }
 
-    this.updateShadowCamera();
+    //this.updateShadowCamera();
     this.controls.update();
     this.updatePhysics(deltaTime);
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
@@ -237,6 +244,10 @@ export class Main extends PureComponent {
     //this.followCam.threeCamera.add( this.followObj);
     const { x, y, z } = this.followObj.position;
     this.followCam.threeCamera.lookAt(x, y, z);
+  }
+
+  updateClipping() {
+    this.clippingPlane.constant = new THREE.Vector3(0, -10, 0);//-this.followObj.position.z + Config.followCam.clipDistance;
   }
 
   updatePhysics(deltaTime) {
@@ -278,7 +289,7 @@ export class Main extends PureComponent {
           //child.material.roughness = 0;//.48608993902439024
 
           child.material.clearcoat = 1.0,
-					child.material.clearcoatRoughness = 0.1;
+          child.material.clearcoatRoughness = 0.1;
           child.material.roughness = 0.5;
           child.material.metalness = 0.9;
           //child.material.metalness= 1;//0.41634908536585363

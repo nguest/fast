@@ -135,7 +135,7 @@ function ExtrudeBufferGeometry(shapes, options) {
 
       splineTube = extrudePath.computeFrenetFrames(steps, false);
 
-      console.log(splineTube, 'splineTube', splineTube.normals.length, 'steps', steps, 'extrudePts', extrudePts.length);
+      // console.log(splineTube, 'splineTube', splineTube.normals.length, 'steps', steps, 'extrudePts', extrudePts.length);
 
       binormal = new Vector3();
       normal = new Vector3();
@@ -522,7 +522,6 @@ function ExtrudeBufferGeometry(shapes, options) {
     }
 
     function sidewalls(contour, layeroffset) {
-      console.log({ layeroffset })
       let j; let k;
       i = contour.length;
 
@@ -541,7 +540,7 @@ function ExtrudeBufferGeometry(shapes, options) {
         for (let i = 0; i < includeSegments.length; i++) {
           const segStart = parseInt(includeSegments[i][0] * steps, 10);
           const segEnd = parseInt(includeSegments[i][1] * steps, 10);
-          console.log({ segStart, segEnd })
+
           for (let s = segStart; s < segEnd; s++) {
             const slen1 = vlen * s;
             const slen2 = vlen * (s + 1);

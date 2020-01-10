@@ -27,6 +27,9 @@ export class Renderer {
     // Get anisotropy for textures
     Config.maxAnisotropy = this.threeRenderer.capabilities.getMaxAnisotropy();
 
+    // Enable clipping planes
+    this.threeRenderer.localClippingEnabled = true;
+
     // Initial size update set to canvas container
     this.updateSize();
 
@@ -44,3 +47,4 @@ export class Renderer {
     this.threeRenderer.render(scene, camera);
   }
 }
+

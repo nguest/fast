@@ -120,6 +120,7 @@ export class Mesh {
             //child.material.emissive = new THREE.Color(0x550000);
 
             child.castShadow = true;
+            child.receiveShadow = true;
           }
           if (child.name === 'gum002_glass_vtx_0') { // headlights
             //child.material.color = new THREE.Color(0x0000ff);

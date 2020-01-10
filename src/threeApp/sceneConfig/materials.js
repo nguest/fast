@@ -88,6 +88,36 @@ export const materialsIndex = [
     shininess: 10,
   },
   {
+    name: 'forest',
+    type: 'MeshBasicMaterial',
+    color: 0xffffff,
+    map: {
+      name: 'Forest_Map',
+      repeat: [1, 1],
+      wrapping: 'RepeatWrapping',
+    },
+    // normalMap: {
+    //   name: 'Grass_Normal',
+    //   repeat: [15, 15],
+    //   normalScale: [0.2, 0.2],
+    // },
+    // lightMap: {
+    //   name: 'LightMap_Map',
+    //   repeat: [1, 1],
+    //   lightMapIntensity: 0.1,
+    // },
+    // bumpMap: {
+    //   name: 'UVGrid',
+    //   repeat: [15, 15],
+    //   bumpScale: 2,
+    // },
+    transparent: true,
+    side: 'DoubleSide',
+    wireframe: false,
+    emissive: 0x000000,
+    //shininess: 10,
+  },
+  {
     name: 'metalPlate',
     type: 'MeshPhongMaterial',
     color: 0xffffff,

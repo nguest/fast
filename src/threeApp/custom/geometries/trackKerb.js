@@ -1,8 +1,10 @@
 import * as THREE from 'three';
+import { trackParams } from './trackParams';
 
 const trackKerbCrossSection1 = new THREE.Shape();
-trackKerbCrossSection1.moveTo(-0.2, -11);
-trackKerbCrossSection1.lineTo(0, -10);
+trackKerbCrossSection1.moveTo(-0.01, -trackParams.trackHalfWidth);
+trackKerbCrossSection1.lineTo(-0.05, -trackParams.trackHalfWidth - 0.2);
+trackKerbCrossSection1.lineTo(-0.01, -trackParams.trackHalfWidth - 1);
 
 const trackKerbCrossSection2 = new THREE.Shape();
 trackKerbCrossSection2.moveTo(-0.2, 11);

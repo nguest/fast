@@ -56,7 +56,6 @@ export class Light {
   }
 
   addLightHelper() {
-    console.log({ t: this.light.shadow.camera });
     this.helper = new THREE.CameraHelper(this.light.shadow.camera);
     this.scene.add(this.helper);
   }

@@ -18,9 +18,7 @@ const createBaseSpline = () => {
   const cp = curve.getPoints(pCount);
 
   const splineTube = curve.computeFrenetFrames( pCount, false );
-  console.log({ splineTube })
 
-  console.log({ a: curve.getTangentAt(1), b: curve.getPointAt(1) })
   //const tangents = cp.map((p, idx) => curve.getTangentAt(idx / pCount).normalize());
   const tangents = splineTube.binormals
   // const tangents = cp.map((p, idx) => {
@@ -38,7 +36,6 @@ const createBaseSpline = () => {
 
 export const calculateVertices = () => {
   const { cp, tangents } = createBaseSpline();
-  console.log({ tangents })
   const vertices = [];
   // calculate vertices for each centerpoint
   for (let i = 0; i < cp.length; i++) {
@@ -48,10 +45,8 @@ export const calculateVertices = () => {
 
     //angle relative to neg z;
     const angle = tangents[i].angleTo(new THREE.Vector3(0,0,-1));// * 180/Math.PI;
-    console.log({ angle })
     const dz = 10 * Math.cos(Math.PI * 0.5 - angle);
     const dx = 10 * (1 - Math.sin(Math.PI * 0.5 - angle))
-    console.log(i, angle * 180/Math.PI, dx, dz )
     v0.add(new THREE.Vector3(dx, 0, dz))
     v2.add(new THREE.Vector3(-dx, 0, -dz))
 

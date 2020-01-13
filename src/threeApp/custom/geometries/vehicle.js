@@ -235,6 +235,8 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
 
   chassisMesh.position.set(p.x(), p.y(), p.z());
   chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
+
+  return { vehicleSteering };
 };
 
 const setBrakeLights = (brakeLights, state) => {

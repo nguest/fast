@@ -17,7 +17,7 @@ import { Light } from './components/Light';
 import { Controls } from './components/Controls';
 import { Mesh } from './components/Mesh';
 import { Forces } from './components/Forces';
-import { createInstancedMesh } from './custom/geometries/trees';
+import { createTrees } from './custom/geometries/trees';
 
 // Helpers
 import { promisifyLoader } from './helpers/helpers';
@@ -33,6 +33,7 @@ import { lightsIndex } from './sceneConfig/lights';
 
 // Objects
 import { objectsIndex } from './sceneConfig/objects';
+import { createSun } from './custom/geometries/sun';
 
 // Managers
 import { Interaction } from './managers/Interaction';
@@ -71,6 +72,7 @@ export class Main extends PureComponent {
     this.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
       this.showStatus(`Loading file: ${itemsLoaded} of ${itemsTotal} files.`);
     };
+    this.vehicleState = { vehicleSteering: 0 };
     // this.skyBox = new SkyBox(this.scene);
 
     if (Config.showStats) this.rS = createStats();
@@ -167,14 +169,12 @@ export class Main extends PureComponent {
       }
       return new Mesh(params).getMesh();
     });
-    createInstancedMesh({ scene: this.scene });
-    createTree(this.scene);
-
+    createTrees({ scene: this.scene });
   }
 
   createWorld(materials, assets) {
     this.createObjects(materials);
-
+    createSun(this.camera, this.scene);
 
     const envCube = createSkyBoxFrom4x3({
       scene: this.scene,
@@ -195,7 +195,7 @@ export class Main extends PureComponent {
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
 
       if (Config.isDev) this.gui = new DatGUI(this);
-      console.log({ a: this.scene })
+      console.log({ 'this.scene': this.scene });
       this.animate();
     };
   }
@@ -222,7 +222,7 @@ export class Main extends PureComponent {
       this.togglePause();
     }
 
-    //this.updateShadowCamera();
+    this.updateShadowCamera();
     this.controls.update();
     this.updatePhysics(deltaTime);
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
@@ -238,10 +238,9 @@ export class Main extends PureComponent {
     const relativeCameraOffset = new THREE.Vector3(...Config.followCam.position);
 
     const cameraOffset = relativeCameraOffset.applyMatrix4(this.followObj.matrixWorld);
-    //this.followCam.threeCamera.position.copy(cameraOffset);
-    this.followCam.threeCamera.position.copy(new THREE.Vector3(cameraOffset.x, cameraOffset.y, cameraOffset.z));
+    const { vehicleSteering } = this.vehicleState;
+    this.followCam.threeCamera.position.copy(new THREE.Vector3(cameraOffset.x - vehicleSteering * 30, cameraOffset.y, cameraOffset.z));
 
-    //this.followCam.threeCamera.add( this.followObj);
     const { x, y, z } = this.followObj.position;
     this.followCam.threeCamera.lookAt(x, y, z);
   }
@@ -257,7 +256,13 @@ export class Main extends PureComponent {
     // Update rigid bodies
     for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
       if (this.physicsWorld.bodies[i].name === 'chassisMesh') {
-        updateVehicle(deltaTime, this.physicsWorld.bodies[i], this.interaction, this.brakeLights, this.showStatus);
+        this.vehicleState = updateVehicle(
+          deltaTime,
+          this.physicsWorld.bodies[i],
+          this.interaction,
+          this.brakeLights,
+          this.showStatus
+        );
       } else {
         const objThree = this.physicsWorld.bodies[i];
         const objPhys = objThree.userData.physicsBody;
@@ -290,10 +295,9 @@ export class Main extends PureComponent {
 
           child.material.clearcoat = 1.0,
           child.material.clearcoatRoughness = 0.1;
-          child.material.roughness = 0.5;
+          child.material.roughness = 0.1;
           child.material.metalness = 0.9;
-          //child.material.metalness= 1;//0.41634908536585363
-          console.log({ matttt: child.material })
+          child.material.specular = 0xffffff;
         }
         if (child.name === 'gum012_glass_0') {
           child.material.envMap = envCube;

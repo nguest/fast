@@ -131,7 +131,6 @@ void main() {
 `;
 
 const u = THREE.UniformsUtils.clone(THREE.ShaderLib.phong.uniforms);
-console.log({ u })
 const map = loader.load('./assets/textures/UVGrid.jpg')
 
 const material = new THREE.ShaderMaterial({

@@ -55,14 +55,12 @@ export const createMaterial = ({
    // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
   }
   if (lightMap) {
-    console.log({ lightMap })
     material.lightMap = assets[lightMap.name];
     material.lightMap.wrapT = THREE[lightMap.wrapping] || THREE.RepeatWrapping;
     material.lightMap.wrapS = THREE[lightMap.wrapping] || THREE.RepeatWrapping;
     if (lightMap.repeat) material.lightMap.repeat.set(...lightMap.repeat);
     if (lightMap.offset) material.lightMap.offset.set(...lightMap.offset);
     material.lightMapIntensity = 1 || lightMap.intensity;
-    console.log({ material })
     //if (lightMap.bumpScale) material.bumpScale = bumpMap.bumpScale;
 
    // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);

@@ -12,6 +12,15 @@ import { trackParams } from '../custom/geometries/trackParams';
 import { createVehicle } from '../custom/geometries/vehicle';
 
 export const objectsIndex = [
+  // {
+  //   name: 'sun',
+  //   type: 'SphereBufferGeometry',
+  //   params: [4, 16, 8],
+  //   position: [20, 5, 0],
+  //   rotation: [0, 0, 0],
+  //   material: 'mappedFlat',
+  //   add: true,
+  // },
   {
     name: 'groundPlane',
     type: 'PlaneBufferGeometry',
@@ -76,12 +85,12 @@ export const objectsIndex = [
     position: [0, 0, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'mappedRed',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
-    physics: {
-      mass: 0,
-      friction: 1,
-      restitution: 0.5,
-    },
+    material: 'kerb',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    // physics: {
+    //   mass: 0,
+    //   friction: 1,
+    //   restitution: 0.5,
+    // },
     shadows: {
       receive: true,
       cast: true,
@@ -107,7 +116,7 @@ export const objectsIndex = [
     material: 'grass',
     physics: {
       mass: 0,
-      friction: 1,
+      friction: 100,
       restitution: 0.5,
     },
     shadows: {
@@ -201,7 +210,7 @@ export const objectsIndex = [
     type: 'custom',
     params: 'custom',
     customFunction: createVehicle,
-    position: [0, 5, 0],
+    position: [10, 5, 0],
     rotation: [0, 1.9, 0],
     scale: [1, 1, 1],
     material: 'wireFrame',//wireFrame',//,//'asphalt',

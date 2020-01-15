@@ -17,7 +17,7 @@ export const lightsIndex = [
     helperEnabled: true,
     target: [0, 0, 0],
     shadow: {
-      bias: 0,
+      bias: 0.0,
       mapWidth: 2048,
       mapHeight: 2048,
       camera: {
@@ -61,7 +61,7 @@ export const lightsIndex = [
     type: 'HemisphereLight',
     addToScene: true,
     color: 0xffffff,
-    intensity: 1,
+    intensity: 0.5,
     position: [0, 10, 0],
     visible: true,
   },

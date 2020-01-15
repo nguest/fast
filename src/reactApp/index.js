@@ -7,6 +7,7 @@ import { styles } from './styles';
 
 export const App = () => {
   const [status, setStatus] = useState(null);
+  const [gamePosition, setGamePosition] = useState('gate-0');
 
   return (
     <div css={styles.app}>
@@ -16,7 +17,14 @@ export const App = () => {
       <div css={styles.statusBar}>
         { status }
       </div>
-      <ThreeContainer setStatus={setStatus} />
+      <div css={styles.gamePosition}>
+        { gamePosition }
+      </div>
+      <ThreeContainer
+        setStatus={setStatus}
+        setGamePosition={setGamePosition}
+        gamePosition={gamePosition}
+      />
     </div>
   );
 };

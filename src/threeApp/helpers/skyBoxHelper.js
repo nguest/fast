@@ -68,7 +68,7 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, imageFile, til
     const skyBox = new THREE.Mesh(skyBoxGeometry, material);
     skyBox.name = 'SkyBox';
     skyBox.scale.set(1, -1, 1);
-    scene.add(skyBox);
+   // scene.add(skyBox);
 
     //scene.background = skyBoxMaterialArray
     return skyBoxMaterialArray;

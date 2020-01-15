@@ -38,4 +38,14 @@ export const styles = {
     backgroundColor: 'black',
     zIndex: 10,
   },
+  gamePosition: {
+    position: 'absolute',
+    bottom: 0,
+    left: 100,
+    width: 100,
+    padding: 10,
+    color: 'white',
+    backgroundColor: 'black',
+    zIndex: 10,
+  },
 };

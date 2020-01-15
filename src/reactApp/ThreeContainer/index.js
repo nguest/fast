@@ -8,13 +8,19 @@ import { Loader } from '../Loader';
 import { styles } from './styles';
 
 
-export const ThreeContainer = ({ setStatus }) => {
+export const ThreeContainer = ({ setStatus, gamePosition, setGamePosition }) => {
   const threeRootElement = useRef();
   const [isLoading, setIsLoading] = useState(true);
 
   return (
     <>
-      <Main ref={threeRootElement} setStatus={setStatus} setIsLoading={setIsLoading} />
+      <Main
+        ref={threeRootElement}
+        setStatus={setStatus}
+        setIsLoading={setIsLoading}
+        gamePosition={gamePosition}
+        setGamePosition={setGamePosition}
+      />
       <button
         css={styles.resetButton}
         onClick={() => threeRootElement.current.resetObjects()}

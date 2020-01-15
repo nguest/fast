@@ -32,13 +32,13 @@ export const Config = {
   },
   fog: {
     color: 0xaaaaaa,
-    near: 0.001,
+    near: 0.00001,
     enable: true,
   },
   camera: {
     fov: 45,
     near: 2,
-    far: 20000,
+    far: 40000,
     aspect: 1,
     position: [-30, 20, 20],
     lookAt: [0, 0, 0],
@@ -46,7 +46,7 @@ export const Config = {
   followCam: {
     fov: 45,
     near: 2,
-    far: 2000,
+    far: 40000,
     aspect: 1,
     position: [0, 1.5, -7],
     ß: 30,

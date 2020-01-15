@@ -1,11 +1,10 @@
 // Global imports
 import * as THREE from 'three';
 import React, { PureComponent } from 'react';
-import { func } from 'prop-types';
+import { func, string } from 'prop-types';
 
 // import TWEEN from '@tweenjs/tween.js';
 import Ammo from 'ammonext';
-//import Ammo from 'ammo.js';
 
 // Config
 import { Config } from './sceneConfig/general';
@@ -16,8 +15,10 @@ import { Camera } from './components/Camera';
 import { Light } from './components/Light';
 import { Controls } from './components/Controls';
 import { Mesh } from './components/Mesh';
-import { Forces } from './components/Forces';
+// import { Forces } from './components/Forces';
 import { createTrees } from './custom/geometries/trees';
+import { Sky } from './components/Sky';
+import { createGates, detectGateCollisions } from './components/Gates';
 
 // Helpers
 import { promisifyLoader } from './helpers/helpers';
@@ -34,6 +35,7 @@ import { lightsIndex } from './sceneConfig/lights';
 // Objects
 import { objectsIndex } from './sceneConfig/objects';
 import { createSun } from './custom/geometries/sun';
+import { decorateCar } from './helpers/car';
 
 // Managers
 import { Interaction } from './managers/Interaction';
@@ -42,7 +44,6 @@ import { DatGUI } from './managers/DatGUI';
 // Stats
 import { createStats, updateStatsStart, updateStatsEnd } from './helpers/stats';
 import { updateVehicle } from './custom/geometries/vehicle';
-import { createTree } from './custom/geometries/treetest';
 
 // -- End of imports
 
@@ -73,6 +74,9 @@ export class Main extends PureComponent {
       this.showStatus(`Loading file: ${itemsLoaded} of ${itemsTotal} files.`);
     };
     this.vehicleState = { vehicleSteering: 0 };
+    this.sky = new Sky(this.scene);
+    this.gates = createGates(this.scene);
+
     // this.skyBox = new SkyBox(this.scene);
 
     if (Config.showStats) this.rS = createStats();
@@ -170,11 +174,21 @@ export class Main extends PureComponent {
       return new Mesh(params).getMesh();
     });
     createTrees({ scene: this.scene });
+
+    //createSun(this.camera, this.scene);
+    // const sunSphere = new THREE.Mesh(
+    //   new THREE.SphereBufferGeometry( 100, 16, 8 ),
+    //   new THREE.MeshBasicMaterial( { color: 0xffffff } )
+    // );
+    // sunSphere.position.y = - 700000;
+    // sunSphere.visible = false;
+    // this.scene.add( sunSphere );
+    var helper = new THREE.GridHelper( 10, 2, 0xffffff, 0xffffff );
+    this.scene.add( helper );
   }
 
   createWorld(materials, assets) {
     this.createObjects(materials);
-    createSun(this.camera, this.scene);
 
     const envCube = createSkyBoxFrom4x3({
       scene: this.scene,
@@ -184,18 +198,21 @@ export class Main extends PureComponent {
       tileSize: 1024,
       manager: this.manager,
     });
+
     this.manager.onLoad = () => { // all managed objects loaded
       this.props.setIsLoading(false);
       this.showStatus('ALL OBJECTS LOADED');
       console.info('ALL OBJECTS LOADED');
       this.followObj = this.scene.children.find((o) => o.name === 'chassisMesh');
-      let car = this.scene.children.find((o) => o.name === 'car');
-      car = this.decorateCar(car, envCube);
+      const baseCar = this.scene.children.find((o) => o.name === 'car');
+      const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, envCube);
+      this.brakeLights = brakeLights;
+
       if (this.followObj.children.length === 1) this.followObj.add(car);
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
 
       if (Config.isDev) this.gui = new DatGUI(this);
-      console.log({ 'this.scene': this.scene });
+
       this.animate();
     };
   }
@@ -205,6 +222,7 @@ export class Main extends PureComponent {
     const { rS } = this;
 
     if (Config.showStats) updateStatsStart(rS);
+
     if (Config.useFollowCam) {
       this.updateFollowCam();
       this.updateClipping();
@@ -213,18 +231,17 @@ export class Main extends PureComponent {
       this.renderer.render(this.scene, this.camera.threeCamera);
     }
 
-
     if (Config.showStats) updateStatsEnd(rS);
+
     // TWEEN.update();
     this.interaction.keyboard.update();
-    if (this.interaction.keyboard.down('space')) {
-      console.log('space PRESSED');
-      this.togglePause();
-    }
-
     this.updateShadowCamera();
     this.controls.update();
     this.updatePhysics(deltaTime);
+    const collidee = detectGateCollisions(this.followObj, this.gates);
+    console.log({ collidee })
+    this.showGamePosition(collidee);
+
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
   }
 
@@ -239,14 +256,17 @@ export class Main extends PureComponent {
 
     const cameraOffset = relativeCameraOffset.applyMatrix4(this.followObj.matrixWorld);
     const { vehicleSteering } = this.vehicleState;
-    this.followCam.threeCamera.position.copy(new THREE.Vector3(cameraOffset.x - vehicleSteering * 30, cameraOffset.y, cameraOffset.z));
+    this.followCam.threeCamera.position.copy(
+      new THREE.Vector3(cameraOffset.x - vehicleSteering * 30, cameraOffset.y, cameraOffset.z)
+    );
 
     const { x, y, z } = this.followObj.position;
     this.followCam.threeCamera.lookAt(x, y, z);
   }
 
   updateClipping() {
-    this.clippingPlane.constant = new THREE.Vector3(0, -10, 0);//-this.followObj.position.z + Config.followCam.clipDistance;
+    this.clippingPlane.constant = new THREE.Vector3(0, -10, 0);
+    // -this.followObj.position.z + Config.followCam.clipDistance;
   }
 
   updatePhysics(deltaTime) {
@@ -261,7 +281,7 @@ export class Main extends PureComponent {
           this.physicsWorld.bodies[i],
           this.interaction,
           this.brakeLights,
-          this.showStatus
+          this.showStatus,
         );
       } else {
         const objThree = this.physicsWorld.bodies[i];
@@ -277,38 +297,6 @@ export class Main extends PureComponent {
         }
       }
     }
-  }
-
-  decorateCar(car, envCube) {
-    car.traverse((child) => {
-      if (child.isMesh) {
-        if (child.name === 'ty_rims_0') {
-          //child.position.set(0, 4, 0);
-          //rim = child;
-        }
-        if (child.name === 'gum001_carpaint_0') { // body
-          // child.material.color = new THREE.Color(0x0000ff);
-          //child.material.emissive = new THREE.Color(0x550000);
-          child.material.reflectivity = 1;
-          child.material.envMap = envCube;
-          //child.material.roughness = 0;//.48608993902439024
-
-          child.material.clearcoat = 1.0,
-          child.material.clearcoatRoughness = 0.1;
-          child.material.roughness = 0.1;
-          child.material.metalness = 0.9;
-          child.material.specular = 0xffffff;
-        }
-        if (child.name === 'gum012_glass_0') {
-          child.material.envMap = envCube;
-        }
-        if (child.name === 'gum_details_glossy_0') {
-          this.brakeLights = child;
-        }
-      }
-    });
-    car.position.set(0, -0.5, 0);
-    return car;
   }
 
   resetObjects() {
@@ -355,6 +343,13 @@ export class Main extends PureComponent {
     this.props.setStatus(message);
   }
 
+  showGamePosition = (gamePosition) => {
+    if (gamePosition && this.props.gamePosition !== gamePosition) {
+      this.props.setGamePosition(gamePosition);
+
+    }
+  }
+
   render() {
     return <section ref={(ref) => { this.container = ref; }} />;
   }
@@ -363,4 +358,6 @@ export class Main extends PureComponent {
 Main.propTypes = {
   setIsLoading: func,
   setStatus: func,
+  gamePosition: string,
+  setGamePosition: func,
 };

@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { trackParams } from '../custom/geometries/trackParams';
+
 
 export const promisifyLoader = (loader, onProgress) => {
   const promiseLoader = (url) => (
@@ -45,5 +47,23 @@ export const throttle = (func, limit) => {
       inThrottle = true;
       setTimeout(() => { inThrottle = false; }, limit);
     }
+  };
+};
+
+export const getPosRotFromGamePosition = (gamePosition) => {
+  const gamePositions = trackParams.centerLine.getSpacedPoints(trackParams.gateCount);
+  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(trackParams.gateCount);
+  //const quat = new THREE.Quaternion().setFromEuler(new THREE.Euler(...objThree.rotation, 'XYZ'));
+
+
+  const binormal = binormals[gamePosition].normalize();
+  const axis = new THREE.Vector3();
+  const up = new THREE.Vector3(1, 0, 0);
+  axis.crossVectors(up, binormal).normalize();
+  const radians = Math.acos(up.dot(binormal));
+
+  return {
+    p: gamePositions[gamePosition],
+    r: radians,
   };
 };

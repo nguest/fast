@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { trackParams } from '../custom/geometries/trackParams';
 
 export const createGates = (scene) => {
-  const gatesCount = 500;
+  const gatesCount = trackParams.gateCount;
   const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(gatesCount);
   const gatePositions = trackParams.centerLine.getSpacedPoints(gatesCount);
 
@@ -29,6 +29,7 @@ export const createGates = (scene) => {
     mesh.quaternion.setFromAxisAngle(axis, radians);
     mesh.position.set(gatePositions[i].x, gatePositions[i].y + 5, gatePositions[i].z);
     mesh.name = `gate-${i}`;
+    mesh.userData = { gate: i };
     gates.push(mesh);
     scene.add(mesh);
   }
@@ -51,17 +52,10 @@ export const detectGateCollisions = (followObj, collidableMeshList) => {
   const collisionResults = ray.intersectObjects(collidableMeshList);
 
   if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-    //console.log(collisionResults[0].object.name, originPoint);
-    const collidee = collisionResults[0].object.name;
-    // if (collidee === 'gate-finish') {
-    //   return this.endGame();
-    // }
-
-    console.log("Hit ", collidee);
-    //this.collisionStatus = "Hit " + collidee
-    //this.gameState.setState({ [collidee]: this.delta })
+    const collidee = collisionResults[0].object.userData.gate;
     return collidee;
   }
+  return null;
 
 
   // gateConfig.map((gate,idx) => {

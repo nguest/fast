@@ -34,6 +34,7 @@ const widthFactor = widthCurve.getPoints(steps);
 
 export const trackParams = {
   centerLine,
+  gateCount: 500,
   steps,
   widthFactor,
   trackHalfWidth: 5,

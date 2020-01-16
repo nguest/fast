@@ -1,7 +1,7 @@
 // Global imports
 import * as THREE from 'three';
 import React, { PureComponent } from 'react';
-import { func, string } from 'prop-types';
+import { func, number } from 'prop-types';
 
 // import TWEEN from '@tweenjs/tween.js';
 import Ammo from 'ammonext';
@@ -21,7 +21,7 @@ import { Sky } from './components/Sky';
 import { createGates, detectGateCollisions } from './components/Gates';
 
 // Helpers
-import { promisifyLoader } from './helpers/helpers';
+import { promisifyLoader, getPosRotFromGamePosition } from './helpers/helpers';
 import { createSkyBoxFrom4x3 } from './helpers/skyBoxHelper';
 
 // Assets & Materials
@@ -212,7 +212,7 @@ export class Main extends PureComponent {
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
 
       if (Config.isDev) this.gui = new DatGUI(this);
-
+console.log({ hhh:this.physicsWorld.bodies })
       this.animate();
     };
   }
@@ -239,7 +239,6 @@ export class Main extends PureComponent {
     this.controls.update();
     this.updatePhysics(deltaTime);
     const collidee = detectGateCollisions(this.followObj, this.gates);
-    console.log({ collidee })
     this.showGamePosition(collidee);
 
     requestAnimationFrame(this.animate.bind(this)); // Bind the main class instead of window object
@@ -299,35 +298,60 @@ export class Main extends PureComponent {
     }
   }
 
-  resetObjects() {
-    // reset three objects
-    this.objects.forEach((o) => {
-      o.setInitialState();
-    });
+  resetObjects(gamePosition) {
+    if (!this.physicsWorld) return;
 
-    // reset physics world
-    if (this.physicsWorld) {
-      for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
-        const objThree = this.objects[i];
-        const objPhys = objThree.mesh.userData.physicsBody;
-        if (objPhys) { // && objPhys.getMotionState()) {
-          const quat = new THREE.Quaternion().setFromEuler(new THREE.Euler(...objThree.rotation, 'XYZ'));
-          const transform = new Ammo.btTransform();
-          transform.setIdentity();
-          transform.setOrigin(new Ammo.btVector3(...objThree.position));
-          transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+    const { p, r } = getPosRotFromGamePosition(400);
+    const objThree = this.physicsWorld.bodies.find((o) => o.name === 'chassisMesh');
+    const objPhys = objThree.userData.physicsBody;
 
-          const zeroVector = new Ammo.btVector3(0, 0, 0);
-          objPhys.setLinearVelocity(zeroVector);
-          objPhys.setAngularVelocity(zeroVector);
-          objPhys.setWorldTransform(transform);
-        }
-      }
-      // // reset some internal cached data in the broadphase
-      // this.physicsWorld.getBroadphase().resetPool(this.physicsWorld.getDispatcher());
-      // this.physicsWorld.getConstraintSolver().reset();
-    }
+    const body = objPhys.getRigidBody();
+    //const motionState = body.getMotionState();
+    const transform = new Ammo.btTransform();
+    transform.setIdentity();
+    console.log({ p })
+
+    const quat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, r, 0, 'XYZ'));
+    transform.setOrigin(new Ammo.btVector3(p.x, p.y + 1, p.z));
+    transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+
+    const zeroVector = new Ammo.btVector3(0, 0, 0);
+
+    body.setLinearVelocity(zeroVector);
+    body.setAngularVelocity(zeroVector);
+    body.setWorldTransform(transform);
+
   }
+
+  // resetObjects1() {
+  //   // reset three objects
+  //   this.objects.forEach((o) => {
+  //     o.setInitialState();
+  //   });
+
+  //   // reset physics world
+  //   if (this.physicsWorld) {
+  //     for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
+  //       const objThree = this.objects[i];
+  //       const objPhys = objThree.mesh.userData.physicsBody;
+  //       if (objPhys) { // && objPhys.getMotionState()) {
+  //         const quat = new THREE.Quaternion().setFromEuler(new THREE.Euler(...objThree.rotation, 'XYZ'));
+  //         const transform = new Ammo.btTransform();
+  //         transform.setIdentity();
+  //         transform.setOrigin(new Ammo.btVector3(...objThree.position));
+  //         transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+
+  //         const zeroVector = new Ammo.btVector3(0, 0, 0);
+  //         objPhys.setLinearVelocity(zeroVector);
+  //         objPhys.setAngularVelocity(zeroVector);
+  //         objPhys.setWorldTransform(transform);
+  //       }
+  //     }
+  //     // // reset some internal cached data in the broadphase
+  //     // this.physicsWorld.getBroadphase().resetPool(this.physicsWorld.getDispatcher());
+  //     // this.physicsWorld.getConstraintSolver().reset();
+  //   }
+  // }
 
   togglePause() {
     if (this.clock.running) {
@@ -346,7 +370,6 @@ export class Main extends PureComponent {
   showGamePosition = (gamePosition) => {
     if (gamePosition && this.props.gamePosition !== gamePosition) {
       this.props.setGamePosition(gamePosition);
-
     }
   }
 
@@ -358,6 +381,6 @@ export class Main extends PureComponent {
 Main.propTypes = {
   setIsLoading: func,
   setStatus: func,
-  gamePosition: string,
+  gamePosition: number,
   setGamePosition: func,
 };

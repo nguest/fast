@@ -7,7 +7,7 @@ import { styles } from './styles';
 
 export const App = () => {
   const [status, setStatus] = useState(null);
-  const [gamePosition, setGamePosition] = useState('gate-0');
+  const [gamePosition, setGamePosition] = useState(0);
 
   return (
     <div css={styles.app}>
@@ -18,7 +18,7 @@ export const App = () => {
         { status }
       </div>
       <div css={styles.gamePosition}>
-        { gamePosition }
+        { `${gamePosition} / 500` }
       </div>
       <ThreeContainer
         setStatus={setStatus}

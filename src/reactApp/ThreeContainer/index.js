@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import React, { useRef, useState } from 'react';
-import { func } from 'prop-types';
+import { func, number } from 'prop-types';
 import { jsx } from '@emotion/core';
 import { Main } from '../../threeApp';
 import { Loader } from '../Loader';
@@ -37,4 +37,6 @@ export const ThreeContainer = ({ setStatus, gamePosition, setGamePosition }) => 
 
 ThreeContainer.propTypes = {
   setStatus: func,
+  gamePosition: number,
+  setGamePosition: func,
 };

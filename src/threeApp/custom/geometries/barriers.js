@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { trackParams } from './trackParams';
+import { Vector3 } from 'three/build/three.module';
 
 const barrierCrossSection1 = new THREE.Shape();
 barrierCrossSection1.moveTo(-0.25, -(trackParams.trackHalfWidth + trackParams.vergeWidth));

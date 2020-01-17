@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { calculateFaces, calculateVertices, planeUnwrapUVs } from '../custom/geometries/concaveExample1';
 import { trackCrossSection, trackUVGenerator } from '../custom/geometries/track';
-import { trackKerbCrossSection } from '../custom/geometries/trackKerb';
+import { trackKerbCrossSection, getIncludeSegments } from '../custom/geometries/trackKerb';
 import { grassCrossSection, treesCrossSection } from '../custom/geometries/grass';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 
@@ -80,6 +80,8 @@ export const objectsIndex = [
         extrudePath: trackParams.centerLine,
         renderEndCaps: false,
         autoCloseShape: false,
+        includeSegments: getIncludeSegments(),
+
       },
     ],
     position: [0, 0, 0],
@@ -105,7 +107,7 @@ export const objectsIndex = [
       {
         steps: trackParams.steps,
         depth: 0,
-        UVGenerator: trackUVGenerator,
+        //UVGenerator: trackUVGenerator,
         extrudePath: trackParams.centerLine,
         widthFactor: trackParams.widthFactor,
       },
@@ -170,7 +172,7 @@ export const objectsIndex = [
     position: [0, -0.3, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'guardRails',//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    material: ['mappedFlat','guardRails'],//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
     physics: {
       mass: 0,
       friction: 1,
@@ -184,7 +186,7 @@ export const objectsIndex = [
     add: true,
   },
   {
-    name: 'rufrt12s',
+    name: 'car',
     type: 'GLTF',
     link: 'https://sketchfab.com/3d-models/ruf-rt-12s-f215e8aa71da449095f4e7dceb373893',
     url: {
@@ -193,7 +195,7 @@ export const objectsIndex = [
     },
     position: [0, 0, 0],
     rotation: [0, 0, 0],
-    scale: [0.2, 0.2, 0.2],
+    scale: [0.01, 0.01, 0.01],
     physics: {
       mass: 0,
       friction: 0.8,
@@ -306,4 +308,25 @@ export const objectsIndex = [
   //   },
   //   add: false,
   // },
+  {
+    name: 'test',
+    type: 'GLTF',
+    url: {
+      path: 'assets/objects/',
+      file: 'wheel.gltf',
+    },
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    // physics: {
+    //   mass: 0,
+    //   friction: 0.8,
+    //   restitution: 0.5,
+    // },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: true,
+  },
 ];

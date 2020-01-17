@@ -156,7 +156,9 @@ export class Main extends PureComponent {
         params: object.params,
         position: object.position,
         rotation: object.rotation,
-        material: materials[object.material],
+        material: Array.isArray(object.material)
+          ? object.material.map((m) => materials[m])
+          : materials[object.material],
         scene: this.scene,
         shadows: object.shadows,
         manager: this.manager,
@@ -212,7 +214,7 @@ export class Main extends PureComponent {
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.followObj);
 
       if (Config.isDev) this.gui = new DatGUI(this);
-console.log({ hhh:this.physicsWorld.bodies })
+
       this.animate();
     };
   }

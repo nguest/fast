@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { BufferGeometryUtils } from '../../helpers/BufferGeometryUtils';
 import { getTreeline } from './treeline';
 
 
@@ -27,7 +28,24 @@ const createTestTree = () => {
 
 const createInstancedMesh = ({ curve, count }) => {
   const treeHeight = 7;
-  const treeGeo1 = new THREE.InstancedBufferGeometry().copy(new THREE.PlaneBufferGeometry(7, treeHeight, 1, 1));
+  const treePlane = new THREE.PlaneBufferGeometry(7, treeHeight, 1, 1);
+  treePlane.name = 'treePlane'
+  console.log({ treePlane })
+
+  const plane1 = treePlane.clone();
+  const plane2 = treePlane.clone().rotateY(2 * Math.PI / 3);
+  const plane3 = treePlane.clone().rotateY(4 * Math.PI / 3);
+  console.log({ plane1, plane2 })
+  //const treeGeo = new THREE.BufferGeometry();
+  const treeGeo = BufferGeometryUtils.mergeBufferGeometries([plane1, plane2, plane3])
+  //treeGeo.copy(plane1.merge(plane2)).merge(plane3);
+  console.log({ 1: treeGeo })
+  // treeGeo.merge(plane2);
+  // console.log({ 2: treeGeo })
+  // treeGeo.merge(plane3);
+  // console.log({ 3: treeGeo })
+
+  const treeGeo1 = new THREE.InstancedBufferGeometry().copy(treeGeo);
 
   const positions = curve.getSpacedPoints(count);
   const { binormals, normals, tangents } = curve.computeFrenetFrames(count);
@@ -53,7 +71,7 @@ const createInstancedMesh = ({ curve, count }) => {
     );
     instanceQuaternion.push(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     instanceScale.push(
-      Math.random() > 0.4 ? scale : -scale,
+      scale, //Math.random() > 0.4 ? scale : -scale,
       scale,
       scale,
     );
@@ -67,57 +85,18 @@ const createInstancedMesh = ({ curve, count }) => {
     new THREE.InstancedBufferAttribute(new Float32Array(instanceQuaternion), 4, false));
 
   
-  // const imageLoader = new THREE.ImageBitmapLoader(this.manager);
-  // imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
-  //const map1 = new THREE.TextureLoader().load('./assets/textures/pinetree1_map.png');
   const loader = new THREE.TextureLoader();
   const map1 = loader.load('./assets/textures/tree_map_2.png');
   const normalMap = loader.load('./assets/textures/tree_block_normal2.png');
-  const alphaMap = loader.load('./assets/textures/tree_alpha.png');
-
-  //const map = new THREE.TextureLoader().load('./assets/textures/tree_map.png');
-
-  // const material1 = new THREE.ShaderMaterial({
-  //   uniforms: {
-  //     map: { value: map1 },
-  //   },
-  //   vertexShader,
-  //   fragmentShader,
-  //   side: THREE.DoubleSide,
-  //   // transparent: true, // not required!
-  //   depthFunc: THREE.LessDepth,
-  // });
 
   const material1 = new InstancesStandardMaterial({
     map: map1,
     side: THREE.DoubleSide,
     normalMap,
     normalScale: new THREE.Vector2(0.5, 0.5),
-
-    //alphaMap,
-    //transparent: true,
     //depthFunc: THREE.LessDepth,
   });
   material1.needsUpdate = true;
-
-
-
-
-  // const material1 = new THREE.MeshPhongMaterial({
-  //   map: map1,
-  //   transparent: true,
-  // });
-
-  // const material2 = new THREE.RawShaderMaterial({
-  //   uniforms: {
-  //     map: { value: map2 },
-  //   },
-  //   vertexShader,
-  //   fragmentShader,
-  //   side: THREE.DoubleSide,
-  //   // transparent: true, // not required!
-  //   depthFunc: THREE.LessDepth,
-  // });
 
 
   const mesh1 = new THREE.Mesh(treeGeo1, material1);
@@ -129,7 +108,7 @@ const createInstancedMesh = ({ curve, count }) => {
   });
 
   mesh1.customDepthMaterial = customDepthMaterial1;
-  mesh1.name = 'trees1';
+  //mesh1.name = 'trees1';
   mesh1.frustumCulled = false; // this is probably not best: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
   mesh1.castShadow = true;
 

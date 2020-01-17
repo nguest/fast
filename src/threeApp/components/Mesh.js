@@ -63,6 +63,20 @@ export class Mesh {
           uv = geometry.attributes.uv.array;
         }
         geometry.setAttribute('uv2', new THREE.BufferAttribute(uv, 2));
+        if (name === 'barriers') {
+          //console.log({ xxx: geometry.attributes.position.count * 3 })
+                    //geometry.clearGroups(); // just in case
+
+          // for (let i = 0; i < geometry.attributes.position.count * 3; i+=50) {
+          //   geometry.addGroup( i, i+50, 0 ); // first 3 vertices use material 0
+          //   geometry.addGroup( i+50, i+50, 1 ); // next 3 vertices use materia
+          // }
+          ///geometry.addGroup( 0, 100, 0 ); // first 3 vertices use material 0
+         // geometry.addGroup( 100, Infinity, 1 ); // next 3 vertices use material 1
+          //geometry.addGroup( 200, Infinity, 0 ); // remaining vertices use material 2
+          //console.log({ttt:geometry})
+
+        }
       }
 
       // return [
@@ -97,6 +111,7 @@ export class Mesh {
         geometry.elementsNeedUpdate = true;
         geometry.verticesNeedUpdate = true;
         geometry.uvsNeedUpdate = true;
+
       }
 
       this.orientObject(geometry);
@@ -105,54 +120,21 @@ export class Mesh {
 
   initLoader(url, manager) {
     const loader = new GLTFLoader(manager).setPath(url.path);
-    const gltfScene = promisifyLoader(loader).load(url.file);
     loader.load(url.file, (gltf) => {
-    //gltfScene.then((gltf) => {
       console.log({ gltf })
       gltf.scene.traverse((child) => {
-        //console.log(child.name, child.material);// &&  child.material.map)
         if (child.isMesh) {
 
-         // child.material = new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0xffffff });
-
-          if (child.name === 'gum001_carpaint_0') { // body
-            // child.material.color = new THREE.Color(0x0000ff);
-            //child.material.emissive = new THREE.Color(0x550000);
-
-            child.castShadow = true;
-            child.receiveShadow = true;
-          }
-          if (child.name === 'gum002_glass_vtx_0') { // headlights
-            //child.material.color = new THREE.Color(0x0000ff);
-            //child.material = new THREE.MeshPhongMaterial({ color: 0xffffaa });
-            //child.material.emissive = new THREE.Color(0xffffff);
-          }
-          if (child.name === 'gum012_glass_0') { // glass
-            child.material = new THREE.MeshPhongMaterial({
-              color: 0x666666,
-              specular: 0xffffff,
-              reflectivity: 1,
-            });
-          }
-          if (child.name === 'gum004_details_opaque_0') { // grill
-
-          }
-          if (child.name === 'gum_details_glossy_0') { // rear lights
-            child.material.emissive = new THREE.Color(0x550000);
-          }
         }
-        //console.log({ a: child })
-
       });
-      // const mesh = gltf.scene.children[0].children.filter((child) => child.type === 'Mesh');
-      // return this.orientObject(mesh[0].geometry, mesh[0].material);
-      if (this.addObjectToScene) {
-        console.log('addtoscene', gltf.scene.children[0])
-        gltf.scene.children[0].position.set(0, 0, 0);
-        gltf.scene.children[0].scale.setScalar(0.01);
-        gltf.scene.children[0].name = 'car';
-        this.scene.add(gltf.scene.children[0]);
-      }
+
+      const mesh = gltf.scene.children[0];
+      mesh.position.set(...this.position);
+      mesh.scale.set(...this.scale);
+      mesh.name = this.name;
+      mesh.castShadow = this.shadows.cast;
+      mesh.receiveShadow = this.shadows.receive;
+      this.scene.add(mesh);
     });
   }
 
@@ -164,8 +146,12 @@ export class Mesh {
       geometry.rotateZ(this.geoRotate[2]);
     }
     this.mesh = new THREE.Mesh(geometry, loadedMaterial || this.material);
+
     this.mesh.material.vertexColors = THREE.VertexColors;
 
+    if (this.name === 'barriers') {
+      console.log({ xx: this.mesh, mat: this.material })
+    }
     //this.mesh.geometry.attributes
     const vCount = this.mesh.geometry.attributes.position.count;
     //const colors = new Array(vCount * 3).fill('').map(c => Math.random());

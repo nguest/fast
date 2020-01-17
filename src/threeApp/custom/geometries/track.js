@@ -9,7 +9,6 @@ trackCrossSection.lineTo(0, -trackParams.trackHalfWidth);
 
 export const trackUVGenerator = {
   generateTopUV(geometry, vertices, indexA, indexB, indexC) {
-    console.log({ geometry, vertices });
     const aX = vertices[indexA * 3];
     const aY = vertices[indexA * 3 + 1];
     const bX = vertices[indexB * 3];

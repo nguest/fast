@@ -6,7 +6,7 @@ Fast is a WebGL car racing game-in-progress, built using three.js and custom sha
 
 The story so far:
 
-![screenshot](https://github.com/nguest/fast/blob/master/public/assets/screenshots/followcam1.png)
+![screenshot](https://github.com/nguest/fast/blob/master/public/assets/screenshots/followcam2.png)
 
 In the project directory, you run:
 

@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-import { calculateFaces, calculateVertices, planeUnwrapUVs } from '../custom/geometries/concaveExample1';
 import { trackCrossSection, trackUVGenerator } from '../custom/geometries/track';
 import { trackKerbCrossSection, getIncludeSegments } from '../custom/geometries/trackKerb';
 import { grassCrossSection, treesCrossSection } from '../custom/geometries/grass';
@@ -249,25 +248,6 @@ export const objectsIndex = [
   //   },
   //   add: true,
   // },
-
-  // {
-  //   name: 'wheel',
-  //   //type: 'CircleBufferGeometry',
-  //   type: 'RingBufferGeometry',
-  //   params: [1, 0.8, 24],
-  //   position: [0, 2, 5],
-  //   rotation: [0, Math.PI / 4, 0],
-  //   material: 'wheel',
-  //   // physics: {
-  //   //   mass: 1,
-  //   //   friction: 0.8,
-  //   // },
-  //   shadows: {
-  //     receive: true,
-  //     cast: true,
-  //   },
-  //   add: true,
-  // },
   // {
   //   name: 'concaveExample1',
   //   type: 'Geometry',
@@ -289,25 +269,20 @@ export const objectsIndex = [
   //   calculateUVs: planeUnwrapUVs,
   //   add: false,
   // },
-   // {
-  //   name: 'box',
-  //   type: 'BoxBufferGeometry',
-  //   params: [1.8, 0.8, 4.5, 1, 1, 1],
-  //   position: [-10, 0.55, 10],
-  //   rotation: [0, 0, 0],
-  //   scale: [1, 1, 1],
-  //   material: 'mappedFlat',
-  //   physics: {
-  //     mass: 0,
-  //     friction: 0.8,
-  //     restitution: 0.5,
-  //   },
-  //   shadows: {
-  //     receive: true,
-  //     cast: true,
-  //   },
-  //   add: false,
-  // },
+  {
+    name: 'skyline',
+    type: 'CylinderBufferGeometry',
+    params: [5000, 5000, 100, 50, 1, true],
+    position: [0, 0, -1000],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'mappedFlat',
+    shadows: {
+      receive: false,
+      cast: false,
+    },
+    add: true,
+  },
   {
     name: 'test',
     type: 'GLTF',

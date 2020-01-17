@@ -7,8 +7,9 @@ trackKerbCrossSection1.lineTo(-0.05, -trackParams.trackHalfWidth - 0.2);
 trackKerbCrossSection1.lineTo(-0.01, -trackParams.trackHalfWidth - 1);
 
 const trackKerbCrossSection2 = new THREE.Shape();
-trackKerbCrossSection2.moveTo(-0.2, 11);
-trackKerbCrossSection2.lineTo(0, 10);
+trackKerbCrossSection2.moveTo(-0.01, trackParams.trackHalfWidth + 1);
+trackKerbCrossSection2.lineTo(-0.05, trackParams.trackHalfWidth - 0.2);
+trackKerbCrossSection2.lineTo(-0.01, trackParams.trackHalfWidth - 0.2);
 
 export const trackKerbCrossSection = [trackKerbCrossSection1, trackKerbCrossSection2];
 //export const trackEdgeCrossSection = [test, test2];
@@ -25,16 +26,16 @@ export const getIncludeSegments = () => {
   const { tangents } = curve.computeFrenetFrames(steps);
   const angles = tangents.map((t, i) => t.angleTo(tangents[i + 1] || t));
 
-  const angleThreshold = 0.05;
-  let open;
+  const angleThreshold = 0.2;
+  let openSeg;
   const segments = angles.reduce((agg, c, idx) => {
     let newAgg = agg;
-    if (c > angleThreshold && !open) {
-      open = true;
+    if (c > angleThreshold && !openSeg) {
+      openSeg = true;
       newAgg = [...agg, [idx / steps]];
     }
-    if (c < angleThreshold && open) {
-      open = false;
+    if (c < angleThreshold && openSeg) {
+      openSeg = false;
       newAgg[agg.length - 1] = [...agg[agg.length - 1], idx / steps];
     }
     return newAgg;

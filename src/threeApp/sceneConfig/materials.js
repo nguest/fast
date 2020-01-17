@@ -64,7 +64,7 @@ export const materialsIndex = [
     color: 0xffffff,
     map: {
       name: 'Grass_Map',
-      repeat: [10, 1],
+      repeat: [20, 1],
       wrapping: 'MirroredRepeatWrapping',
     },
     normalMap: {

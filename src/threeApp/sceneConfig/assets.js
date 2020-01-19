@@ -20,6 +20,8 @@ export const assetsIndex = {
     Forest_Map: { name: 'Forest_Map', path: './assets/textures/forest.png' },
     Concrete_Map: { name: 'Concrete_Map', path: './assets/textures/concrete_map.png' },
     Concrete_Normal: { name: 'Concrete_Normal', path: './assets/textures/concrete_normal.png' },
+    Skyline_Map: { name: 'Skyline_Map', path: './assets/textures/skyline_map.png' },
+
   },
   SkyBox: {
     One: { name: 'One', path: './assets/textures/skybox1.png', type: '4x3' },

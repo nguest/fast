@@ -85,10 +85,12 @@ export class DatGUI {
 
     /* Meshes */
     const meshFolder = gui.addFolder('Meshes');
-    this.meshes.forEach((mesh) => {
-      meshFolder.add(mesh, 'visible').name(mesh.name || 'No name').onChange((value) => {
-        mesh.visible = value;
+    this.meshes
+      .filter((m) => m.userData.type !== 'gate')
+      .forEach((mesh) => {
+        meshFolder.add(mesh, 'visible').name(mesh.name || 'No name').onChange((value) => {
+          mesh.visible = value;
+        });
       });
-    });
   }
 }

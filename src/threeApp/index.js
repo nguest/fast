@@ -52,6 +52,13 @@ export class Main extends PureComponent {
     this.initialize();
   }
 
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.gamePosition !== this.props.gamePosition) {
+  //     console.log({p: this.props.gamePosition });
+  //     this.resetObjects(this.props.gamePosition)
+  //   }
+  // }
+
   initialize() {
     this.createPhysicsWorld();
     this.auxTrans = new Ammo.btTransform();
@@ -67,8 +74,8 @@ export class Main extends PureComponent {
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
     this.clock = new THREE.Clock();
     this.light = this.createLights();
-    this.clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 1);// Config.followCam.clipDistance);
-    this.renderer.clippingPlanes = [this.clippingPlane];
+    //this.clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 1);// Config.followCam.clipDistance);
+    //this.renderer.clippingPlanes = [this.clippingPlane];
     this.manager = new THREE.LoadingManager();
     this.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
       this.showStatus(`Loading file: ${itemsLoaded} of ${itemsTotal} files.`);
@@ -91,7 +98,8 @@ export class Main extends PureComponent {
   }
 
   loadAssets() {
-    const imageLoader = new THREE.ImageBitmapLoader(this.manager);
+    const imageLoader = new THREE.
+    Loader(this.manager);
     imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
     const ImagePromiseLoader = promisifyLoader(imageLoader);
     const imagePromises = Object.values(assetsIndex.images).map((file) => (
@@ -176,6 +184,7 @@ export class Main extends PureComponent {
       return new Mesh(params).getMesh();
     });
     createTrees({ scene: this.scene });
+    console.log({ 'this.scene': this.scene.children.filter(o => o.userData.type !== 'gate') })
 
     //createSun(this.camera, this.scene);
     // const sunSphere = new THREE.Mesh(
@@ -227,7 +236,7 @@ export class Main extends PureComponent {
 
     if (Config.useFollowCam) {
       this.updateFollowCam();
-      this.updateClipping();
+      //this.updateClipping();
       this.renderer.render(this.scene, this.followCam.threeCamera);
     } else {
       this.renderer.render(this.scene, this.camera.threeCamera);
@@ -253,16 +262,24 @@ export class Main extends PureComponent {
   }
 
   updateFollowCam() {
-    const relativeCameraOffset = new THREE.Vector3(...Config.followCam.position);
-
-    const cameraOffset = relativeCameraOffset.applyMatrix4(this.followObj.matrixWorld);
     const { vehicleSteering } = this.vehicleState;
+
+    const relativeCameraOffset = new THREE.Vector3(
+      Config.followCam.position[0] + vehicleSteering * 20,
+      Config.followCam.position[1],
+      Config.followCam.position[2],
+    );
+    const cameraOffset = relativeCameraOffset.applyMatrix4(this.followObj.matrixWorld);
     this.followCam.threeCamera.position.copy(
-      new THREE.Vector3(cameraOffset.x - vehicleSteering * 30, cameraOffset.y, cameraOffset.z)
+      new THREE.Vector3(cameraOffset.x, cameraOffset.y, cameraOffset.z),
     );
 
     const { x, y, z } = this.followObj.position;
     this.followCam.threeCamera.lookAt(x, y, z);
+
+    // update instancedMeshes so frustrum culling works correctly https://stackoverflow.com/questions/51025071/instance-geometry-frustum-culling
+    const instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
+    instancedMeshes.forEach((mesh) => mesh.geometry.boundingSphere.center.set(x, y, z));
   }
 
   updateClipping() {
@@ -284,26 +301,29 @@ export class Main extends PureComponent {
           this.brakeLights,
           this.showStatus,
         );
-      } else {
-        const objThree = this.physicsWorld.bodies[i];
-        const objPhys = objThree.userData.physicsBody;
-        const motionState = objPhys.getMotionState();
-        if (motionState) {
-          motionState.getWorldTransform(this.auxTrans);
-          const p = this.auxTrans.getOrigin();
-          const q = this.auxTrans.getRotation();
+      } 
+      // else {
+      //   const objThree = this.physicsWorld.bodies[i];
+      //   const objPhys = objThree.userData.physicsBody;
+      //   const motionState = objPhys.getMotionState();
+      //   if (motionState) {
+      //     motionState.getWorldTransform(this.auxTrans);
+      //     const p = this.auxTrans.getOrigin();
+      //     const q = this.auxTrans.getRotation();
 
-          objThree.position.set(p.x(), p.y(), p.z());
-          objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
-        }
-      }
+      //     objThree.position.set(p.x(), p.y(), p.z());
+      //     objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
+      //   }
+      // }
     }
   }
 
   resetObjects(gamePosition) {
+    console.log('gamePosition', gamePosition);
+    this.showGamePosition(gamePosition);
     if (!this.physicsWorld) return;
 
-    const { p, r } = getPosRotFromGamePosition(400);
+    const { p, r } = getPosRotFromGamePosition(gamePosition);
     const objThree = this.physicsWorld.bodies.find((o) => o.name === 'chassisMesh');
     const objPhys = objThree.userData.physicsBody;
 
@@ -311,7 +331,6 @@ export class Main extends PureComponent {
     //const motionState = body.getMotionState();
     const transform = new Ammo.btTransform();
     transform.setIdentity();
-    console.log({ p })
 
     const quat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, r, 0, 'XYZ'));
     transform.setOrigin(new Ammo.btVector3(p.x, p.y + 1, p.z));
@@ -322,7 +341,6 @@ export class Main extends PureComponent {
     body.setLinearVelocity(zeroVector);
     body.setAngularVelocity(zeroVector);
     body.setWorldTransform(transform);
-
   }
 
   // resetObjects1() {

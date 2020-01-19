@@ -5,7 +5,7 @@ import { jsx } from '@emotion/core';
 import { Main } from '../../threeApp';
 import { Loader } from '../Loader';
 
-import { styles } from './styles';
+import { styles } from '../styles';
 
 
 export const ThreeContainer = ({ setStatus, gamePosition, setGamePosition }) => {
@@ -21,12 +21,26 @@ export const ThreeContainer = ({ setStatus, gamePosition, setGamePosition }) => 
         gamePosition={gamePosition}
         setGamePosition={setGamePosition}
       />
-      <button
-        css={styles.resetButton}
-        onClick={() => threeRootElement.current.resetObjects()}
-      >
-        Reset
-      </button>
+      <section css={styles.info2}>
+        <button
+          css={styles.resetButton}
+          onClick={() => threeRootElement.current.resetObjects(0)}
+        >
+          Reset
+        </button>
+        <button
+          css={styles.button}
+          onClick={() => threeRootElement.current.resetObjects(gamePosition > 0 ? gamePosition - 1 : gamePosition)}
+        >
+            &lt;
+        </button>
+        <button
+          css={styles.button}
+          onClick={() => threeRootElement.current.resetObjects(gamePosition < 500 ? gamePosition + 1 : gamePosition)}
+        >
+            &gt;
+        </button>
+      </section>
       {
         isLoading
         && (<div css={styles.loadingScreen}><Loader /></div>)

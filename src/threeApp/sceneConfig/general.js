@@ -10,11 +10,12 @@ export const Config = {
   isMouseMoving: false,
   isMouseOver: false,
   maxAnisotropy: 1,
+  gammaFactor: 1.1,
   dpr: 1,
   easing: TWEEN.Easing.Quadratic.InOut,
   duration: 500,
   renderer: {
-    antialias: false,
+    antialias: true,
     alpha: true,
   },
   container: {

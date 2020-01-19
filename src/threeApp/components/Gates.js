@@ -29,7 +29,7 @@ export const createGates = (scene) => {
     mesh.quaternion.setFromAxisAngle(axis, radians);
     mesh.position.set(gatePositions[i].x, gatePositions[i].y + 5, gatePositions[i].z);
     mesh.name = `gate-${i}`;
-    mesh.userData = { gate: i };
+    mesh.userData = { gate: i, type: 'gate' };
     gates.push(mesh);
     scene.add(mesh);
   }

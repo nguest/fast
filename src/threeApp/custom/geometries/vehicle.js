@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import * as Ammo from 'ammonext';
 
+
+// https://docs.google.com/document/u/0/d/18edpOwtGgCwNyvakS78jxMajCuezotCU_0iezcwiFQc/mobilebasic?urp=gmail_link
+
 // - Global variables -
 const DISABLE_DEACTIVATION = 4;
 const TRANSFORM_AUX = new Ammo.btTransform();
@@ -84,12 +87,12 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
   // const suspensionRestLength = 0.6;
   // const rollInfluence = 0.2;
 
-  const friction = 1000;
+  const friction = 100;
   const suspensionStiffness = 50.0;
   const suspensionDamping = 2.3;
   const suspensionCompression = 4;// 1.4;
   const suspensionRestLength = 0.5;
-  const rollInfluence = 0.2;
+  const rollInfluence = 0.05; // 0 no roll
 
   // const steeringIncrement = 0.04;
   // const steeringClamp = 0.5;
@@ -175,12 +178,15 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
 
   if (speed > 1.0) showStatus(`${(speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1)} km/h`);
 
-  breakingForce = 0;
+  breakingForce = 10;
   engineForce = 0;
 
   if (interaction.keyboard.pressed('W')) {
     if (speed < -1) breakingForce = maxBreakingForce;
-    else engineForce = maxEngineForce;
+    else {
+      engineForce = maxEngineForce;
+      breakingForce = 0;
+    }
     setBrakeLights(brakeLights, false);
   }
   if (interaction.keyboard.pressed('S')) {
@@ -194,18 +200,23 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
     setBrakeLights(brakeLights, false);
   }
 
+  let sasi = steeringIncrement;// / speed; // speed adjusted steering
+
   if (interaction.keyboard.pressed('A')) {
-    if (vehicleSteering < steeringClamp) vehicleSteering += steeringIncrement;
+    if (vehicleSteering < steeringClamp) vehicleSteering += sasi;
   } else if (interaction.keyboard.pressed('D')) {
-    if (vehicleSteering > -steeringClamp) vehicleSteering -= steeringIncrement;
-  } else if (vehicleSteering < -steeringIncrement) vehicleSteering += steeringIncrement;
-  else if (vehicleSteering > steeringIncrement) vehicleSteering -= steeringIncrement;
+    if (vehicleSteering > -steeringClamp) vehicleSteering -= sasi;
+  } else if (vehicleSteering < -sasi) vehicleSteering += sasi;
+  else if (vehicleSteering > sasi) vehicleSteering -= sasi;
   else {
     vehicleSteering = 0;
   }
 
   vehicle.applyEngineForce(engineForce, BACK_LEFT);
   vehicle.applyEngineForce(engineForce, BACK_RIGHT);
+
+  //console.log(engineForce)
+
 
   vehicle.setBrake(breakingForce / 2, FRONT_LEFT);
   vehicle.setBrake(breakingForce / 2, FRONT_RIGHT);
@@ -216,7 +227,7 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
   vehicle.setSteeringValue(vehicleSteering, FRONT_RIGHT);
 
   let tm; let p; let q; let i;
-  const n = vehicle.getNumWheels();
+  const n = 4;//vehicle.getNumWheels();
 
   for (i = 0; i < n; i++) {
     vehicle.updateWheelTransform(i, true);

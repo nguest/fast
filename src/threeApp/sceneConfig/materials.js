@@ -15,6 +15,7 @@ export const materialsIndex = [
     color: 0xffffff,
     map: {
       name: 'UVGrid',
+      repeat: [10, 1]
     },
     side: 'DoubleSide',
     wireframe: false,
@@ -69,7 +70,7 @@ export const materialsIndex = [
     },
     normalMap: {
       name: 'Grass_Normal',
-      //repeat: [15, 15],
+      repeat: [0.5, 0.5],
       normalScale: [0.2, 0.2],
     },
     // lightMap: {
@@ -85,7 +86,7 @@ export const materialsIndex = [
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,
-    shininess: 10,
+    shininess: 0,
   },
   {
     name: 'forest',
@@ -186,7 +187,7 @@ export const materialsIndex = [
     map: {
       name: 'Wheel_Map',
       wrapping: 'RepeatWrapping',
-      repeat: [1, 1],
+      repeat: [10, 1],
       offset: [-0.1, 0]
     },
     // bumpMap: {
@@ -202,5 +203,22 @@ export const materialsIndex = [
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,
+  },
+  {
+    name: 'skyline',
+    type: 'MeshPhongMaterial',
+    color: 0xffffff,
+    map: {
+      name: 'Skyline_Map',
+      wrapping: 'RepeatWrapping',
+      repeat: [10, 1],
+      //offset: [0, 0],
+    },
+    shininess: 0,
+    specular: 0xaaaaaa,
+    side: 'DoubleSide',
+    wireframe: false,
+    emissive: 0x000000,
+    transparent: true,
   },
 ];

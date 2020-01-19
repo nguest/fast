@@ -2,14 +2,14 @@ import * as THREE from 'three';
 import { trackParams } from './trackParams';
 
 const trackKerbCrossSection1 = new THREE.Shape();
-trackKerbCrossSection1.moveTo(-0.01, -trackParams.trackHalfWidth + 0.2);
+trackKerbCrossSection1.moveTo(-0.01, -trackParams.trackHalfWidth + 0.1);
 trackKerbCrossSection1.lineTo(-0.05, -trackParams.trackHalfWidth - 0.2);
-trackKerbCrossSection1.lineTo(-0.01, -trackParams.trackHalfWidth - 1);
+trackKerbCrossSection1.lineTo(-0.01, -trackParams.trackHalfWidth - 0.8);
 
 const trackKerbCrossSection2 = new THREE.Shape();
-trackKerbCrossSection2.moveTo(-0.01, trackParams.trackHalfWidth + 1);
+trackKerbCrossSection2.moveTo(-0.01, trackParams.trackHalfWidth + 0.8);
 trackKerbCrossSection2.lineTo(-0.05, trackParams.trackHalfWidth - 0.2);
-trackKerbCrossSection2.lineTo(-0.01, trackParams.trackHalfWidth - 0.2);
+trackKerbCrossSection2.lineTo(-0.01, trackParams.trackHalfWidth - 0.1);
 
 export const trackKerbCrossSection = [trackKerbCrossSection1, trackKerbCrossSection2];
 //export const trackEdgeCrossSection = [test, test2];
@@ -26,7 +26,7 @@ export const getIncludeSegments = () => {
   const { tangents } = curve.computeFrenetFrames(steps);
   const angles = tangents.map((t, i) => t.angleTo(tangents[i + 1] || t));
 
-  const angleThreshold = 0.2;
+  const angleThreshold = 0.2; // min angle to build after
   let openSeg;
   const segments = angles.reduce((agg, c, idx) => {
     let newAgg = agg;

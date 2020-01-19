@@ -77,7 +77,9 @@ export const Sky = (scene) => {
   uniforms.luminance.value = effectController.luminance;
 
   skyMesh.scale.setScalar(150000);
-  scene.add(sunSphere);
+  sunSphere.name = 'sunSphere';
+  skyMesh.name = 'skyMesh';
+  //scene.add(sunSphere);
 
   scene.add(skyMesh);
   // /Mesh.call(this, new BoxBufferGeometry(1, 1, 1), material);

@@ -52,23 +52,26 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, imageFile, til
   }
 
 
-    // Required sequence of tile view directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
-    const imagePieceIdx = [7, 1, 3, 5, 4, 10];
+  // Required sequence of tile view directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
+  const imagePieceIdx = [7, 1, 3, 5, 4, 10];
 
-    const loader = new THREE.CubeTextureLoader(manager);
-    const skyBoxMaterialArray = loader.load(imagePieceIdx.map((idx) => imagePieces[idx]));
-    skyBoxMaterialArray.minFilter = THREE.LinearFilter;
+  const loader = new THREE.CubeTextureLoader(manager);
+  const skyBoxMaterialArray = loader.load(imagePieceIdx.map((idx) => imagePieces[idx]));
+  skyBoxMaterialArray.minFilter = THREE.LinearFilter;
 
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xffffdd,
-      envMap: skyBoxMaterialArray,
-      side: THREE.BackSide,
-      fog: false,
-    });
-    const skyBox = new THREE.Mesh(skyBoxGeometry, material);
-    skyBox.name = 'SkyBox';
-    skyBox.scale.set(1, -1, 1);
-   // scene.add(skyBox);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xddddbb,
+    envMap: skyBoxMaterialArray,
+    side: THREE.BackSide,
+    fog: false,
+    opacity: 0.5,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+  });
+  const skyBox = new THREE.Mesh(skyBoxGeometry, material);
+  skyBox.name = 'SkyBox';
+  skyBox.scale.set(1, 1, 1);
+  scene.add(skyBox);
 
     //scene.background = skyBoxMaterialArray
     return skyBoxMaterialArray;

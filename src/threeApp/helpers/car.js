@@ -4,6 +4,7 @@ export const decorateCar = (car, brakelights, envCube) => {
   let brakeLights;
   car.traverse((child) => {
     if (child.isMesh) {
+      //console.log(child.name)
       if (child.name === 'ty_rims_0') {
         //child.position.set(0, 4, 0);
         //rim = child;
@@ -30,9 +31,16 @@ export const decorateCar = (car, brakelights, envCube) => {
           envMap: envCube,
         });
       }
-      if (child.name === 'gum_details_glossy_0') {
+      if (child.name === 'gum_details_glossy_0') { // brakelights
         child.material.emissive = new THREE.Color(0x550000);
         brakeLights = child;
+      }
+      if (child.name === 'gum005_details_glossy_ncl1_1_0') {
+        child.material = new THREE.MeshPhongMaterial({
+          color: 0xffffff,
+          specular: 0xffffff,
+          reflectivity: 1,
+        });
       }
     }
   });

@@ -53,12 +53,14 @@ const createInstancedMesh = ({ curve, count }) => {
   const instanceOffset = [];
   const instanceScale = [];
   const instanceQuaternion = [];
+  const quaternion = new THREE.Quaternion();
+  const up = new THREE.Vector3(1, 0, 0);
 
   for (let i = 0; i < count; i++) {
-    const quaternion = new THREE.Quaternion();
     quaternion.setFromUnitVectors(
-      new THREE.Vector3(1, 0, 0),
-      new THREE.Vector3(binormals[i].x, 0, binormals[i].z)
+      up,
+      //new THREE.Vector3(binormals[i].x, 0, binormals[i].z);
+      new THREE.Vector3(Math.random() * Math.PI, 0, Math.random() * Math.PI)
     );
     quaternion.normalize();
 
@@ -94,7 +96,7 @@ const createInstancedMesh = ({ curve, count }) => {
     side: THREE.DoubleSide,
     normalMap,
     normalScale: new THREE.Vector2(0.5, 0.5),
-    //depthFunc: THREE.LessDepth,
+    depthFunc: THREE.LessDepth,
   });
   material1.needsUpdate = true;
 
@@ -107,11 +109,14 @@ const createInstancedMesh = ({ curve, count }) => {
     alphaTest: 0.5,
   });
 
+  mesh1.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 10);
+
   mesh1.customDepthMaterial = customDepthMaterial1;
   //mesh1.name = 'trees1';
-  mesh1.frustumCulled = false; // this is probably not best: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+  //mesh1.frustumCulled = false; // this is probably not best: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
   mesh1.castShadow = true;
-
+  mesh1.userData.type = 'instancedMesh';
+  mesh1.name = 'treesInstance';
   return mesh1;
 };
 

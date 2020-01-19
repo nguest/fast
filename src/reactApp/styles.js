@@ -29,23 +29,45 @@ export const styles = {
     right: 0,
     top: 0,
   },
-  statusBar: {
+  info: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    padding: 10,
-    color: 'white',
-    backgroundColor: 'black',
     zIndex: 10,
+    width: 200,
+    backgroundColor: 'black',
   },
-  gamePosition: {
+  info2: {
     position: 'absolute',
     bottom: 0,
+    left: 0,
+    zIndex: 10,
+    width: 200,
+    backgroundColor: 'black',
+  },
+  statusBar: {
+    padding: 10,
+    color: 'white',
+    right: 0,
+  },
+  gamePosition: {
     left: 100,
     width: 100,
     padding: 10,
     color: 'white',
-    backgroundColor: 'black',
-    zIndex: 10,
+  },
+  resetButton: {
+    //padding: 10,
+  },
+  loadingScreen: {
+    background: 'darkgrey',
+    display: 'flex',
+    position: 'fixed',
+    width: '100vw',
+    height: '100vh',
+    top: 0,
+    left: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 };

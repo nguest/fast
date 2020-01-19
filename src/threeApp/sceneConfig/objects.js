@@ -58,7 +58,7 @@ export const objectsIndex = [
     physics: {
       mass: 0,
       friction: 1,
-      restitution: 0.5,
+      restitution: 0.1,
     },
     shadows: {
       receive: true,
@@ -180,7 +180,6 @@ export const objectsIndex = [
     shadows: {
       receive: true,
       cast: true,
-
     },
     add: true,
   },
@@ -272,11 +271,11 @@ export const objectsIndex = [
   {
     name: 'skyline',
     type: 'CylinderBufferGeometry',
-    params: [5000, 5000, 100, 50, 1, true],
-    position: [0, 0, -1000],
+    params: [5000, 5000, 500, 36, 1, true],
+    position: [1285, 0, -2386],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'mappedFlat',
+    material: 'skyline',//'skyline',
     shadows: {
       receive: false,
       cast: false,
@@ -302,6 +301,6 @@ export const objectsIndex = [
       receive: true,
       cast: true,
     },
-    add: true,
+    add: false,
   },
 ];

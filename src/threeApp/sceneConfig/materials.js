@@ -1,3 +1,5 @@
+import { GrassMaterial } from '../custom/geometries/grass';
+
 export const materialsIndex = [
   {
     name: 'mappedRed',
@@ -15,11 +17,14 @@ export const materialsIndex = [
     color: 0xffffff,
     map: {
       name: 'UVGrid',
-      repeat: [10, 1]
+      repeat: [1, 1]
     },
     side: 'DoubleSide',
     wireframe: false,
     emissive: 0x000022,
+    shininess: 200,
+    opacity: 0.5,
+    transparent: true,
   },
   {
     name: 'wireFrame',
@@ -34,7 +39,7 @@ export const materialsIndex = [
     name: 'road',
     type: 'MeshStandardMaterial',
     color: 0xffffff,
-    roughness: 1,
+    roughness: 0.1,
     map: {
       name: 'Road_Map',
       wrapping: 'MirroredRepeatWrapping',
@@ -60,12 +65,13 @@ export const materialsIndex = [
     transparent: true,
   },
   {
-    name: 'grass',
+    name: 'GrassMaterial',
     type: 'MeshPhongMaterial',
     color: 0xffffff,
+    customMaterial: GrassMaterial,
     map: {
       name: 'Grass_Map',
-      repeat: [20, 1],
+      repeat: [1, 1],
       wrapping: 'MirroredRepeatWrapping',
     },
     normalMap: {
@@ -88,6 +94,35 @@ export const materialsIndex = [
     emissive: 0x000000,
     shininess: 0,
   },
+  // {
+  //   name: 'grassShader',
+  //   type: 'ShaderMaterial',
+  //   color: 0xffffff,
+  //   map: {
+  //     name: 'Grass_Map',
+  //     repeat: [0.1, 20],
+  //     wrapping: 'MirroredRepeatWrapping',
+  //   },
+  //   normalMap: {
+  //     name: 'Grass_Normal',
+  //     repeat: [0.5, 0.5],
+  //     normalScale: [0.2, 0.2],
+  //   },
+  //   // lightMap: {
+  //   //   name: 'LightMap_Map',
+  //   //   repeat: [1, 1],
+  //   //   lightMapIntensity: 0.1,
+  //   // },
+  //   // bumpMap: {
+  //   //   name: 'UVGrid',
+  //   //   repeat: [15, 15],
+  //   //   bumpScale: 2,
+  //   // },
+  //   side: 'FrontSide',
+  //   wireframe: false,
+  //   emissive: 0x000000,
+  //   shininess: 0,
+  // },
   {
     name: 'forest',
     type: 'MeshBasicMaterial',
@@ -173,7 +208,7 @@ export const materialsIndex = [
       wrapping: 'RepeatWrapping',
       repeat: [10, 3],
     },
-    metalness: 1,
+    metalness: 0.5,
     shininess: 40,
     specular: 0xaaaaaa,
     side: 'DoubleSide',

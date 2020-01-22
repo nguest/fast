@@ -68,5 +68,6 @@ export const getPosRotFromGamePosition = (gamePosition) => {
   };
 };
 
-
-
+export const getObjByName = (scene, name) => {
+  return scene.children.find((object) => object.name === name);
+};

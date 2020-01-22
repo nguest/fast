@@ -3,31 +3,73 @@ import * as THREE from 'three';
 export const createMaterial = ({
   bumpMap,
   color,
+  customMaterial,
   emissive = 0x000000,
   envMap,
   flatShading = false,
   lightMap,
   map,
+  metalness,
   name,
   normalMap,
+  opacity = 1,
+  roughness,
   shininess = 30,
   side,
-  specular = 0x000000,
+  specular,// = 0x000000,
   transparent,
   type,
   wireframe = false,
+  vertexShader,
+  fragmentShader,
 }, assets) => {
-  const material = new THREE[type]({
+  let material;
+  if (customMaterial) {
+    material = customMaterial({ 
+      map: assets[map.name],
+      normalMap: assets[normalMap.name],
+      shininess: 5,
+    });
+    material.uniforms.map.value.repeat.set(...map.repeat);
+    material.uniforms.map.value.wrapS = THREE.RepeatWrapping;
+    material.uniforms.map.value.wrapT = THREE.RepeatWrapping;
+    material.uniforms.normalMap.value.wrapS = THREE.RepeatWrapping;
+    material.uniforms.normalMap.value.wrapT = THREE.RepeatWrapping;
+    material.name = name;
+
+    // ({
+    //   color,
+    //   emissive,
+    //   flatShading,
+    //   name,
+    //   shininess,
+    //   side: THREE[side],
+    //   specular,
+    //   transparent,
+    //   wireframe,
+    //   vertexShader,
+    //   fragmentShader,
+    // });
+    material.needsUpdate = true;
+    material.uniformsNeedUpdate = true;
+    return material;
+  }
+  material = new THREE[type]({
     color,
-    emissive,
     flatShading,
     name,
-    shininess,
     side: THREE[side],
-    specular,
-    transparent,
     wireframe,
+    opacity,
   });
+
+  material.shininess = material.shininess !== undefined ? shininess : material.shininess;
+  material.emissive = material.emissive !== undefined ? new THREE.Color(emissive) : new THREE.Color(material.emissive);
+  material.specular = material.specular !== undefined ? new THREE.Color(specular) : new THREE.Color(material.specular);
+  material.transparent = material.transparent !== undefined ? transparent : false;
+  material.roughness = material.roughness !== undefined ? roughness : material.roughness;
+  material.metalness = material.metalness !== undefined ? metalness : material.metalness;
+
   if (map) {
     material.map = assets[map.name];
     material.map.wrapT = THREE[map.wrapping] || THREE.RepeatWrapping;
@@ -42,7 +84,7 @@ export const createMaterial = ({
     material.normalMap.wrapS = THREE[normalMap.wrapping] || THREE.RepeatWrapping;
     if (normalMap.repeat) material.normalMap.repeat.set(...normalMap.repeat);
     if (normalMap.offset) material.normalMap.repeat.set(...normalMap.offset);
-    if (normalMap.normalScale) material.normalScale.set(...normalMap.normalScale);
+    if (normalMap.normalScale && material.normalScale) material.normalScale.set(...normalMap.normalScale);
   }
   if (bumpMap) {
     material.bumpMap = assets[bumpMap.name];

@@ -667,21 +667,21 @@ const WorldUVGenerator = {
     const d_y = vertices[indexD * 3 + 1];
     const d_z = vertices[indexD * 3 + 2];
 
-    if (Math.abs(a_y - b_y) < 0.01) {
+    //if (Math.abs(a_y - b_y) < 0.01) {
       return [
-        new Vector2(a_x, 1 - a_z),
-        new Vector2(b_x, 1 - b_z),
-        new Vector2(c_x, 1 - c_z),
-        new Vector2(d_x, 1 - d_z),
+        new Vector2(a_x, 1 - a_z).multiplyScalar(0.2),
+        new Vector2(b_x, 1 - b_z).multiplyScalar(0.2),
+        new Vector2(c_x, 1 - c_z).multiplyScalar(0.2),
+        new Vector2(d_x, 1 - d_z).multiplyScalar(0.2),
       ];
-    }
+    //}
 
-    return [
-      new Vector2(a_y, 1 - a_z),
-      new Vector2(b_y, 1 - b_z),
-      new Vector2(c_y, 1 - c_z),
-      new Vector2(d_y, 1 - d_z),
-    ];
+    // return [
+    //   new Vector2(a_y, 1 - a_z),
+    //   new Vector2(b_y, 1 - b_z),
+    //   new Vector2(c_y, 1 - c_z),
+    //   new Vector2(d_y, 1 - d_z),
+    // ];
   },
 };
 

@@ -19,9 +19,10 @@ import { Mesh } from './components/Mesh';
 import { createTrees } from './custom/geometries/trees';
 import { Sky } from './components/Sky';
 import { createGates, detectGateCollisions } from './components/Gates';
+import { createTrackDecals } from './custom/geometries/track';
 
 // Helpers
-import { promisifyLoader, getPosRotFromGamePosition } from './helpers/helpers';
+import { promisifyLoader, getPosRotFromGamePosition, getObjByName } from './helpers/helpers';
 import { createSkyBoxFrom4x3 } from './helpers/skyBoxHelper';
 
 // Assets & Materials
@@ -34,7 +35,6 @@ import { lightsIndex } from './sceneConfig/lights';
 
 // Objects
 import { objectsIndex } from './sceneConfig/objects';
-import { createSun } from './custom/geometries/sun';
 import { decorateCar } from './helpers/car';
 
 // Managers
@@ -42,7 +42,7 @@ import { Interaction } from './managers/Interaction';
 import { DatGUI } from './managers/DatGUI';
 
 // Stats
-import { createStats, updateStatsStart, updateStatsEnd } from './helpers/stats';
+import { Stats } from './helpers/statsModule';
 import { updateVehicle } from './custom/geometries/vehicle';
 
 // -- End of imports
@@ -74,8 +74,8 @@ export class Main extends PureComponent {
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
     this.clock = new THREE.Clock();
     this.light = this.createLights();
-    //this.clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 1);// Config.followCam.clipDistance);
-    //this.renderer.clippingPlanes = [this.clippingPlane];
+    // this.clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 1);// Config.followCam.clipDistance);
+    // this.renderer.clippingPlanes = [this.clippingPlane];
     this.manager = new THREE.LoadingManager();
     this.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
       this.showStatus(`Loading file: ${itemsLoaded} of ${itemsTotal} files.`);
@@ -86,7 +86,10 @@ export class Main extends PureComponent {
 
     // this.skyBox = new SkyBox(this.scene);
 
-    if (Config.showStats) this.rS = createStats();
+    if (Config.showStats) {
+      this.stats = new Stats();
+      this.container.appendChild(this.stats.dom);
+    }
     if (Config.isDev) {
       const axesHelper = new THREE.AxesHelper(150);
       this.scene.add(axesHelper);
@@ -98,8 +101,7 @@ export class Main extends PureComponent {
   }
 
   loadAssets() {
-    const imageLoader = new THREE.
-    Loader(this.manager);
+    const imageLoader = new THREE.ImageBitmapLoader(this.manager);
     imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
     const ImagePromiseLoader = promisifyLoader(imageLoader);
     const imagePromises = Object.values(assetsIndex.images).map((file) => (
@@ -138,6 +140,7 @@ export class Main extends PureComponent {
           ...agg,
           [materialParams.name]: createMaterial(materialParams, assets),
         }), {});
+        console.log({ materials })
         return this.createWorld(materials, assets);
       });
   }
@@ -184,7 +187,9 @@ export class Main extends PureComponent {
       return new Mesh(params).getMesh();
     });
     createTrees({ scene: this.scene });
-    console.log({ 'this.scene': this.scene.children.filter(o => o.userData.type !== 'gate') })
+    createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
+    console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
+
 
     //createSun(this.camera, this.scene);
     // const sunSphere = new THREE.Mesh(
@@ -214,8 +219,8 @@ export class Main extends PureComponent {
       this.props.setIsLoading(false);
       this.showStatus('ALL OBJECTS LOADED');
       console.info('ALL OBJECTS LOADED');
-      this.followObj = this.scene.children.find((o) => o.name === 'chassisMesh');
-      const baseCar = this.scene.children.find((o) => o.name === 'car');
+      this.followObj = getObjByName(this.scene, 'chassisMesh');
+      const baseCar = getObjByName(this.scene, 'car');
       const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, envCube);
       this.brakeLights = brakeLights;
 
@@ -230,9 +235,8 @@ export class Main extends PureComponent {
 
   animate() {
     const deltaTime = this.clock.getDelta();
-    const { rS } = this;
 
-    if (Config.showStats) updateStatsStart(rS);
+    if (Config.showStats) this.stats.update();
 
     if (Config.useFollowCam) {
       this.updateFollowCam();
@@ -241,8 +245,6 @@ export class Main extends PureComponent {
     } else {
       this.renderer.render(this.scene, this.camera.threeCamera);
     }
-
-    if (Config.showStats) updateStatsEnd(rS);
 
     // TWEEN.update();
     this.interaction.keyboard.update();

@@ -121,7 +121,6 @@ export class Mesh {
   initLoader(url, manager) {
     const loader = new GLTFLoader(manager).setPath(url.path);
     loader.load(url.file, (gltf) => {
-      console.log({ gltf })
       gltf.scene.traverse((child) => {
         if (child.isMesh) {
 
@@ -149,9 +148,6 @@ export class Mesh {
 
     this.mesh.material.vertexColors = THREE.VertexColors;
 
-    if (this.name === 'barriers') {
-      console.log({ xx: this.mesh, mat: this.material })
-    }
     //this.mesh.geometry.attributes
     const vCount = this.mesh.geometry.attributes.position.count;
     //const colors = new Array(vCount * 3).fill('').map(c => Math.random());

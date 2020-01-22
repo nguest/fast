@@ -6,8 +6,7 @@ import { grassCrossSection, treesCrossSection } from '../custom/geometries/grass
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 
 import { trackParams } from '../custom/geometries/trackParams';
-
-
+ 
 import { createVehicle } from '../custom/geometries/vehicle';
 
 export const objectsIndex = [
@@ -114,7 +113,7 @@ export const objectsIndex = [
     position: [0, 0, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'grass',
+    material: 'GrassMaterial',
     physics: {
       mass: 0,
       friction: 100,

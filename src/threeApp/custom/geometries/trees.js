@@ -30,16 +30,13 @@ const createInstancedMesh = ({ curve, count }) => {
   const treeHeight = 7;
   const treePlane = new THREE.PlaneBufferGeometry(7, treeHeight, 1, 1);
   treePlane.name = 'treePlane'
-  console.log({ treePlane })
 
   const plane1 = treePlane.clone();
   const plane2 = treePlane.clone().rotateY(2 * Math.PI / 3);
   const plane3 = treePlane.clone().rotateY(4 * Math.PI / 3);
-  console.log({ plane1, plane2 })
   //const treeGeo = new THREE.BufferGeometry();
   const treeGeo = BufferGeometryUtils.mergeBufferGeometries([plane1, plane2, plane3])
   //treeGeo.copy(plane1.merge(plane2)).merge(plane3);
-  console.log({ 1: treeGeo })
   // treeGeo.merge(plane2);
   // console.log({ 2: treeGeo })
   // treeGeo.merge(plane3);
@@ -164,7 +161,7 @@ const OVERRIDE_PROJECT_VERTEX = `
 `;
 
 
-export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
+export class InstancesStandardMaterial extends THREE.MeshBasicMaterial {
   name = 'InstancesStandardMaterial';
 
   onBeforeCompile = (shader) => {

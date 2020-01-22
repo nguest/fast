@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { trackParams } from './trackParams';
+import { DecalGeometry } from '../../helpers/DecalGeometry';
 
 export const trackCrossSection = new THREE.Shape();
 trackCrossSection.moveTo(0, trackParams.trackHalfWidth);
@@ -58,9 +59,25 @@ export const trackUVGenerator = {
   },
 };
 
-/*
-0: {a_x: -9.999999997904824, a_y: 0, a_z: -0.00020470352443405633}
-1: {b_x: 0, b_y: 0.1, b_z: 0}
-4: {c_x: 0.07644613795383218, c_y: 0.1, c_z: -12.902481556879032}
-3: {d_x: -9.923062852324778, d_y: 0, d_z: -13.001577234571238}
-*/
+export const createTrackDecals = (trackMesh, scene, material) => {
+  const pointsCount = 2000;
+  const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
+  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(pointsCount);
+
+  material.polygonOffset = true;
+  material.polygonOffsetFactor = -1;
+  material.blending = THREE.AdditiveBlending;
+
+  const scale = new THREE.Vector3(10, 10, 10);
+
+  for (let i = 0; i < pointsCount; i++) {
+    const geometry = new DecalGeometry(
+      trackMesh,
+      positions[i],
+      new THREE.Euler().setFromVector3(tangents[i]),
+      scale,
+    );
+    const decalMesh = new THREE.Mesh(geometry, material);
+    scene.add(decalMesh);
+  }
+};

@@ -7,6 +7,7 @@ const steps = 5000; // total extrusion segments
 const points = converLatLngToVector(coordinates);
 const adjustedPoints = points.map((p) => p.clone().sub(points[0]));
 const centerLine = new CatmullRomCurve3(adjustedPoints);
+centerLine.arcLengthDivisions = 10000;
 //centerLine.rotation.set(0, Math.PI/2, 0)
 centerLine.closed = true;
 

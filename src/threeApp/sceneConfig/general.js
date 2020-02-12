@@ -47,10 +47,11 @@ export const Config = {
   followCam: {
     fov: 45,
     near: 2,
-    far: 40000,
+    far: 20000,
     aspect: 1,
     position: [0, 1.5, -7],
     ß: 30,
+    clipDistance: 20,
   },
   useBasicMaterials: false,
   useFollowCam: true,

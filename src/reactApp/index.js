@@ -2,14 +2,15 @@
 import React, { useState } from 'react';
 import { jsx } from '@emotion/core';
 import { ThreeContainer } from './ThreeContainer';
+import { TrackMap } from './TrackMap';
+import { trackParams } from '../threeApp/custom/geometries/trackParams';
 
 import { styles } from './styles';
 
 export const App = () => {
   const [status, setStatus] = useState(null);
-  const [gamePosition, setGamePosition] = useState(0);
-  //const [resetPosition, setResetPosition] = useState(0)
-  //console.log({ gamePosition })
+  const [gamePosition, setGamePosition] = useState({ gate: 0, vehiclePosition: { x: 0, z: 0 } });
+  console.log('renderAPP')
   return (
     <div css={styles.app}>
       <header css={styles.appHeader}>
@@ -20,7 +21,7 @@ export const App = () => {
           { status }
         </div>
         <div css={styles.gamePosition}>
-          { `${gamePosition} / 500` }
+          { `${gamePosition.gate} / 500` }
         </div>
       </section>
       <ThreeContainer
@@ -28,6 +29,7 @@ export const App = () => {
         setGamePosition={setGamePosition}
         gamePosition={gamePosition}
       />
+      <TrackMap gamePosition={gamePosition} trackParams={trackParams} />
     </div>
   );
 };

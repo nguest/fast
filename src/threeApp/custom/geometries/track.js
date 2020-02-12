@@ -78,6 +78,8 @@ export const createTrackDecals = (trackMesh, scene, material) => {
       scale,
     );
     const decalMesh = new THREE.Mesh(geometry, material);
+    decalMesh.name = `trackDecal-${i}`;
+    decalMesh.userData.type = 'decal';
     scene.add(decalMesh);
   }
 };

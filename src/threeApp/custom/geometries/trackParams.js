@@ -1,25 +1,21 @@
-import { CatmullRomCurve3, LineCurve, CubicBezierCurve, Vector2, Vector3 } from 'three';
+import { CatmullRomCurve3, CubicBezierCurve, Vector2, Vector3 } from 'three';
 import { converLatLngToVector } from '../../helpers/latlngConverter';
 import { coordinates } from './nordschleife';
+//import { coordinates } from './SpaFrancorchamps';
 
-const steps = 5000; // total extrusion segments
+const steps = 5000;//5000; // total extrusion segments
+const startPoint = 30;
 
-const points = converLatLngToVector(coordinates);
-const adjustedPoints = points.map((p) => p.clone().sub(points[0]));
-const centerLine = new CatmullRomCurve3(adjustedPoints);
-centerLine.arcLengthDivisions = 10000;
-//centerLine.rotation.set(0, Math.PI/2, 0)
+const trackPoints = converLatLngToVector(coordinates);
+
+// rejig points array so startpoint is at array position 0
+const section2 = trackPoints.splice(0, startPoint);
+const adjustedTrackPoints = trackPoints.concat(section2).map((p) => p.clone().sub(trackPoints[0]));
+
+const centerLine = new CatmullRomCurve3(adjustedTrackPoints);
+centerLine.arcLengthDivisions = steps;
 centerLine.closed = true;
-
-// const centerLine = new CatmullRomCurve3([
-//   new Vector3(0, 0, 40),
-//   new Vector3(0, -0.1, 0),
-//   new Vector3(-5, 0, -150),
-//   new Vector3(50, -2, -400),
-//   new Vector3(0, 0, -850),
-//   new Vector3(-100, 0, -1050),
-//   new Vector3(-150, 0, -1200),
-// ]);
+centerLine.name = 'centerLine';
 
 const widthCurve = new CubicBezierCurve(
   new Vector2(1, 0),
@@ -34,6 +30,7 @@ const widthCurve = new CubicBezierCurve(
 const widthFactor = widthCurve.getPoints(steps);
 
 export const trackParams = {
+  adjustedTrackPoints,
   centerLine,
   gateCount: 500,
   steps,

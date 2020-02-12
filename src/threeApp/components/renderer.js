@@ -15,7 +15,7 @@ export class Renderer {
     // Set clear color to fog to enable fog or to hex color for no fog
     this.threeRenderer.setClearColor(scene.fog.color);
 
-    this.threeRenderer.setPixelRatio(1);//  window.devicePixelRatio);
+    this.threeRenderer.setPixelRatio(Config.dpr);//  window.devicePixelRatio);
 
     if (Config.gammaFactor) {
       this.threeRenderer.gammaOutput = true;
@@ -44,7 +44,7 @@ export class Renderer {
   }
 
   updateSize() {
-    this.threeRenderer.setSize(Config.container.width, Config.container.height);
+    //this.threeRenderer.setSize(Config.container.width, Config.container.height);
   }
 
   render(scene, camera) {

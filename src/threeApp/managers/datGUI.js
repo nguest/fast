@@ -86,7 +86,7 @@ export class DatGUI {
     /* Meshes */
     const meshFolder = gui.addFolder('Meshes');
     this.meshes
-      .filter((m) => m.userData.type !== 'gate')
+      .filter((m) => m.userData.type !== 'gate' && m.userData.type !== 'decal')
       .forEach((mesh) => {
         meshFolder.add(mesh, 'visible').name(mesh.name || 'No name').onChange((value) => {
           mesh.visible = value;

@@ -25,17 +25,29 @@ export const createMaterial = ({
 }, assets) => {
   let material;
   if (customMaterial) {
-    material = customMaterial({ 
-      map: assets[map.name],
-      normalMap: assets[normalMap.name],
-      shininess: 5,
-    });
-    material.uniforms.map.value.repeat.set(...map.repeat);
-    material.uniforms.map.value.wrapS = THREE.RepeatWrapping;
-    material.uniforms.map.value.wrapT = THREE.RepeatWrapping;
-    material.uniforms.normalMap.value.wrapS = THREE.RepeatWrapping;
-    material.uniforms.normalMap.value.wrapT = THREE.RepeatWrapping;
-    material.name = name;
+    if (typeof customMaterial === 'function') {
+      material = customMaterial({ 
+        map: assets[map.name],
+        normalMap: assets[normalMap.name],
+        shininess: 5,
+      });
+      material.uniforms.map.value.repeat.set(...map.repeat);
+      material.uniforms.map.value.wrapS = THREE.RepeatWrapping;
+      material.uniforms.map.value.wrapT = THREE.RepeatWrapping;
+      material.uniforms.normalMap.value.wrapS = THREE.RepeatWrapping;
+      material.uniforms.normalMap.value.wrapT = THREE.RepeatWrapping;
+      material.name = name;
+    } else {
+      material = customMaterial;
+      material.map = assets[map.name];
+      material.map.wrapT = THREE[map.wrapping] || THREE.RepeatWrapping;
+      material.map.wrapS = THREE[map.wrapping] || THREE.RepeatWrapping;
+      material.map.preMultiplyAlpha = true;
+      if (map.repeat) material.map.repeat.set(...map.repeat);
+      if (map.offset) material.map.repeat.set(...map.offset);
+    }
+
+
 
     // ({
     //   color,
@@ -93,8 +105,7 @@ export const createMaterial = ({
     if (bumpMap.repeat) material.normalMap.repeat.set(...bumpMap.repeat);
     if (bumpMap.offset) material.normalMap.repeat.set(...bumpMap.offset);
     if (bumpMap.bumpScale) material.bumpScale = bumpMap.bumpScale;
-
-   // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
+    // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
   }
   if (lightMap) {
     material.lightMap = assets[lightMap.name];
@@ -102,14 +113,12 @@ export const createMaterial = ({
     material.lightMap.wrapS = THREE[lightMap.wrapping] || THREE.RepeatWrapping;
     if (lightMap.repeat) material.lightMap.repeat.set(...lightMap.repeat);
     if (lightMap.offset) material.lightMap.offset.set(...lightMap.offset);
-    material.lightMapIntensity = 1 || lightMap.intensity;
-    //if (lightMap.bumpScale) material.bumpScale = bumpMap.bumpScale;
-
-   // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
+    material.lightMapIntensity = lightMap.lightMapIntensity || 1;
+    // if (lightMap.bumpScale) material.bumpScale = bumpMap.bumpScale;
+    // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
   }
   if (envMap) {
     material.envMap = assets[envMap.name];
   }
-
   return material;
 };

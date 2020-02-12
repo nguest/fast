@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { trackParams } from './trackParams';
-import { extend } from '../../materials/extend';
+import { extend, patchShader } from '../../materials/extend';
 
 const grassCrossSection1 = new THREE.Shape();
 grassCrossSection1.moveTo(0.1, -trackParams.trackHalfWidth + 0.3);
@@ -27,9 +27,8 @@ export const treesCrossSection = [treesCrossSection1, treesCrossSection2];
 
 const x = new THREE.ShaderMaterial()
 x.extend = extend;
-console.log({ t: THREE.ShaderMaterial })
 
-export const GrassMaterial = (params) => x.extend(THREE.MeshPhongMaterial, {
+export const GrassMaterial1 = (params) => x.extend(THREE.MeshPhongMaterial, {
 
   // Will be prepended to vertex and fragment code
   header: 'varying vec3 vEye;',
@@ -37,15 +36,18 @@ export const GrassMaterial = (params) => x.extend(THREE.MeshPhongMaterial, {
   defines: { USE_UV: 'true' },
   // Insert code lines by hinting at a existing
   vertex: {
-      // Inserts the line after #include <fog_vertex>
-      //'#define USE_MAP true;': '#define USE_UV true;',
-      //'#include <fog_vertex>': 'vEye = normalize(cameraPosition - w.xyz);',
+    // Inserts the line after #include <fog_vertex>
+    //'#define USE_MAP true;': '#define USE_UV true;',
+    //'#include <fog_vertex>': 'vEye = normalize(cameraPosition - w.xyz);',
 
-      // Replaces a line (@ prefix) inside of the project_vertex include
+    // Replaces a line (@ prefix) inside of the project_vertex include
 
-      // 'project_vertex': {
-      //     '@vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );': 'vec4 mvPosition = modelViewMatrix * vec4( transformed * 0.5, 1.0 );'
-      // }
+    project_vertex: {
+        '@mvPosition = modelViewMatrix * mvPosition;':
+        `if (mvPosition.x < 0) discard;
+        mvPosition = modelViewMatrix * mvPosition;;
+        `
+    }
   },
   // fragment: {
   //     '#include <envmap_fragment>': 'diffuseColor.rgb += pow(dot(vNormal, vEye), 3.0);'
@@ -70,8 +72,79 @@ export const GrassMaterial = (params) => x.extend(THREE.MeshPhongMaterial, {
 
 
 console.log({ GrassMaterial })
+const loader = new THREE.TextureLoader();
 
-export class GrassMaterial1 extends THREE.MeshStandardMaterial {
+
+export const GrassMaterial = new THREE.MeshLambertMaterial({
+  //map: loader.load('https://threejs.org/examples/textures/brick_diffuse.jpg'),
+  
+  onBeforeCompile: (shader) => {
+    // Use string.replace or this helper https://github.com/Fyrestar/ShaderMaterialExtend
+
+    patchShader(shader, {
+      
+      header: `
+      uniform sampler2D tDecal;
+      uniform vec4 uDecal;
+      uniform vec4 uDecal2;`,
+
+      vertex: {
+        // Inserts the line after #include <fog_vertex>
+        //'#define USE_MAP true;': '#define USE_UV true;',
+        //'#include <fog_vertex>': 'vEye = normalize(cameraPosition - w.xyz);',
+    
+        // Replaces a line (@ prefix) inside of the project_vertex include
+    
+        project_vertex: {
+            '@gl_Position = projectionMatrix * mvPosition;':
+            `gl_Position = projectionMatrix * mvPosition;
+            if (gl_Position.z > 50.0) gl_Position.w = 0.0/0.0;
+            
+            `
+        },
+
+      },
+      
+//       fragment: {
+//         //'#include <fog_fragment>':
+//         '#include <emissivemap_fragment>':
+
+        
+//         `
+
+//         vec2 offset = 1.0 * uDecal.xy + vUv / uDecal.zw;
+//         vec2 offset2 = 1.0 * uDecal2.xy + vUv / uDecal2.zw;
+//         vec4 c = texture2D(tDecal, offset);
+//         vec4 c2 = texture2D(tDecal, offset2);
+
+
+//         c = mapTexelToLinear( c );
+//         c2 = mapTexelToLinear( c2 );
+//         vec4 decalColor = c + c2;
+//         //if (decalColor.a < 0.9) discard;
+//         //diffuseColor *= mix(diffuseColor, c, c.a);
+//         //diffuseColor *= mix(diffuseColor, decalColor, 0.5);
+//         diffuseColor = decalColor + diffuseColor;
+
+//         //gl_FragColor = mix(gl_FragColor, c, c.a);
+
+// `  
+//       },
+    
+      uniforms: {
+        uDecal: new THREE.Vector4(0, 0, 0.2, 0.8), //(p.u, pv, scale (0.5 is fill uv))
+        uDecal2: new THREE.Vector4(-0.5, -0.5, 0.2, 0.2),
+        tDecal: loader.load('https://threejs.org/examples/textures/sprite0.png')
+        //tDecal: loader.load('./assets/textures/UV_Grid_Sm.png')
+
+      }
+      
+    });
+
+  }
+});
+
+export class GrassMaterial2 extends THREE.MeshStandardMaterial {
   //name = 'GrassMaterial';
 
   onBeforeCompile = (shader) => {

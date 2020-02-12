@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { trackParams } from '../custom/geometries/trackParams';
+import { computeFrenetFrames } from './curveHelpers';
 
 
 export const promisifyLoader = (loader, onProgress) => {
@@ -12,28 +13,6 @@ export const promisifyLoader = (loader, onProgress) => {
     originalLoader: loader,
     load: promiseLoader,
   };
-};
-
-export const klein = (v, u, optionalTarget) => {
-  const result = optionalTarget || new THREE.Vector3();
-
-  u *= Math.PI;
-  v *= 2 * Math.PI;
-
-  u *= 2;
-  let x;
-  let z;
-  if (u < Math.PI) {
-    x = 3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(u) * Math.cos(v);
-    z = -8 * Math.sin(u) - 2 * (1 - Math.cos(u) / 2) * Math.sin(u) * Math.cos(v);
-  } else {
-    x = 3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(v + Math.PI);
-    z = -8 * Math.sin(u);
-  }
-
-  const y = -2 * (1 - Math.cos(u) / 2) * Math.sin(v);
-
-  return result.set(x, y, z);
 };
 
 export const rand = (v) => (v * (Math.random() - 0.5));
@@ -50,24 +29,32 @@ export const throttle = (func, limit) => {
   };
 };
 
-export const getPosRotFromGamePosition = (gamePosition) => {
-  const gamePositions = trackParams.centerLine.getSpacedPoints(trackParams.gateCount);
-  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(trackParams.gateCount);
-  //const quat = new THREE.Quaternion().setFromEuler(new THREE.Euler(...objThree.rotation, 'XYZ'));
+export const getPosQuatFromGamePosition = (gate) => {
+  const gatePositions = trackParams.centerLine.getSpacedPoints(trackParams.gateCount);
+  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.gateCount);
 
-
-  const binormal = binormals[gamePosition].normalize();
-  const axis = new THREE.Vector3();
-  const up = new THREE.Vector3(1, 0, 0);
-  axis.crossVectors(up, binormal).normalize();
-  const radians = Math.acos(up.dot(binormal));
+  const axis = new THREE.Vector3(0, 0, 1);
+  const quat = new THREE.Quaternion().setFromUnitVectors(axis, tangents[gate].clone().normalize());
 
   return {
-    p: gamePositions[gamePosition],
-    r: radians,
+    position: gatePositions[gate],
+    quat,
   };
 };
 
-export const getObjByName = (scene, name) => {
-  return scene.children.find((object) => object.name === name);
+export const getObjByName = (scene, name) => scene.children.find((object) => object.name === name);
+
+export const scaleBackground = (scene) => {
+  const track = getObjByName(scene, 'track');
+  track.geometry.computeBoundingSphere();
+  track.geometry.computeBoundingBox();
+  const { boundingBox, boundingSphere } = track.geometry;
+
+  const skyline = getObjByName(scene, 'skyline');
+  skyline.position.set(boundingSphere.center.x, boundingSphere.center.y, boundingSphere.center.z);
+  skyline.scale.setScalar(boundingSphere.radius * 2);
+
+  const groundPlane = getObjByName(scene, 'groundPlane');
+  groundPlane.position.set(boundingSphere.center.x, boundingBox.min.y - 1, boundingSphere.center.z);
+  groundPlane.scale.setScalar(boundingSphere.radius * 2);
 };

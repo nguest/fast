@@ -9,7 +9,7 @@ export const assetsIndex = {
     Grass_Normal: { name: 'Grass_Normal', path: './assets/textures/grass_normal.jpg' },
     Darkstone_Map: { name: 'Darkstone_Map', path: './assets/textures/darkstone_map.jpg' },
     Road_Map: { name: 'Road_Map', path: './assets/textures/roadhalf_map.png' },
-    Road_Normal: { name: 'Road_Normal', path: './assets/textures/road_normal.jpg' },
+    Road_Normal: { name: 'Road_Normal', path: './assets/textures/road_normal2.png' },
     Metalplate_Map: { name: 'Metalplate_Map', path: './assets/textures/metalplate_map.jpg' },
     Metalplate_Normal: { name: 'Metalplate_Normal', path: './assets/textures/metalplate_normal.jpg' },
     Wheel_Map: { name: 'Wheel_Map', path: './assets/textures/wheel_map.jpg' },
@@ -21,7 +21,7 @@ export const assetsIndex = {
     Concrete_Map: { name: 'Concrete_Map', path: './assets/textures/concrete_map.png' },
     Concrete_Normal: { name: 'Concrete_Normal', path: './assets/textures/concrete_normal.png' },
     Skyline_Map: { name: 'Skyline_Map', path: './assets/textures/skyline_map.png' },
-
+    Perlin: { name: 'Perlin', path: './assets/textures/perlin_map.png' },
   },
   SkyBox: {
     One: { name: 'One', path: './assets/textures/skybox1.png', type: '4x3' },

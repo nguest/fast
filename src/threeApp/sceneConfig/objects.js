@@ -22,20 +22,15 @@ export const objectsIndex = [
   {
     name: 'groundPlane',
     type: 'PlaneBufferGeometry',
-    params: [1000, 1000, 1, 1],
+    params: [1, 1, 1, 1],
     position: [0, -0.1, 0],
     rotation: [-Math.PI * 0.5, 0, 0],
-    material: 'mappedFlat',
-    physics: {
-      mass: 0,
-      friction: 1,
-      restitution: 0.5,
-    },
+    material: 'green',
     shadows: {
-      receive: true,
+      receive: false,
       cast: false,
     },
-    add: false,
+    add: true,
   },
   {
     name: 'track',
@@ -108,6 +103,7 @@ export const objectsIndex = [
         //UVGenerator: trackUVGenerator,
         extrudePath: trackParams.centerLine,
         widthFactor: trackParams.widthFactor,
+        autoCloseShape: true,
       },
     ],
     position: [0, 0, 0],
@@ -210,7 +206,7 @@ export const objectsIndex = [
     params: 'custom',
     customFunction: createVehicle,
     position: [10, 5, 0],
-    rotation: [0, 1.9, 0],
+    //rotation: [0, 1.9, 0],
     scale: [1, 1, 1],
     material: 'wireFrame',//wireFrame',//,//'asphalt',
     physics: {
@@ -270,8 +266,8 @@ export const objectsIndex = [
   {
     name: 'skyline',
     type: 'CylinderBufferGeometry',
-    params: [5000, 5000, 500, 36, 1, true],
-    position: [1285, 0, -2386],
+    params: [1, 1, 0.1, 36, 1, true],
+    position: [0, 0, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
     material: 'skyline',//'skyline',
@@ -283,19 +279,17 @@ export const objectsIndex = [
   },
   {
     name: 'test',
-    type: 'GLTF',
-    url: {
-      path: 'assets/objects/',
-      file: 'wheel.gltf',
-    },
-    position: [0, 0, 0],
-    rotation: [0, 0, 0],
+    type: 'PlaneBufferGeometry',
+    params: [15, 15, 2, 2],
+    position: [0, 1, 0],
+    rotation: [-Math.PI/2, 0, 0],
     scale: [1, 1, 1],
     // physics: {
     //   mass: 0,
     //   friction: 0.8,
     //   restitution: 0.5,
     // },
+    material: 'GrassMaterial',
     shadows: {
       receive: true,
       cast: true,

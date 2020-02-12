@@ -23,6 +23,7 @@
  */
 
 import { Geometry, BufferGeometry, Float32BufferAttribute, Vector2, Vector3, ShapeUtils } from 'three';
+import { computeFrenetFrames, getSpacedPoints } from './curveHelpers';
 
 // ExtrudeGeometry
 
@@ -124,7 +125,7 @@ function ExtrudeBufferGeometry(shapes, options) {
     let position2;
 
     if (extrudePath) {
-      extrudePts = extrudePath.getSpacedPoints(steps);
+      extrudePts = getSpacedPoints(extrudePath, steps);
 
       extrudeByPath = true;
       bevelEnabled = false; // bevels not supported for path extrusion
@@ -133,7 +134,8 @@ function ExtrudeBufferGeometry(shapes, options) {
 
       // TODO1 - have a .isClosed in spline?
 
-      splineTube = extrudePath.computeFrenetFrames(steps, false);
+      //splineTube = extrudePath.computeFrenetFrames(steps, false);
+      splineTube = computeFrenetFrames(extrudePath, steps, false);
 
       // console.log(splineTube, 'splineTube', splineTube.normals.length, 'steps', steps, 'extrudePts', extrudePts.length);
 
@@ -177,7 +179,6 @@ function ExtrudeBufferGeometry(shapes, options) {
         }
       }
     }
-
 
     const faces = ShapeUtils.triangulateShape(vertices, holes);
 
@@ -398,7 +399,7 @@ function ExtrudeBufferGeometry(shapes, options) {
           // get extrusion widthFactor and multiply vert.x
           const w = widthFactor.length ? widthFactor[s].x : widthFactor;
 
-          normal.copy(splineTube.normals[s]).multiplyScalar(vert.x * w);
+          normal.copy(splineTube.normals[s]).multiplyScalar(vert.x); // (vert.x * w) for withh factor
           binormal.copy(splineTube.binormals[s]).multiplyScalar(vert.y);
 
           position2.copy(extrudePts[s]).add(normal).add(binormal);
@@ -413,36 +414,37 @@ function ExtrudeBufferGeometry(shapes, options) {
 
     // Add bevel segments planes
 
-    // for ( b = 1; b <= bevelSegments; b ++ ) {
-    // for (b = bevelSegments - 1; b >= 0; b--) {
-    //   t = b / bevelSegments;
-    //   z = bevelThickness * Math.cos(t * Math.PI / 2);
-    //   bs = bevelSize * Math.sin(t * Math.PI / 2) + bevelOffset;
+  //   for ( b = 1; b <= bevelSegments; b ++ ) {
+  //   for (b = bevelSegments - 1; b >= 0; b--) {
+  //     t = b / bevelSegments;
+  //     z = bevelThickness * Math.cos(t * Math.PI / 2);
+  //     bs = bevelSize * Math.sin(t * Math.PI / 2) + bevelOffset;
 
-    //   // contract shape
+  //     // contract shape
 
-    //   for (i = 0, il = contour.length; i < il; i++) {
-    //     vert = scalePt2(contour[i], contourMovements[i], bs);
-    //     v(vert.x, vert.y, depth + z);
-    //   }
+  //     for (i = 0, il = contour.length; i < il; i++) {
+  //       vert = scalePt2(contour[i], contourMovements[i], bs);
+  //       v(vert.x, vert.y, depth + z);
+  //     }
 
-    //   // expand holes
+  //     // expand holes
 
-    //   for (h = 0, hl = holes.length; h < hl; h++) {
-    //     ahole = holes[h];
-    //     oneHoleMovements = holesMovements[h];
+  //     for (h = 0, hl = holes.length; h < hl; h++) {
+  //       ahole = holes[h];
+  //       oneHoleMovements = holesMovements[h];
 
-    //     for (i = 0, il = ahole.length; i < il; i++) {
-    //       vert = scalePt2(ahole[i], oneHoleMovements[i], bs);
+  //       for (i = 0, il = ahole.length; i < il; i++) {
+  //         vert = scalePt2(ahole[i], oneHoleMovements[i], bs);
 
-    //       if (!extrudeByPath) {
-    //         v(vert.x, vert.y, depth + z);
-    //       } else {
-    //         v(vert.x, vert.y + extrudePts[steps - 1].y, extrudePts[steps - 1].x + z);
-    //       }
-    //     }
-    //   }
-    // }
+  //         if (!extrudeByPath) {
+  //           v(vert.x, vert.y, depth + z);
+  //         } else {
+  //           v(vert.x, vert.y + extrudePts[steps - 1].y, extrudePts[steps - 1].x + z);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
     /* Faces */
 
@@ -516,7 +518,6 @@ function ExtrudeBufferGeometry(shapes, options) {
         // , true
         layeroffset += ahole.length;
       }
-
 
       scope.addGroup(start, verticesArray.length / 3 - start, 1);
     }

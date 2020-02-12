@@ -2,13 +2,10 @@ import { GrassMaterial } from '../custom/geometries/grass';
 
 export const materialsIndex = [
   {
-    name: 'mappedRed',
-    type: 'MeshPhongMaterial',
-    color: 0xff0000,
-    map: {
-      name: 'UVGrid',
-    },
-    side: 'DoubleSide',
+    name: 'green',
+    type: 'MeshLambertMaterial',
+    color: 0x5f753c,
+    side: 'FrontSide',
     wireframe: false,
   },
   {
@@ -17,14 +14,14 @@ export const materialsIndex = [
     color: 0xffffff,
     map: {
       name: 'UVGrid',
-      repeat: [1, 1]
+      repeat: [1, 1],
     },
     side: 'DoubleSide',
     wireframe: false,
     emissive: 0x000022,
-    shininess: 200,
-    opacity: 0.5,
-    transparent: true,
+    shininess: 100,
+    //opacity: 1.0,
+    //transparent: true,
   },
   {
     name: 'wireFrame',
@@ -37,9 +34,9 @@ export const materialsIndex = [
   },
   {
     name: 'road',
-    type: 'MeshStandardMaterial',
+    type: 'MeshPhongMaterial',
     color: 0xffffff,
-    roughness: 0.1,
+    //roughness: 1.0,//.1,
     map: {
       name: 'Road_Map',
       wrapping: 'MirroredRepeatWrapping',
@@ -48,21 +45,21 @@ export const materialsIndex = [
     lightMap: {
       name: 'LightMap_Map',
       repeat: [0.25, 0.25],
-      lightMapIntensity: 1,//0.1,
+      lightMapIntensity: 0.3,//0.1,
       //wrapping: 'MirroredRepeatWrapping',
     },
     normalMap: {
       name: 'Road_Normal',
       wrapping: 'MirroredRepeatWrapping',
-      repeat: [2, 1],
-      normalScale: [0.4, 0.4],
+      //repeat: [2, 1],
+      normalScale: [0.2, 0.2],
     },
     shininess: 20,
     specular: 0x555555,
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,
-    transparent: true,
+   // transparent: true,
   },
   {
     name: 'GrassMaterial',
@@ -79,15 +76,16 @@ export const materialsIndex = [
       repeat: [0.5, 0.5],
       normalScale: [0.2, 0.2],
     },
+
     // lightMap: {
     //   name: 'LightMap_Map',
     //   repeat: [1, 1],
     //   lightMapIntensity: 0.1,
     // },
     // bumpMap: {
-    //   name: 'UVGrid',
+    //   name: 'Perlin',
     //   repeat: [15, 15],
-    //   bumpScale: 2,
+    //   bumpScale: 1,
     // },
     side: 'FrontSide',
     wireframe: false,

@@ -152,7 +152,7 @@ const mapShader = (name, type) => {
 
 };
 
-const patchShader = (shader, object) => {
+export const patchShader = (shader, object) => {
 
   // A shared header ( varyings, uniforms, functions etc )
 

@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 
 import { trackParams } from '../custom/geometries/trackParams';
+import { computeFrenetFrames } from '../helpers/curveHelpers';
 
 export const createGates = (scene) => {
   const gatesCount = trackParams.gateCount;
-  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(gatesCount);
+  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, gatesCount);
   const gatePositions = trackParams.centerLine.getSpacedPoints(gatesCount);
 
   const gateMaterial = new THREE.MeshBasicMaterial({
@@ -31,6 +32,7 @@ export const createGates = (scene) => {
     mesh.name = `gate-${i}`;
     mesh.userData = { gate: i, type: 'gate' };
     gates.push(mesh);
+    //mesh.visible = false;
     scene.add(mesh);
   }
   return gates;

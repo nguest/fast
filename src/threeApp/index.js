@@ -19,7 +19,7 @@ import { Mesh } from './components/Mesh';
 import { createTrees } from './custom/geometries/trees';
 import { Sky } from './components/Sky';
 import { createGates, detectGateCollisions } from './components/Gates';
-import { createTrackDecals } from './custom/geometries/track';
+import { createTrackDecals, createApexes } from './custom/geometries/track';
 import { trackParams } from './custom/geometries/trackParams';
 
 // Helpers
@@ -199,6 +199,7 @@ export class Main extends PureComponent {
     //createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
     console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
 
+    this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
 
     //createSun(this.camera, this.scene);
     // const sunSphere = new THREE.Mesh(
@@ -208,6 +209,7 @@ export class Main extends PureComponent {
     // sunSphere.position.y = - 700000;
     // sunSphere.visible = false;
     // this.scene.add( sunSphere );
+    createApexes(this.scene);
     const helper = new THREE.GridHelper(10, 2, 0xffffff, 0xffffff);
     this.scene.add(helper);
   }
@@ -242,19 +244,11 @@ export class Main extends PureComponent {
       // scale bg objects to track
       scaleBackground(this.scene);
 
-      // clipping Planes
-      // this.clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 20);
-      // this.chassisMesh.add(this.clippingPlane);
-
-      // this.renderer.threeRenderer.clippingPlanes = [this.clippingPlane];
-
-
       if (Config.isDev) this.gui = new DatGUI(this);
 
       this.goal = new THREE.Object3D();
       this.goal.position.set(0, 1.5, -7);
       this.chassisMesh.add(this.goal);
-
 
       this.animate();
     };
@@ -304,22 +298,19 @@ export class Main extends PureComponent {
 
     const { x, y, z } = this.chassisMesh.position;
     // this.temp.setFromMatrixPosition(this.goal.matrixWorld);
-
     // this.followCam.threeCamera.position.lerp(this.temp, 0.1);
 
     this.followCam.threeCamera.lookAt(x, y, z);
 
-    // update instancedMeshes so frustrum culling works correctly https://stackoverflow.com/questions/51025071/instance-geometry-frustum-culling
-    // const instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
-    // instancedMeshes.forEach((mesh) => mesh.geometry.boundingSphere.center.set(x, y, z));
+    // update instancedMeshes so frustrum culling works correctly
+    // https://stackoverflow.com/questions/51025071/instance-geometry-frustum-culling
+    this.instancedMeshes.forEach((mesh) => mesh.geometry.boundingSphere.center.set(x, y, z));
   }
 
   updatePhysics(deltaTime) {
     // Step world
-    this.physicsWorld.stepSimulation(1/60, 1000); // jerky if set to deltaTime??
+    this.physicsWorld.stepSimulation(0.033, 0); // jerky if set to deltaTime??
     // Update rigid bodies
- //   for (let i = 0; i < this.physicsWorld.bodies.length; i++) {
-   //   if (this.physicsWorld.bodies[i].name === 'chassisMesh') {
     this.vehicleState = updateVehicle(
       deltaTime,
       this.physicsWorld.bodies[3],
@@ -366,7 +357,6 @@ export class Main extends PureComponent {
 
   showGamePosition = (gate) => {
     if (gate && this.props.gamePosition.gate !== gate) {
-      console.log({ p: this.chassisMesh.position })
       this.props.setGamePosition({
         gate,
         vehiclePosition: this.chassisMesh.position,

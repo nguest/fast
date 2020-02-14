@@ -15,8 +15,8 @@ export const Config = {
   easing: TWEEN.Easing.Quadratic.InOut,
   duration: 500,
   renderer: {
-    antialias: true,
-    alpha: true,
+    antialias: false, // true has serious framerate implications!
+    alpha: false,
   },
   container: {
     width: window.innerWidth,

@@ -7,7 +7,6 @@ trackCrossSection.moveTo(0, trackParams.trackHalfWidth);
 //trackCrossSection.lineTo(0, 0);
 trackCrossSection.lineTo(0, -trackParams.trackHalfWidth);
 
-
 export const trackUVGenerator = {
   generateTopUV(geometry, vertices, indexA, indexB, indexC) {
     const aX = vertices[indexA * 3];
@@ -58,11 +57,13 @@ export const trackUVGenerator = {
     ];
   },
 };
-
+// 
 export const createTrackDecals = (trackMesh, scene, material) => {
   const pointsCount = 2000;
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
   const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(pointsCount);
+
+  console.log({ tangents })
 
   material.polygonOffset = true;
   material.polygonOffsetFactor = -1;
@@ -82,4 +83,42 @@ export const createTrackDecals = (trackMesh, scene, material) => {
     decalMesh.userData.type = 'decal';
     scene.add(decalMesh);
   }
+};
+
+export const createApexes = (scene) => {
+  const pointsCount = 500;
+  const { tangents } = trackParams.centerLine.computeFrenetFrames(pointsCount);
+  const points = trackParams.centerLine.getSpacedPoints(pointsCount);
+
+  const angles = tangents.map((t, i, arr) => {
+    if (arr[i - 1] && arr[i + 1]) {
+      return 0.5 * arr[i - 1].angleTo(arr[i + 1]);
+    }
+    return 0;
+  });
+  console.log({ angles, points })
+
+  const apexIndices = angles.reduce((agg, theta, i) => {
+    if (
+      angles[i - 1]
+      && angles[i + 1]
+      && (theta > 0.2)
+      && angles[i - 1] < theta
+      && angles[i + 1] < theta
+    ) {
+      return [...agg, i];
+    }
+    return agg;
+  }, []);
+
+
+  const apexPoints = apexIndices.map((i) => points[i]);
+  const geometry = new THREE.BoxBufferGeometry(20, 20, 20);
+  const material = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+  console.log({ apexPoints })
+  apexPoints.forEach((p) => {
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(p.x, p.y, p.z);
+    scene.add(mesh);
+  });
 };

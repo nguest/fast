@@ -39,6 +39,8 @@ export class Camera {
   updateSize() {
     //this.threeCamera.aspect = window.innerWidth / window.innerHeight;
     //this.renderer.setSize(window.innerWidth, window.innerHeight);
+    // this.renderer.setPixelRatio();
+    // 2560 1440
     this.renderer.setSize(1920 * 0.5, 1080 * 0.5);
     this.threeCamera.aspect = 1920 / 1080;
 

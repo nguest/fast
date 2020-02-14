@@ -16,7 +16,6 @@ export const createTrees = ({ scene }) => {
 const createTestTree = () => {
   const geometry = new THREE.SphereGeometry(3, 16, 8);
   geometry.scale(0.7, 1, 0.7);
-  console.log({ geometry })
   const material = new THREE.MeshPhongMaterial({
     color: new THREE.Color(0x226622),
     flatShading: true,
@@ -127,7 +126,6 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
     this.overrideLogic(shader);
   }
 
-
   insertAttributesAndFunctions = (shader) => {
     shader.vertexShader = shader.vertexShader
       .replace(
@@ -158,6 +156,8 @@ const OVERRIDE_PROJECT_VERTEX = `
 
   vec4 mvPosition = modelViewMatrix * vec4(getInstancePosition(transformed), 1.0);
   gl_Position = projectionMatrix * mvPosition;
+  if (gl_Position.z > 100.0) gl_Position.w = 0.0/0.0;
+
 `;
 
 

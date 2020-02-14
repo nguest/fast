@@ -17,6 +17,23 @@ export const promisifyLoader = (loader, onProgress) => {
 
 export const rand = (v) => (v * (Math.random() - 0.5));
 
+// https://github.com/mattdesl/three-quaternion-from-normal
+export const getQuatFromNormal = (normal, quat) => {
+  const quaternion = quat || new THREE.Quaternion();
+  const axis = new THREE.Vector3();
+  // vector is assumed to be normalized
+  if (normal.y > 0.99999) {
+    quaternion.set(0, 0, 0, 1);
+  } else if (normal.y < -0.99999) {
+    quaternion.set(1, 0, 0, 0);
+  } else {
+    axis.set(normal.z, 0, -normal.x).normalize();
+    const radians = Math.acos(normal.y);
+    quaternion.setFromAxisAngle(axis, radians);
+  }
+  return quaternion;
+};
+
 export const throttle = (func, limit) => {
   let inThrottle;
   return (...args) => {
@@ -31,7 +48,7 @@ export const throttle = (func, limit) => {
 
 export const getPosQuatFromGamePosition = (gate) => {
   const gatePositions = trackParams.centerLine.getSpacedPoints(trackParams.gateCount);
-  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.gateCount);
+  const { tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.gateCount);
 
   const axis = new THREE.Vector3(0, 0, 1);
   const quat = new THREE.Quaternion().setFromUnitVectors(axis, tangents[gate].clone().normalize());

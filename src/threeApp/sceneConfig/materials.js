@@ -63,7 +63,7 @@ export const materialsIndex = [
   },
   {
     name: 'GrassMaterial',
-    type: 'MeshPhongMaterial',
+    type: 'MeshLambertMaterial',
     color: 0xffffff,
     customMaterial: GrassMaterial,
     map: {
@@ -71,11 +71,11 @@ export const materialsIndex = [
       repeat: [1, 1],
       wrapping: 'MirroredRepeatWrapping',
     },
-    normalMap: {
-      name: 'Grass_Normal',
-      repeat: [0.5, 0.5],
-      normalScale: [0.2, 0.2],
-    },
+    // normalMap: {
+    //   name: 'Grass_Normal',
+    //   repeat: [0.5, 0.5],
+    //   normalScale: [0.2, 0.2],
+    // },
 
     // lightMap: {
     //   name: 'LightMap_Map',
@@ -194,20 +194,20 @@ export const materialsIndex = [
   },
   {
     name: 'guardRails',
-    type: 'MeshStandardMaterial',
-    color: 0xbbbbbb,
-    map: {
-      name: 'Metalplate_Map',
-      wrapping: 'RepeatWrapping',
-      repeat: [10, 3],
-    },
+    type: 'MeshPhongMaterial',
+    color: 0x888888,
+    // map: {
+    //   name: 'Metalplate_Map',
+    //   wrapping: 'RepeatWrapping',
+    //   repeat: [10, 3],
+    // },
     normalMap: {
       name: 'GuardRails_Normal',
       wrapping: 'RepeatWrapping',
       repeat: [10, 3],
     },
-    metalness: 0.5,
-    shininess: 40,
+    //metalness: 1.0,
+    shininess: 100,
     specular: 0xaaaaaa,
     side: 'DoubleSide',
     wireframe: false,

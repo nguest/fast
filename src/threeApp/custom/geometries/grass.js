@@ -76,35 +76,30 @@ const loader = new THREE.TextureLoader();
 
 
 export const GrassMaterial = new THREE.MeshLambertMaterial({
-  //map: loader.load('https://threejs.org/examples/textures/brick_diffuse.jpg'),
-  
   onBeforeCompile: (shader) => {
     // Use string.replace or this helper https://github.com/Fyrestar/ShaderMaterialExtend
 
     patchShader(shader, {
-      
       header: `
       uniform sampler2D tDecal;
       uniform vec4 uDecal;
-      uniform vec4 uDecal2;`,
+      uniform vec4 uDecal2;
+      uniform float clipDistance;`,
 
       vertex: {
         // Inserts the line after #include <fog_vertex>
-        //'#define USE_MAP true;': '#define USE_UV true;',
-        //'#include <fog_vertex>': 'vEye = normalize(cameraPosition - w.xyz);',
-    
+        // '#define USE_MAP true;': '#define USE_UV true;',
+        // '#include <fog_vertex>': 'vEye = normalize(cameraPosition - w.xyz);',
         // Replaces a line (@ prefix) inside of the project_vertex include
-    
         project_vertex: {
-            '@gl_Position = projectionMatrix * mvPosition;':
-            `gl_Position = projectionMatrix * mvPosition;
-            if (gl_Position.z > 50.0) gl_Position.w = 0.0/0.0;
-            
-            `
+          '@gl_Position = projectionMatrix * mvPosition;':
+          `
+          gl_Position = projectionMatrix * mvPosition;
+          if (gl_Position.z > clipDistance) gl_Position.w = 0.0/0.0;
+          `,
         },
-
       },
-      
+
 //       fragment: {
 //         //'#include <fog_fragment>':
 //         '#include <emissivemap_fragment>':
@@ -128,20 +123,19 @@ export const GrassMaterial = new THREE.MeshLambertMaterial({
 
 //         //gl_FragColor = mix(gl_FragColor, c, c.a);
 
-// `  
-//       },
-    
+// `
+//    },
+
       uniforms: {
         uDecal: new THREE.Vector4(0, 0, 0.2, 0.8), //(p.u, pv, scale (0.5 is fill uv))
         uDecal2: new THREE.Vector4(-0.5, -0.5, 0.2, 0.2),
-        tDecal: loader.load('https://threejs.org/examples/textures/sprite0.png')
-        //tDecal: loader.load('./assets/textures/UV_Grid_Sm.png')
-
-      }
+        tDecal: loader.load('https://threejs.org/examples/textures/sprite0.png'),
+        clipDistance: 50.0,
+        // tDecal: loader.load('./assets/textures/UV_Grid_Sm.png')
+      },
       
     });
-
-  }
+  },
 });
 
 export class GrassMaterial2 extends THREE.MeshStandardMaterial {

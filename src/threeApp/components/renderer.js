@@ -9,8 +9,14 @@ export class Renderer {
     this.scene = scene;
     this.container = container;
 
+    
     // Create WebGL renderer and set its antialias
     this.threeRenderer = new THREE.WebGLRenderer(Config.renderer);
+
+    // WEBGL2?
+    // const canvas = document.createElement( 'canvas' );
+    // const context = canvas.getContext( 'webgl2', { alpha: false } );
+    // this.threeRenderer = new THREE.WebGLRenderer({ canvas, context });
 
     // Set clear color to fog to enable fog or to hex color for no fog
     this.threeRenderer.setClearColor(scene.fog.color);

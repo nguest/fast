@@ -25,7 +25,7 @@ treesCrossSection2.lineTo(-8, trackParams.trackHalfWidth + 10);
 
 export const treesCrossSection = [treesCrossSection1, treesCrossSection2];
 
-const x = new THREE.ShaderMaterial()
+const x = new THREE.ShaderMaterial();
 x.extend = extend;
 
 export const GrassMaterial1 = (params) => x.extend(THREE.MeshPhongMaterial, {

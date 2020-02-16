@@ -85,7 +85,7 @@ export class Main extends PureComponent {
       this.showStatus(`Loading file: ${itemsLoaded} of ${itemsTotal} files.`);
     };
     this.vehicleState = { vehicleSteering: 0 };
-    this.sky = new Sky(this.scene);
+    //this.sky = new Sky(this.scene);
     this.gates = createGates(this.scene);
 
     // this.skyBox = new SkyBox(this.scene);
@@ -195,7 +195,7 @@ export class Main extends PureComponent {
       }
       return new Mesh(params).getMesh();
     });
-    createTrees({ scene: this.scene });
+    createTrees({ scene: this.scene, camera: this.camera });
     //createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
     console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
 
@@ -300,7 +300,7 @@ export class Main extends PureComponent {
     // this.temp.setFromMatrixPosition(this.goal.matrixWorld);
     // this.followCam.threeCamera.position.lerp(this.temp, 0.1);
 
-    this.followCam.threeCamera.lookAt(x, y, z);
+    this.followCam.threeCamera.lookAt(x, y + 0.5, z);
 
     // update instancedMeshes so frustrum culling works correctly
     // https://stackoverflow.com/questions/51025071/instance-geometry-frustum-culling

@@ -271,40 +271,40 @@ ExtrudeBufferGeometry.prototype.constructor = ExtrudeBufferGeometry;
 const WorldUVGenerator = {
 
   generateTopUV(geometry, vertices, indexA, indexB, indexC) {
-    const a_x = vertices[indexA * 3];
-    const a_y = vertices[indexA * 3 + 1];
-    const b_x = vertices[indexB * 3];
-    const b_y = vertices[indexB * 3 + 1];
-    const c_x = vertices[indexC * 3];
-    const c_y = vertices[indexC * 3 + 1];
+    const ax = vertices[indexA * 3];
+    const ay = vertices[indexA * 3 + 1];
+    const bx = vertices[indexB * 3];
+    const by = vertices[indexB * 3 + 1];
+    const cx = vertices[indexC * 3];
+    const cy = vertices[indexC * 3 + 1];
 
     return [
-      new Vector2(a_x, a_y),
-      new Vector2(b_x, b_y),
-      new Vector2(c_x, c_y),
+      new Vector2(ax, ay),
+      new Vector2(bx, by),
+      new Vector2(cx, cy),
     ];
   },
 
   generateSideWallUV(geometry, vertices, indexA, indexB, indexC, indexD) {
-    const a_x = vertices[indexA * 3];
-    const a_y = vertices[indexA * 3 + 1];
-    const a_z = vertices[indexA * 3 + 2];
-    const b_x = vertices[indexB * 3];
-    const b_y = vertices[indexB * 3 + 1];
-    const b_z = vertices[indexB * 3 + 2];
-    const c_x = vertices[indexC * 3];
-    const c_y = vertices[indexC * 3 + 1];
-    const c_z = vertices[indexC * 3 + 2];
-    const d_x = vertices[indexD * 3];
-    const d_y = vertices[indexD * 3 + 1];
-    const d_z = vertices[indexD * 3 + 2];
+    const ax = vertices[indexA * 3];
+    const ay = vertices[indexA * 3 + 1];
+    const az = vertices[indexA * 3 + 2];
+    const bx = vertices[indexB * 3];
+    const by = vertices[indexB * 3 + 1];
+    const bz = vertices[indexB * 3 + 2];
+    const cx = vertices[indexC * 3];
+    const cy = vertices[indexC * 3 + 1];
+    const cz = vertices[indexC * 3 + 2];
+    const dx = vertices[indexD * 3];
+    const dy = vertices[indexD * 3 + 1];
+    const dz = vertices[indexD * 3 + 2];
 
-    //if (Math.abs(a_y - b_y) < 0.01) {
+    // if (Math.abs(a_y - b_y) < 0.01) {
     return [
-      new Vector2(a_x, 1 - a_z).multiplyScalar(0.2),
-      new Vector2(b_x, 1 - b_z).multiplyScalar(0.2),
-      new Vector2(c_x, 1 - c_z).multiplyScalar(0.2),
-      new Vector2(d_x, 1 - d_z).multiplyScalar(0.2),
+      new Vector2(ax, 1 - az).multiplyScalar(0.2),
+      new Vector2(bx, 1 - bz).multiplyScalar(0.2),
+      new Vector2(cx, 1 - cz).multiplyScalar(0.2),
+      new Vector2(dx, 1 - dz).multiplyScalar(0.2),
     ];
     //}
 

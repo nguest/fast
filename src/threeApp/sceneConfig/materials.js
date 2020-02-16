@@ -196,11 +196,11 @@ export const materialsIndex = [
     name: 'guardRails',
     type: 'MeshPhongMaterial',
     color: 0x888888,
-    // map: {
-    //   name: 'Metalplate_Map',
-    //   wrapping: 'RepeatWrapping',
-    //   repeat: [10, 3],
-    // },
+    map: {
+      name: 'GuardRails_Map',
+      wrapping: 'RepeatWrapping',
+      repeat: [10, 3],
+    },
     normalMap: {
       name: 'GuardRails_Normal',
       wrapping: 'RepeatWrapping',

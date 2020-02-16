@@ -4,6 +4,7 @@ export const createMaterial = ({
   bumpMap,
   color,
   customMaterial,
+  dithering,
   emissive = 0x000000,
   envMap,
   flatShading = false,
@@ -73,6 +74,7 @@ export const createMaterial = ({
     side: THREE[side],
     wireframe,
     opacity,
+    dithering: true,
   });
 
   material.shininess = material.shininess !== undefined ? shininess : material.shininess;

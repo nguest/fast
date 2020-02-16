@@ -200,7 +200,7 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
     setBrakeLights(brakeLights, false);
   }
 
-  let sasi = steeringIncrement;// / speed; // speed adjusted steering
+  let sasi = speed > 20 ? steeringIncrement : steeringIncrement * 3;// / speed; // speed adjusted steering
 
   if (interaction.keyboard.pressed('A')) {
     if (vehicleSteering < steeringClamp) vehicleSteering += sasi;

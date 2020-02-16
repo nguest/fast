@@ -15,7 +15,7 @@ export const Config = {
   easing: TWEEN.Easing.Quadratic.InOut,
   duration: 500,
   renderer: {
-    antialias: false, // true has serious framerate implications!
+    antialias: false, // 'true' has serious framerate implications!
     alpha: false,
   },
   container: {
@@ -45,11 +45,11 @@ export const Config = {
     lookAt: [0, 0, 0],
   },
   followCam: {
-    fov: 45,
+    fov: 55,
     near: 2,
     far: 20000,
     aspect: 1,
-    position: [0, 1.5, -7],
+    position: [0, 1.35, -4.5],
     ß: 30,
     clipDistance: 20,
   },

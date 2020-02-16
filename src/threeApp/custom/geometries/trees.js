@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { BufferGeometryUtils } from '../../helpers/BufferGeometryUtils';
 import { getTreeline } from './treeline';
+import { computeFrenetFrames } from '../../helpers/curveHelpers';
 
 
-export const createTrees = ({ scene }) => {
+export const createTrees = ({ scene, camera }) => {
   const { treeCurveLeft, treeCurveRight } = getTreeline();
-  const mesh1 = createInstancedMesh({ curve: treeCurveLeft, count: 5000 });
-  const mesh2 = createInstancedMesh({ curve: treeCurveRight, count: 5000 });
+  const mesh1 = createInstancedMesh({ curve: treeCurveLeft, count: 5000, camera });
+  const mesh2 = createInstancedMesh({ curve: treeCurveRight, count: 5000, camera });
   scene.add(mesh1);
   scene.add(mesh2);
   // const testMesh = createTestTree();
@@ -25,10 +26,10 @@ const createTestTree = () => {
   return mesh;
 }
 
-const createInstancedMesh = ({ curve, count }) => {
+const createInstancedMesh = ({ curve, count, camera }) => {
   const treeHeight = 7;
   const treePlane = new THREE.PlaneBufferGeometry(7, treeHeight, 1, 1);
-  treePlane.name = 'treePlane'
+  treePlane.name = 'treePlane';
 
   const plane1 = treePlane.clone();
   const plane2 = treePlane.clone().rotateY(2 * Math.PI / 3);
@@ -41,24 +42,24 @@ const createInstancedMesh = ({ curve, count }) => {
   // treeGeo.merge(plane3);
   // console.log({ 3: treeGeo })
 
-  const treeGeo1 = new THREE.InstancedBufferGeometry().copy(treeGeo);
+  const treeGeo1 = new THREE.InstancedBufferGeometry().copy(treePlane);
 
   const positions = curve.getSpacedPoints(count);
-  const { binormals, normals, tangents } = curve.computeFrenetFrames(count);
+  const { binormals, normals, tangents } = computeFrenetFrames(curve, count);
 
   const instanceOffset = [];
   const instanceScale = [];
   const instanceQuaternion = [];
-  const quaternion = new THREE.Quaternion();
+  //const quaternion = new THREE.Quaternion();
   const up = new THREE.Vector3(1, 0, 0);
 
   for (let i = 0; i < count; i++) {
-    quaternion.setFromUnitVectors(
-      up,
-      //new THREE.Vector3(binormals[i].x, 0, binormals[i].z);
-      new THREE.Vector3(Math.random() * Math.PI, 0, Math.random() * Math.PI)
-    );
-    quaternion.normalize();
+    // quaternion.setFromUnitVectors(
+    //   up,
+    //   //new THREE.Vector3(binormals[i].x, 0, binormals[i].z);
+    //   new THREE.Vector3(Math.random() * Math.PI, 0, Math.random() * Math.PI)
+    // );
+    // quaternion.normalize();
 
     const scale = Math.random() * 0.5 + 0.75;
 
@@ -67,6 +68,7 @@ const createInstancedMesh = ({ curve, count }) => {
       positions[i].y + scale * treeHeight * 0.5,
       positions[i].z,
     );
+    let quaternion = camera.threeCamera.quaternion;
     instanceQuaternion.push(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     instanceScale.push(
       scale, //Math.random() > 0.4 ? scale : -scale,
@@ -93,9 +95,13 @@ const createInstancedMesh = ({ curve, count }) => {
     normalMap,
     normalScale: new THREE.Vector2(0.5, 0.5),
     depthFunc: THREE.LessDepth,
+    color: 0x444444,
+    extensions: {
+      derivatives: true,
+    },
   });
   material1.needsUpdate = true;
-
+  material1.uniformsNeedUpdate = true;
 
   const mesh1 = new THREE.Mesh(treeGeo1, material1);
 
@@ -132,10 +138,12 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
         'void main() {',
         `
         attribute vec3 ${INSTANCE_POSITION};
+        attribute vec3 instanceScale;
         
-        vec3 getInstancePosition(vec3 position) {
-          position += ${INSTANCE_POSITION};
-          position *= 1.0;
+        // scale shadows' scale and position, but no rotating towards camera because that looks mental
+        vec3 getBillboardInstancePosition(vec3 position) {
+          position += ${INSTANCE_POSITION}; 
+          position *= instanceScale;
           return position;
         }
         
@@ -152,16 +160,16 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
 
 
 const OVERRIDE_PROJECT_VERTEX = `
-  //vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
+  //!! vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
 
-  vec4 mvPosition = modelViewMatrix * vec4(getInstancePosition(transformed), 1.0);
+  vec4 mvPosition = modelViewMatrix * vec4(getBillboardInstancePosition(transformed), 1.0);
   gl_Position = projectionMatrix * mvPosition;
-  if (gl_Position.z > 100.0) gl_Position.w = 0.0/0.0;
 
+  if (gl_Position.z > 100.0) gl_Position.w = 0.0/0.0;
 `;
 
 
-export class InstancesStandardMaterial extends THREE.MeshBasicMaterial {
+export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
   name = 'InstancesStandardMaterial';
 
   onBeforeCompile = (shader) => {
@@ -178,13 +186,25 @@ export class InstancesStandardMaterial extends THREE.MeshBasicMaterial {
         attribute vec4 instanceQuaternion;
         attribute vec3 instanceScale;
         
-        vec3 getInstancePosition(vec3 position) {
-          position *= instanceScale;
-          vec3 vcV = cross( instanceQuaternion.xyz, position );
-          position = vcV * ( 2.0 * instanceQuaternion.w ) + ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
-          position += ${INSTANCE_POSITION};
+        // vec3 getInstancePosition(vec3 position) {
+        //   position *= instanceScale;
+        //   vec4 instanceQuaternion = vec4(0, 0, 0, 1);
+        //   vec3 vcV = cross( instanceQuaternion.xyz, position );
+        //   position = vcV * ( 2.0 * instanceQuaternion.w ) + ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
+        //   position += ${INSTANCE_POSITION};
 
-          return position;
+        //   return position;
+        // }
+
+        // rotate to face camera in on y-axis for billboarding
+        vec3 getBillboardInstancePosition(vec3 position) {
+          vec3 look = cameraPosition - instanceOffset;
+          look.y = 0.0;
+          look = normalize(look);
+          vec3 billboardUp = vec3(0, 1, 0);
+          vec3 billboardRight = cross(billboardUp, look);
+          vec3 pos = instanceOffset + billboardRight * position.x * instanceScale.x + billboardUp * position.y * instanceScale.y;
+          return pos;
         }
         
         void main() {

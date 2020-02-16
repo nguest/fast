@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { trackParams } from './trackParams';
 import { DecalGeometry } from '../../helpers/DecalGeometry';
+import { computeFrenetFrames } from '../../helpers/curveHelpers';
 
 export const trackCrossSection = new THREE.Shape();
 trackCrossSection.moveTo(0, trackParams.trackHalfWidth);
@@ -61,7 +62,7 @@ export const trackUVGenerator = {
 export const createTrackDecals = (trackMesh, scene, material) => {
   const pointsCount = 2000;
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
-  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(pointsCount);
+  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
 
   console.log({ tangents })
 
@@ -86,8 +87,9 @@ export const createTrackDecals = (trackMesh, scene, material) => {
 };
 
 export const createApexes = (scene) => {
+  const threshold = 0.12;
   const pointsCount = 500;
-  const { tangents } = trackParams.centerLine.computeFrenetFrames(pointsCount);
+  const { binormals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
   const points = trackParams.centerLine.getSpacedPoints(pointsCount);
 
   const angles = tangents.map((t, i, arr) => {
@@ -98,27 +100,42 @@ export const createApexes = (scene) => {
   });
   console.log({ angles, points })
 
-  const apexIndices = angles.reduce((agg, theta, i) => {
+  const apexes = angles.reduce((agg, theta, i) => {
     if (
       angles[i - 1]
       && angles[i + 1]
-      && (theta > 0.2)
+      && (theta > threshold)
       && angles[i - 1] < theta
       && angles[i + 1] < theta
     ) {
-      return [...agg, i];
+      const signedArea = signedTriangleArea(points[i - 1], points[i], points[i + 1]);
+      const dir = Math.sign(signedArea);
+
+      return [
+        ...agg,
+        { i, p: points[i], dir },
+      ];
     }
     return agg;
   }, []);
 
 
-  const apexPoints = apexIndices.map((i) => points[i]);
-  const geometry = new THREE.BoxBufferGeometry(20, 20, 20);
-  const material = new THREE.MeshPhongMaterial({ color: 0x0000ff });
-  console.log({ apexPoints })
-  apexPoints.forEach((p) => {
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(p.x, p.y, p.z);
-    scene.add(mesh);
+  //const apexPoints = apexIndices.map((i) => points[i]);
+  const spriteMap = new THREE.TextureLoader().load( './assets/textures/UV_Grid_Sm.png' );
+  const spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff } );
+  //var sprite = new THREE.Sprite( spriteMaterial );
+  console.log({ apexes })
+  apexes.forEach((apex, i) => {
+    //const mesh = new THREE.Mesh(geometry, material);
+    const sprite = new THREE.Sprite( spriteMaterial );
+
+    const apexMarkerPosn = apex.p.clone().sub(binormals[apex.i].clone().multiplyScalar(5 * apex.dir))
+    sprite.position.set(apexMarkerPosn.x, apexMarkerPosn.y + 1, apexMarkerPosn.z);
+
+    scene.add(sprite);
   });
+};
+
+const signedTriangleArea = (a, b, c) => {
+  return a.x * b.z - a.z * b.x + a.z * c.x - a.x * c.z + b.x *c.z - c.x * b.z;
 };

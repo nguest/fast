@@ -206,7 +206,6 @@ export const objectsIndex = [
     params: 'custom',
     customFunction: createVehicle,
     position: [10, 5, 0],
-    //rotation: [0, 1.9, 0],
     scale: [1, 1, 1],
     material: 'wireFrame',//wireFrame',//,//'asphalt',
     physics: {
@@ -242,27 +241,6 @@ export const objectsIndex = [
   //   },
   //   add: true,
   // },
-  // {
-  //   name: 'concaveExample1',
-  //   type: 'Geometry',
-  //   params: 'custom',
-  //   position: [0, 1, 0],
-  //   rotation: [0, 0, 0],
-  //   material: 'redMapped',//'wireFrame',//'redMapped',
-  //   physics: {
-  //     mass: 0,
-  //     friction: 0.8,
-  //     restitution: 0.5,
-  //   },
-  //   shadows: {
-  //     receive: true,
-  //     cast: true,
-  //   },
-  //   calculateVertices,
-  //   calculateFaces,
-  //   calculateUVs: planeUnwrapUVs,
-  //   add: false,
-  // },
   {
     name: 'skyline',
     type: 'CylinderBufferGeometry',
@@ -270,7 +248,7 @@ export const objectsIndex = [
     position: [0, 0, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'skyline',//'skyline',
+    material: 'skyline',
     shadows: {
       receive: false,
       cast: false,
@@ -282,7 +260,7 @@ export const objectsIndex = [
     type: 'PlaneBufferGeometry',
     params: [15, 15, 2, 2],
     position: [0, 1, 0],
-    rotation: [-Math.PI/2, 0, 0],
+    rotation: [-Math.PI / 2, 0, 0],
     scale: [1, 1, 1],
     // physics: {
     //   mass: 0,

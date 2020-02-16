@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Children } from 'react';
 
 export const decorateCar = (car, brakelights, envCube) => {
   let brakeLights;
@@ -18,7 +19,7 @@ export const decorateCar = (car, brakelights, envCube) => {
         child.material.clearcoat = 1.0,
         child.material.clearcoatRoughness = 0.2;
         child.material.roughness = 0.5;
-        child.material.metalness = 0.9;
+        child.material.metalness = 0.4;
         child.material.specular = 0xffffff;
         child.castShadow = true;
         child.receiveShadow = true;

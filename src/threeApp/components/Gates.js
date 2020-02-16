@@ -12,6 +12,7 @@ export const createGates = (scene) => {
     color: new THREE.Color(0xff0000),
     side: THREE.DoubleSide,
     wireframe: true,
+    visible: false,
   });
 
   const axis = new THREE.Vector3();

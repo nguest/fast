@@ -1,5 +1,5 @@
 import * as dat from 'dat.gui';
-
+import * as THREE from 'three';
 import { Config } from '../sceneConfig/general';
 
 // Manages all dat.GUI interactions
@@ -18,6 +18,14 @@ export class DatGUI {
     gui.useLocalStorage = true;
     gui.remember(Config);
 
+    gui.add(Config, 'useBasicMaterials').name('useBasicMaterials').onChange((value) => {
+      Config.useBasicMaterials = value;
+      this.meshes.forEach((mesh) => {
+        if (mesh.material) {
+          mesh.material = new THREE.MeshLambertMaterial({ color: 0x990000 })
+        }
+      })
+    });
     /* Camera */
     const cameraFolder = gui.addFolder('Camera');
     cameraFolder.open();

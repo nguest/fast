@@ -32,13 +32,25 @@ export const ThreeContainer = ({ setStatus, gamePosition, setGamePosition }) => 
           css={styles.button}
           onClick={() => threeRootElement.current.resetObjects(gamePosition.gate > 0 ? gamePosition.gate - 1 : gamePosition.gate)}
         >
-            &lt;
+          &lt;
         </button>
         <button
           css={styles.button}
           onClick={() => threeRootElement.current.resetObjects(gamePosition.gate < 500 ? gamePosition.gate + 1 : gamePosition.gate)}
         >
-            &gt;
+          &gt;
+        </button>
+        <button
+          css={styles.button}
+          onClick={() => threeRootElement.current.resetObjects(gamePosition.gate > 0 ? gamePosition.gate - 10 : gamePosition.gate)}
+        >
+            &lt; 10
+        </button>
+        <button
+          css={styles.button}
+          onClick={() => threeRootElement.current.resetObjects(gamePosition.gate < 500 ? gamePosition.gate + 10 : gamePosition.gate)}
+        >
+            &gt; 10
         </button>
       </section>
       {

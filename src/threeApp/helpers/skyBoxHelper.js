@@ -60,7 +60,7 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, imageFile, til
   skyBoxMaterialArray.minFilter = THREE.LinearFilter;
 
   const material = new THREE.MeshBasicMaterial({
-    color: 0xddddbb,
+    color: 0xaaaabb,
     envMap: skyBoxMaterialArray,
     side: THREE.BackSide,
     fog: false,

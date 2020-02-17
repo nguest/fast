@@ -21,11 +21,11 @@ export const createTrees = ({ scene }) => {
   treePlane.translate(0, treeHeight * 0.5, 0);
   treePlane.name = 'treePlane';
   const loader = new THREE.TextureLoader();
-  const map1 = loader.load('./assets/textures/tree_map_2.png');
+  const map = loader.load('./assets/textures/tree_map_2.png');
   const normalMap = loader.load('./assets/textures/tree_block_normal2.png');
 
   const material = new InstancesStandardMaterial({
-    map: map1,
+    map,
     side: THREE.DoubleSide,
     normalMap,
     normalScale: new THREE.Vector2(0.5, 0.5),
@@ -38,7 +38,7 @@ export const createTrees = ({ scene }) => {
 
   const depthMaterial = new InstancesDepthMaterial({
     depthPacking: THREE.RGBADepthPacking,
-    map: map1,
+    map,
     alphaTest: 0.5,
   });
 
@@ -157,7 +157,7 @@ const OVERRIDE_PROJECT_VERTEX = `
   vec4 mvPosition = modelViewMatrix * vec4(getBillboardInstancePosition(transformed), 1.0);
   gl_Position = projectionMatrix * mvPosition;
 
-  if (gl_Position.z > 100.0) gl_Position.w = 0.0/0.0;
+  if (gl_Position.z > 200.0) gl_Position.w = 0.0/0.0;
 `;
 
 

@@ -91,7 +91,7 @@ export const GrassMaterial = new THREE.MeshLambertMaterial({
         uDecal: new THREE.Vector4(0, 0, 0.2, 0.8), //(p.u, pv, scale (0.5 is fill uv))
         uDecal2: new THREE.Vector4(-0.5, -0.5, 0.2, 0.2),
         tDecal: loader.load('https://threejs.org/examples/textures/sprite0.png'),
-        clipDistance: 100.0,
+        clipDistance: 200.0,
         // tDecal: loader.load('./assets/textures/UV_Grid_Sm.png')
       },
       header: `

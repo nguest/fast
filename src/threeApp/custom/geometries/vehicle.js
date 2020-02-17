@@ -88,9 +88,9 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
   // const rollInfluence = 0.2;
 
   const friction = 100;
-  const suspensionStiffness = 50.0;
+  const suspensionStiffness = 40.0;
   const suspensionDamping = 2.3;
-  const suspensionCompression = 4;// 1.4;
+  const suspensionCompression = 1;// 1.4;
   const suspensionRestLength = 0.5;
   const rollInfluence = 0.05; // 0 no roll
 

@@ -57,10 +57,9 @@ export const styles = {
     color: 'white',
   },
   resetButton: {
-    //padding: 10,
   },
   loadingScreen: {
-    background: 'darkgrey',
+    background: 'rgba(0,0,0,0.5)',
     display: 'flex',
     position: 'fixed',
     width: '100vw',

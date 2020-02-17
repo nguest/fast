@@ -146,9 +146,12 @@ export class Mesh {
     }
     this.mesh = new THREE.Mesh(geometry, loadedMaterial || this.material);
 
-    this.mesh.material.vertexColors = THREE.VertexColors;
+   
 
-    //this.mesh.geometry.attributes
+    if (false === true) {
+      this.mesh.material.vertexColors = THREE.VertexColors;
+       //this.mesh.geometry.attributes
+    console.log({ rrr: this.mesh })
     const vCount = this.mesh.geometry.attributes.position.count;
     //const colors = new Array(vCount * 3).fill('').map(c => Math.random());
     let colors = [];
@@ -170,6 +173,8 @@ export class Mesh {
     this.mesh.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ));//.onUpload( disposeArray ) );
     //console.log({ h: this.mesh.geometry.attributes })
 
+    }
+   
     this.mesh.position.set(...this.position);
     this.mesh.rotation.set(...this.rotation);
     this.mesh.geometry.scale(...this.scale);

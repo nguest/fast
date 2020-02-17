@@ -20,6 +20,7 @@ import { createTrees } from './custom/geometries/trees';
 import { Sky } from './components/Sky';
 import { createGates, detectGateCollisions } from './components/Gates';
 import { createTrackDecals, createApexes } from './custom/geometries/track';
+import { decorateGrass } from './custom/geometries/grass';
 import { trackParams } from './custom/geometries/trackParams';
 
 // Helpers
@@ -70,22 +71,18 @@ export class Main extends PureComponent {
     this.scene = new THREE.Scene();
     this.scene.fog = new THREE.FogExp2(Config.fog.color, Config.fog.near);
 
-    if (window.devicePixelRatio) Config.dpr = window.devicePixelRatio;
-
     this.renderer = new Renderer(this.scene, this.container);
     this.camera = new Camera(this.renderer.threeRenderer, this.container);
     this.controls = new Controls(this.camera.threeCamera, this.renderer, this.container);
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
     this.clock = new THREE.Clock();
-    this.light = this.createLights();
-    // this.clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 1);// Config.followCam.clipDistance);
-    // this.renderer.clippingPlanes = [this.clippingPlane];
+    this.lights = this.createLights();
     this.manager = new THREE.LoadingManager();
     this.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
       this.showStatus(`Loading file: ${itemsLoaded} of ${itemsTotal} files.`);
     };
     this.vehicleState = { vehicleSteering: 0 };
-    //this.sky = new Sky(this.scene);
+    // this.sky = new Sky(this.scene);
     this.gates = createGates(this.scene);
 
     // this.skyBox = new SkyBox(this.scene);
@@ -144,7 +141,7 @@ export class Main extends PureComponent {
           ...agg,
           [materialParams.name]: createMaterial(materialParams, assets),
         }), {});
-        console.log({ materials })
+        console.log({ materials });
         return this.createWorld(materials, assets);
       });
   }
@@ -159,7 +156,6 @@ export class Main extends PureComponent {
     // var worldMax=new Ammo.btVector3(1000,1000,1000);
     // var overlappingPairCache= new Ammo.btAxisSweep3(worldMin,worldMax);
 
-
     const physicsWorld = new Ammo.btDiscreteDynamicsWorld(
       dispatcher, overlappingPairCache, solver, collisionConfiguration,
     );
@@ -169,38 +165,39 @@ export class Main extends PureComponent {
   }
 
   createObjects = (materials) => {
-    this.objects = objectsIndex.map((object) => {
+    this.objects = objectsIndex.map((obj) => {
       const params = {
-        ...object,
-        type: object.type,
-        params: object.params,
-        position: object.position,
-        rotation: object.rotation,
-        material: Array.isArray(object.material)
-          ? object.material.map((m) => materials[m])
-          : materials[object.material],
+        ...obj,
+        type: obj.type,
+        params: obj.params,
+        position: obj.position,
+        rotation: obj.rotation,
+        material: Array.isArray(obj.material)
+          ? obj.material.map((m) => materials[m])
+          : materials[obj.material],
         scene: this.scene,
-        shadows: object.shadows,
+        shadows: obj.shadows,
         manager: this.manager,
       };
 
-      if (object.physics) {
+      if (obj.physics) {
         params.physics = {
           physicsWorld: this.physicsWorld,
-          mass: object.physics.mass,
-          friction: object.physics.friction,
-          restitution: object.physics.restitution,
-          damping: object.physics.damping,
+          mass: obj.physics.mass,
+          friction: obj.physics.friction,
+          restitution: obj.physics.restitution,
+          damping: obj.physics.damping,
         };
       }
       return new Mesh(params).getMesh();
     });
-    createTrees({ scene: this.scene, camera: this.camera });
+    createTrees({ scene: this.scene });
     //createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
     console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
+    decorateGrass(getObjByName(this.scene, 'grass'), this.scene);
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
-
+    console.log({ t: this.instancedMeshes })
     //createSun(this.camera, this.scene);
     // const sunSphere = new THREE.Mesh(
     //   new THREE.SphereBufferGeometry( 100, 16, 8 ),
@@ -217,6 +214,7 @@ export class Main extends PureComponent {
   createWorld(materials, assets) {
     this.createObjects(materials);
 
+    // calculate global envmap and skybox
     const envCube = createSkyBoxFrom4x3({
       scene: this.scene,
       boxDimension: 10000,
@@ -233,6 +231,7 @@ export class Main extends PureComponent {
       // set chassisMesh in position, attach car and decorate
       this.chassisMesh = getObjByName(this.scene, 'chassisMesh');
       const baseCar = getObjByName(this.scene, 'car');
+      console.log({ baseCar, a: this.chassisMesh })
       const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, envCube);
       this.brakeLights = brakeLights;
       if (this.chassisMesh.children.length === 1) this.chassisMesh.add(car);
@@ -246,9 +245,9 @@ export class Main extends PureComponent {
 
       if (Config.isDev) this.gui = new DatGUI(this);
 
-      this.goal = new THREE.Object3D();
-      this.goal.position.set(0, 1.5, -7);
-      this.chassisMesh.add(this.goal);
+      // this.goal = new THREE.Object3D();
+      // this.goal.position.set(0, 1.5, -7);
+      // this.chassisMesh.add(this.goal);
 
       this.animate();
     };
@@ -256,7 +255,7 @@ export class Main extends PureComponent {
 
   animate() {
     const deltaTime = this.clock.getDelta();
-    //console.log(deltaTime)
+
     if (Config.showStats) this.stats.update();
 
     if (Config.useFollowCam) {
@@ -279,8 +278,8 @@ export class Main extends PureComponent {
 
   updateShadowCamera() {
     const posn = this.chassisMesh.position.add(new THREE.Vector3(...lightsIndex[1].position));
-    this.light[1].position.set(posn.x, posn.y, posn.z);
-    this.light[1].target = this.chassisMesh;
+    this.lights[1].position.set(posn.x, posn.y, posn.z);
+    this.lights[1].target = this.chassisMesh;
   }
 
   updateFollowCam() {
@@ -304,13 +303,15 @@ export class Main extends PureComponent {
 
     // update instancedMeshes so frustrum culling works correctly
     // https://stackoverflow.com/questions/51025071/instance-geometry-frustum-culling
-    this.instancedMeshes.forEach((mesh) => mesh.geometry.boundingSphere.center.set(x, y, z));
+    this.instancedMeshes.forEach((mesh) => {
+      mesh.geometry.boundingSphere.center.set(x, y, z)
+    });
   }
 
   updatePhysics(deltaTime) {
     // Step world
     this.physicsWorld.stepSimulation(0.033, 0); // jerky if set to deltaTime??
-    // Update rigid bodies
+    // Update rigid bodies (just vehicle)
     this.vehicleState = updateVehicle(
       deltaTime,
       this.physicsWorld.bodies[3],

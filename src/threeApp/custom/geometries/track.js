@@ -58,7 +58,7 @@ export const trackUVGenerator = {
     ];
   },
 };
-// 
+
 export const createTrackDecals = (trackMesh, scene, material) => {
   const pointsCount = 2000;
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
@@ -98,7 +98,6 @@ export const createApexes = (scene) => {
     }
     return 0;
   });
-  console.log({ angles, points })
 
   const apexes = angles.reduce((agg, theta, i) => {
     if (
@@ -119,23 +118,18 @@ export const createApexes = (scene) => {
     return agg;
   }, []);
 
-
-  //const apexPoints = apexIndices.map((i) => points[i]);
-  const spriteMap = new THREE.TextureLoader().load( './assets/textures/UV_Grid_Sm.png' );
-  const spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff } );
-  //var sprite = new THREE.Sprite( spriteMaterial );
+  const spriteMap = new THREE.TextureLoader().load('./assets/textures/UV_Grid_Sm.png');
+  const spriteMaterial = new THREE.SpriteMaterial({ map: spriteMap, color: 0xffffff });
   console.log({ apexes })
   apexes.forEach((apex, i) => {
-    //const mesh = new THREE.Mesh(geometry, material);
-    const sprite = new THREE.Sprite( spriteMaterial );
-
-    const apexMarkerPosn = apex.p.clone().sub(binormals[apex.i].clone().multiplyScalar(5 * apex.dir))
+    const sprite = new THREE.Sprite(spriteMaterial);
+    const apexMarkerPosn = apex.p.sub(binormals[apex.i].clone().multiplyScalar(trackParams.trackHalfWidth * apex.dir));
     sprite.position.set(apexMarkerPosn.x, apexMarkerPosn.y + 1, apexMarkerPosn.z);
 
     scene.add(sprite);
   });
 };
 
-const signedTriangleArea = (a, b, c) => {
-  return a.x * b.z - a.z * b.x + a.z * c.x - a.x * c.z + b.x *c.z - c.x * b.z;
-};
+const signedTriangleArea = (a, b, c) => (
+  a.x * b.z - a.z * b.x + a.z * c.x - a.x * c.z + b.x * c.z - c.x * b.z
+);

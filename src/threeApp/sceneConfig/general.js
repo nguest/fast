@@ -11,7 +11,7 @@ export const Config = {
   isMouseOver: false,
   maxAnisotropy: 1,
   gammaFactor: 1.1,
-  dpr: 1,
+  dpr: 2,
   easing: TWEEN.Easing.Quadratic.InOut,
   duration: 500,
   renderer: {

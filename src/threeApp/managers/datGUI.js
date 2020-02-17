@@ -9,7 +9,7 @@ export class DatGUI {
 
     this.camera = main.camera.threeCamera;
     this.controls = main.controls;
-    this.light = main.light;
+    this.lights = main.lights;
     this.meshes = main.scene.children.filter((child) => child.isMesh || child.type === 'Object3D');
 
     /* Global */
@@ -85,7 +85,7 @@ export class DatGUI {
 
     /* Lights */
     const lightFolder = gui.addFolder('Lights');
-    this.light.forEach((light) => {
+    this.lights.forEach((light) => {
       lightFolder.add(light, 'intensity').name(light.name).onChange((value) => {
         light.intensity = value;
       });

@@ -9,7 +9,7 @@ const computeMapPoints = (points) => points.reduce((agg, p) => agg.concat(`${p.x
 
 export const TrackMap = ({ gamePosition, trackParams }) => {
   const [points, setPoints] = useState([]);
-  const [e, setE] = useState({});
+  const [e, setE] = useState(null);
 
   useEffect(() => {
     if (trackParams.adjustedTrackPoints) {
@@ -27,6 +27,8 @@ export const TrackMap = ({ gamePosition, trackParams }) => {
     }
   }, []);
 
+  if (!e) return null;
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -34,8 +36,8 @@ export const TrackMap = ({ gamePosition, trackParams }) => {
       viewBox={` ${e.minX} ${e.minZ} ${-e.minX + e.maxX} ${-e.minZ + e.maxZ}`}
     >
       <polyline points={points} fill="none" stroke="black" strokeWidth="50" />
-      <circle cx="0" cy="0" r="100" fill="white" />
-      <circle cx={gamePosition.vehiclePosition.x} cy={gamePosition.vehiclePosition.z} r="200" fill="red" />
+      <circle cx="0" cy="0" r="60" fill="white" />
+      <circle cx={gamePosition.vehiclePosition.x} cy={gamePosition.vehiclePosition.z} r="50" fill="red" />
     </svg>
   );
 };

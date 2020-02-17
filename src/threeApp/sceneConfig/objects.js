@@ -2,7 +2,8 @@ import * as THREE from 'three';
 
 import { trackCrossSection, trackUVGenerator } from '../custom/geometries/track';
 import { trackKerbCrossSection, getIncludeSegments } from '../custom/geometries/trackKerb';
-import { grassCrossSection, treesCrossSection } from '../custom/geometries/grass';
+import { grassCrossSection } from '../custom/geometries/grass';
+import { treesCrossSection } from '../custom/geometries/trees';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 
 import { trackParams } from '../custom/geometries/trackParams';
@@ -121,34 +122,34 @@ export const objectsIndex = [
     },
     add: true,
   },
-  {
-    name: 'treesBg',
-    type: 'ExtrudeGeometry',
-    params: [
-      treesCrossSection,
-      {
-        steps: trackParams.steps,
-        depth: 0,
-        UVGenerator: barriersUVGenerator,
-        extrudePath: trackParams.centerLine,
-        widthFactor: trackParams.widthFactor,
-      },
-    ],
-    position: [0, 0, 0],
-    rotation: [0, 0, 0],
-    scale: [1, 1, 1],
-    material: 'forest',
-    // physics: {
-    //   mass: 0,
-    //   friction: 1,
-    //   restitution: 0.5,
-    // },
-    shadows: {
-      receive: true,
-      cast: true,
-    },
-    add: false,
-  },
+  // {
+  //   name: 'treesBg',
+  //   type: 'ExtrudeGeometry',
+  //   params: [
+  //     treesCrossSection,
+  //     {
+  //       steps: trackParams.steps,
+  //       depth: 0,
+  //       UVGenerator: barriersUVGenerator,
+  //       extrudePath: trackParams.centerLine,
+  //       widthFactor: trackParams.widthFactor,
+  //     },
+  //   ],
+  //   position: [0, 0, 0],
+  //   rotation: [0, 0, 0],
+  //   scale: [1, 1, 1],
+  //   material: 'forest',
+  //   // physics: {
+  //   //   mass: 0,
+  //   //   friction: 1,
+  //   //   restitution: 0.5,
+  //   // },
+  //   shadows: {
+  //     receive: true,
+  //     cast: true,
+  //   },
+  //   add: false,
+  // },
   {
     name: 'barriers',
     type: 'ExtrudeGeometry',
@@ -166,7 +167,7 @@ export const objectsIndex = [
     position: [0, -0.3, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: ['mappedFlat','guardRails'],//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    material: ['mappedFlat', 'guardRails'],//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
     physics: {
       mass: 0,
       friction: 1,

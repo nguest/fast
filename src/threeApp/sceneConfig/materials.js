@@ -59,6 +59,8 @@ export const materialsIndex = [
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,
+    clipping: true,
+
    // transparent: true,
   },
   {
@@ -151,26 +153,26 @@ export const materialsIndex = [
     emissive: 0x000000,
     //shininess: 10,
   },
-  {
-    name: 'metalPlate',
-    type: 'MeshPhongMaterial',
-    color: 0xffffff,
-    map: {
-      name: 'Metalplate_Map',
-      wrapping: 'RepeatWrapping',
-      repeat: [10, 1],
-    },
-    normalMap: {
-      name: 'Metalplate_Normal',
-      wrapping: 'RepeatWrapping',
-      repeat: [10, 1],
-    },
-    shininess: 0,
-    specular: 0xaaaaaa,
-    side: 'DoubleSide',
-    wireframe: false,
-    emissive: 0x000000,
-  },
+  // {
+  //   name: 'metalPlate',
+  //   type: 'MeshPhongMaterial',
+  //   color: 0xffffff,
+  //   map: {
+  //     name: 'Metalplate_Map',
+  //     wrapping: 'RepeatWrapping',
+  //     repeat: [10, 1],
+  //   },
+  //   normalMap: {
+  //     name: 'Metalplate_Normal',
+  //     wrapping: 'RepeatWrapping',
+  //     repeat: [10, 1],
+  //   },
+  //   shininess: 0,
+  //   specular: 0xaaaaaa,
+  //   side: 'DoubleSide',
+  //   wireframe: false,
+  //   emissive: 0x000000,
+  // },
   {
     name: 'kerb',
     type: 'MeshPhongMaterial',
@@ -191,6 +193,7 @@ export const materialsIndex = [
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,
+    clipping: true,
   },
   {
     name: 'guardRails',
@@ -212,6 +215,8 @@ export const materialsIndex = [
     side: 'DoubleSide',
     wireframe: false,
     emissive: 0x000000,
+    clipping: true,
+
   },
   {
     name: 'wheel',
@@ -248,6 +253,7 @@ export const materialsIndex = [
       //offset: [0, 0],
     },
     shininess: 0,
+    smartAlpha: true,
     specular: 0xaaaaaa,
     side: 'DoubleSide',
     wireframe: false,

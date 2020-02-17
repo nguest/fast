@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { trackParams } from './trackParams';
 import { patchShader } from '../../materials/extend';
-import { MeshSurfaceSampler } from '../../helpers/MeshSurfaceSampler';
+import { createSampledInstanceMesh } from '../../helpers/InstancedBufferGeometry';
+
 
 const grassCrossSection1 = new THREE.Shape();
 grassCrossSection1.moveTo(0.1, -trackParams.trackHalfWidth + 0.3);
@@ -19,36 +20,17 @@ export const decorateGrass = (mesh, scene) => {
   //plane.rotateZ(Math.PI * 0.5);
   plane.translate(0, 0.125, 0);
 
-  const geometry = new THREE.InstancedBufferGeometry().copy(plane);
-  const count = 100000;
-  geometry.computeBoundingSphere();
-
-  const instancedMesh = new THREE.InstancedMesh(geometry, GrassClumpMaterial, count);
-  instancedMesh.name = 'grassClumps';
-  instancedMesh.userData.type = 'instancedMesh';
-
-  const sampler = new MeshSurfaceSampler(mesh)
-    .setWeightAttribute(null)
-    .build();
-
-  const position = new THREE.Vector3();
-  const normal = new THREE.Vector3();
-  const dummy = new THREE.Object3D();
-
-  for (let i = 0; i < count; i++) {
-    sampler.sample(position, normal);
-    normal.add(position);
-
-    dummy.position.copy(position);
-    //dummy.lookAt(normal);
-    dummy.updateMatrix();
-
-    instancedMesh.setMatrixAt(i, dummy.matrix);
-    instancedMesh.instanceMatrix.needsUpdate = true;
-  }
-
+  const instancedMesh = createSampledInstanceMesh({
+    baseGeometry: plane,
+    mesh,
+    material: GrassClumpMaterial,
+    count: 100000,
+    name: 'grassClumps',
+  });
   scene.add(instancedMesh);
 };
+
+
 
 
 // create custom material with vertex clipping and proper alpha

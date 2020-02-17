@@ -4,6 +4,7 @@ import { getTreeline } from './treeline';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
 import { trackParams } from './trackParams';
 import { patchShader } from '../../materials/extend';
+import { rand } from '../../helpers/helpers';
 
 const treesCrossSection1 = new THREE.Shape();
 treesCrossSection1.moveTo(0.1, -trackParams.trackHalfWidth - 10);
@@ -79,9 +80,9 @@ const createInstancedMesh = ({ geometry, curve, count, yOffset, name, material, 
     const scale = Math.random() * 0.5 + 0.75;
 
     instanceOffset.push(
-      positions[i].x,
+      positions[i].x + rand(1),
       positions[i].y + scale * yOffset - 1,
-      positions[i].z,
+      positions[i].z + rand(1),
     );
     //instanceQuaternion.push(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     instanceScale.push(

@@ -192,20 +192,12 @@ export class Main extends PureComponent {
       return new Mesh(params).getMesh();
     });
     createTrees({ scene: this.scene });
-    //createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
+    createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
     console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
     decorateGrass(getObjByName(this.scene, 'grass'), this.scene);
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
-    console.log({ t: this.instancedMeshes })
-    //createSun(this.camera, this.scene);
-    // const sunSphere = new THREE.Mesh(
-    //   new THREE.SphereBufferGeometry( 100, 16, 8 ),
-    //   new THREE.MeshBasicMaterial( { color: 0xffffff } )
-    // );
-    // sunSphere.position.y = - 700000;
-    // sunSphere.visible = false;
-    // this.scene.add( sunSphere );
+
     createApexes(this.scene);
     const helper = new THREE.GridHelper(10, 2, 0xffffff, 0xffffff);
     this.scene.add(helper);
@@ -304,7 +296,7 @@ export class Main extends PureComponent {
     // update instancedMeshes so frustrum culling works correctly
     // https://stackoverflow.com/questions/51025071/instance-geometry-frustum-culling
     this.instancedMeshes.forEach((mesh) => {
-      mesh.geometry.boundingSphere.center.set(x, y, z)
+      mesh.geometry.boundingSphere.center.set(x, y, z);
     });
   }
 
@@ -322,7 +314,7 @@ export class Main extends PureComponent {
   }
 
   resetObjects(gate) {
-    console.log('gate passed: ', gate);
+    console.log('resetObjects: ', gate);
     this.showGamePosition(gate);
     if (!this.physicsWorld) return;
 

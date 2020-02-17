@@ -247,7 +247,6 @@ export class Mesh {
       scene: this.scene,
       material: this.material,
     });
-    console.log({ M: this.mesh })
     return this;
   }
 }

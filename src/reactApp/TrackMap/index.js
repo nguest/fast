@@ -5,7 +5,7 @@ import { object } from 'prop-types';
 
 import { styles } from './styles';
 
-const computeMapPoints = (points) => points.reduce((agg, p) => agg.concat(`${p.x} ${p.z},`), '');
+const computeMapPoints = (points) => points.reduce((agg, p) => agg.concat(`${p.x} ${p.z},`), '').slice(0, -1);
 
 export const TrackMap = ({ gamePosition, trackParams }) => {
   const [points, setPoints] = useState([]);

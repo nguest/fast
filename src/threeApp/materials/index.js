@@ -1,7 +1,9 @@
 import * as THREE from 'three';
+import { patchShader } from './extend';
 
 export const createMaterial = ({
   bumpMap,
+  clipping,
   color,
   customMaterial,
   dithering,
@@ -17,6 +19,7 @@ export const createMaterial = ({
   roughness,
   shininess = 30,
   side,
+  smartAlpha = false,
   specular,// = 0x000000,
   transparent,
   type,
@@ -47,8 +50,6 @@ export const createMaterial = ({
       if (map.repeat) material.map.repeat.set(...map.repeat);
       if (map.offset) material.map.repeat.set(...map.offset);
     }
-
-
 
     // ({
     //   color,
@@ -83,6 +84,38 @@ export const createMaterial = ({
   material.transparent = material.transparent !== undefined ? transparent : false;
   material.roughness = material.roughness !== undefined ? roughness : material.roughness;
   material.metalness = material.metalness !== undefined ? metalness : material.metalness;
+
+  if (smartAlpha) {
+    material.onBeforeCompile = (shader) => {
+      patchShader(shader, {
+        fragment: {
+          'gl_FragColor = vec4( outgoingLight, diffuseColor.a );':
+          `if ( diffuseColor.a < 0.95 ) discard; // remove low alpha values
+          gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`,
+        },
+      });
+    };
+  }
+
+  if (clipping) {
+    material.onBeforeCompile = (shader) => {
+      patchShader(shader, {
+        uniforms: {
+          clipDistance: 200.0,
+        },
+        header: 'uniform float clipDistance;',
+        vertex: {
+          project_vertex: {
+            '@gl_Position = projectionMatrix * mvPosition;':
+            `
+            gl_Position = projectionMatrix * mvPosition;
+            if (gl_Position.z > clipDistance) gl_Position.w = 0.0/0.0;
+            `,
+          },
+        },
+      });
+    };
+  }
 
   if (map) {
     material.map = assets[map.name];

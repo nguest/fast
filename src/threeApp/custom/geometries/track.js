@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { trackParams } from './trackParams';
 import { DecalGeometry } from '../../helpers/DecalGeometry';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
+import { createSampledInstanceMesh } from '../../helpers/InstancedBufferGeometry';
+import { patchShader } from '../../materials/extend';
 
 export const trackCrossSection = new THREE.Shape();
 trackCrossSection.moveTo(0, trackParams.trackHalfWidth);
@@ -59,7 +61,7 @@ export const trackUVGenerator = {
   },
 };
 
-export const createTrackDecals = (trackMesh, scene, material) => {
+export const createTrackDecalsOld = (trackMesh, scene, material) => {
   const pointsCount = 2000;
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
   const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
@@ -85,6 +87,26 @@ export const createTrackDecals = (trackMesh, scene, material) => {
     scene.add(decalMesh);
   }
 };
+
+export const createTrackDecals = (trackMesh, scene, material) => {
+
+  const plane = new THREE.PlaneBufferGeometry(0.25, 5);
+  //plane.rotateX(-Math.PI * 0.5);
+  //plane.rotateZ(Math.PI * 0.5);
+  //plane.translate(0, 0.125, 0);
+
+  const instancedMesh = createSampledInstanceMesh({
+    baseGeometry: plane,
+    mesh: trackMesh,
+    material: TrackMarksMaterial,
+    count: 20000,
+    name: 'trackMarks',
+    lookAtNormal: true,
+  });
+  scene.add(instancedMesh);
+
+}
+
 
 export const createApexes = (scene) => {
   const threshold = 0.12;
@@ -120,7 +142,6 @@ export const createApexes = (scene) => {
 
   const spriteMap = new THREE.TextureLoader().load('./assets/textures/UV_Grid_Sm.png');
   const spriteMaterial = new THREE.SpriteMaterial({ map: spriteMap, color: 0xffffff });
-  console.log({ apexes })
   apexes.forEach((apex, i) => {
     const sprite = new THREE.Sprite(spriteMaterial);
     const apexMarkerPosn = apex.p.sub(binormals[apex.i].clone().multiplyScalar(trackParams.trackHalfWidth * apex.dir));
@@ -133,3 +154,39 @@ export const createApexes = (scene) => {
 const signedTriangleArea = (a, b, c) => (
   a.x * b.z - a.z * b.x + a.z * c.x - a.x * c.z + b.x * c.z - c.x * b.z
 );
+
+// create custom material with vertex clipping and proper alpha
+const TrackMarksMaterial = new THREE.MeshLambertMaterial({
+  color: 0x000000,
+  //map: new THREE.TextureLoader().load('./assets/textures/grassClump64_map.png'),
+  //side: THREE.DoubleSide,
+  polygonOffset: true,
+  polygonOffsetFactor: -1,
+  transparent: true,
+  opacity: 0.2,
+  //renderOrder: 1,
+
+});
+
+TrackMarksMaterial.onBeforeCompile = (shader) => {
+  patchShader(shader, {
+    uniforms: {
+      clipDistance: 50.0,
+    },
+    header: 'uniform float clipDistance;',
+    // fragment: {
+    //   'gl_FragColor = vec4( outgoingLight, diffuseColor.a );':
+    //   `if ( diffuseColor.a < 0.95 ) discard; // remove low alpha values
+    //   gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`,
+    // },
+    vertex: {
+      project_vertex: {
+        '@gl_Position = projectionMatrix * mvPosition;':
+        `
+        gl_Position = projectionMatrix * mvPosition;
+        if (gl_Position.z > clipDistance) gl_Position.w = 0.0/0.0;
+        `,
+      },
+    },
+  });
+};

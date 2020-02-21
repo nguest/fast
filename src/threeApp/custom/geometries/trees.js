@@ -25,12 +25,11 @@ export const createTrees = ({ scene }) => {
   const material = new InstancesStandardMaterial({
     map,
     //side: THREE.DoubleSide,
-    //normalMap,
-   //c normalScale: new THREE.Vector2(0.5, 0.5),
+    normalMap,
+    normalScale: new THREE.Vector2(0.5, 0.5),
     depthFunc: THREE.LessDepth,
     color: 0x444444,
     specular: 0x000000,
-    castShadow: true,
     // extensions: {
     //   derivatives: true,
     // },
@@ -39,7 +38,7 @@ export const createTrees = ({ scene }) => {
   const depthMaterial = new InstancesDepthMaterial({
     depthPacking: THREE.RGBADepthPacking,
     map,
-    alphaTest: 0.5,
+    //alphaTest: 0.5,
   });
 
   const { treeCurveLeft, treeCurveRight } = getTreeline();
@@ -58,49 +57,16 @@ export const createTrees = ({ scene }) => {
   });
 };
 
-export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
-  name = 'InstancesDepthMaterial';
-
-  onBeforeCompile = (shader) => {
-    this.insertAttributesAndFunctions(shader);
-    this.overrideLogic(shader);
-  }
-
-  insertAttributesAndFunctions = (shader) => {
-    shader.vertexShader = shader.vertexShader
-      .replace(
-        'void main() {',
-        `
-        attribute vec3 instanceOffset;
-        attribute vec3 instanceScale;
-        
-        // scale shadows' scale and position, but no rotating towards camera because that looks mental
-        vec3 getBillboardInstancePosition(vec3 position) {
-          position += instanceOffset; 
-          position *= instanceScale;
-          return position;
-        }
-        
-        void main() {
-      `,
-      );
-  };
-
-  overrideLogic = (shader) => {
-    shader.vertexShader = shader.vertexShader
-      .replace('#include <project_vertex>', OVERRIDE_PROJECT_VERTEX);
-  };
-}
-
 
 const OVERRIDE_PROJECT_VERTEX = `
-  //!! vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
+  //!! orig // vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
 
   vec4 mvPosition = modelViewMatrix * vec4(getBillboardInstancePosition(transformed), 1.0);
   gl_Position = projectionMatrix * mvPosition;
 
   if (gl_Position.z > 200.0) gl_Position.w = 0.0/0.0;
 `;
+
 
 export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
   name = 'InstancesStandardMaterial';
@@ -119,17 +85,6 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
         // attribute vec4 instanceQuaternion;
         attribute vec3 instanceScale;
         attribute vec2 instanceMapUV;
-        
-        // if applying instanceQuaternion
-        // vec3 getInstancePosition(vec3 position) {
-        //   position *= instanceScale;
-        //   vec4 instanceQuaternion = vec4(0, 0, 0, 1);
-        //   vec3 vcV = cross( instanceQuaternion.xyz, position );
-        //   position = vcV * ( 2.0 * instanceQuaternion.w ) + ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
-        //   position += instanceOffset;
-
-        //   return position;
-        // }
 
         // rotate to face camera on y-axis for billboarding
         vec3 getBillboardInstancePosition(vec3 position) {
@@ -164,28 +119,71 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
           vUv = ( uvTransform * vec3( uv.x * 0.5 + instanceMapUV.x, uv.y * 0.5 + instanceMapUV.y, 1 ) ).xy ;
         #endif
         `);
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <map_fragment>',
-        `#ifdef USE_MAP
+  };
+}
 
-        vec4 texelColor = texture2D( map, vUv );
+// ------------------------------ //
 
-        texelColor = mapTexelToLinear( texelColor );
-        diffuseColor *= texelColor;
+export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
+  name = 'InstancesDepthMaterial';
 
+  onBeforeCompile = (shader) => {
+    this.insertAttributesAndFunctions(shader);
+    this.overrideLogic(shader);
+  }
+
+  insertAttributesAndFunctions = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        'void main() {',
+        `
+        attribute vec3 instanceOffset;
+        attribute vec3 instanceScale;
+        attribute vec2 instanceMapUV;
+
+        // scale shadows' scale and position, but no rotating towards camera because that looks mental
+        // vec3 getBillboardInstancePosition(vec3 position) {
+        //   position += instanceOffset; 
+        //   position *= instanceScale;
+        //   return position;
+        // }
+        vec3 getBillboardInstancePosition(vec3 position) {
+          vec3 look = cameraPosition - instanceOffset;
+          look.y = 0.0;
+          look = normalize(look);
+          vec3 billboardUp = vec3(0, 1, 0);
+          vec3 billboardRight = cross(billboardUp, look);
+          vec3 pos = instanceOffset + billboardRight * position.x * instanceScale.x + billboardUp * position.y * instanceScale.y;
+          return pos;
+        }
+        
+        void main() {
+      `,
+      );
+  };
+
+  overrideLogic = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <project_vertex>', OVERRIDE_PROJECT_VERTEX)
+      .replace('#include <uv_vertex>',
+        `
+        #ifdef USE_UV
+          // ! orig: //  vUv = ( uvTransform * vec3(uv, 1.0)).xy;
+          vUv = ( uvTransform * vec3( uv.x * 0.5 + instanceMapUV.x, uv.y * 0.5 + instanceMapUV.y, 1 ) ).xy ;
         #endif
-        `);
+      `);
   };
 }
 
 /*
-860: 	vec4 texelColor = texture2D( map, vUv );
-861: 	texelColor = mapTexelToLinear( texelColor );
-862: 	diffuseColor *= texelColor;
-*/
-/*
-vec3 vPosition = position;
-vec3 vcV = cross( instanceQuaternion.xyz, vPosition );
-vPosition *= instanceScale;
-vPosition = vcV * ( 2.0 * instanceQuaternion.w ) + ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + vPosition );
+        // if applying instanceQuaternion
+        // vec3 getInstancePosition(vec3 position) {
+        //   position *= instanceScale;
+        //   vec4 instanceQuaternion = vec4(0, 0, 0, 1);
+        //   vec3 vcV = cross( instanceQuaternion.xyz, position );
+        //   position = vcV * ( 2.0 * instanceQuaternion.w ) + ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
+        //   position += instanceOffset;
+
+        //   return position;
+        // }
 */

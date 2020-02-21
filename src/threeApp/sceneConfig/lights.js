@@ -17,7 +17,7 @@ export const lightsIndex = [
     helperEnabled: true,
     target: [0, 0, 0],
     shadow: {
-      bias: 0.0000,
+      bias: 0.005,
       mapWidth: 1024,
       mapHeight: 1024,
       camera: {
@@ -26,7 +26,7 @@ export const lightsIndex = [
         top: 100,
         right: 100,
         bottom: -10,
-        left: -100,
+        left: -10,
       },
     },
   },

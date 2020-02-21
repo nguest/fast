@@ -76,6 +76,7 @@ export class Main extends PureComponent {
     this.controls = new Controls(this.camera.threeCamera, this.renderer, this.container);
     this.interaction = new Interaction(this.renderer, this.scene, this.camera, this.controls);
     this.clock = new THREE.Clock();
+    this.frameCount = 0;
     this.lights = this.createLights();
     this.manager = new THREE.LoadingManager();
     this.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
@@ -232,6 +233,7 @@ export class Main extends PureComponent {
       // create followCam
       this.followCam = new Camera(this.renderer.threeRenderer, this.container, this.chassisMesh);
 
+
       // scale bg objects to track
       scaleBackground(this.scene);
 
@@ -247,6 +249,10 @@ export class Main extends PureComponent {
 
   animate() {
     const deltaTime = this.clock.getDelta();
+    if (this.frameCount >= 10) this.frameCount = 0;
+    this.frameCount++;
+    //console.log(this.frameCount)
+
 
     if (Config.showStats) this.stats.update();
 
@@ -261,7 +267,7 @@ export class Main extends PureComponent {
     this.interaction.keyboard.update();
     this.updateShadowCamera();
     if (!Config.useFollowCam) this.controls.update();
-    this.updatePhysics(deltaTime);
+    this.updatePhysics(deltaTime, this.frameCount);
     const collidee = detectGateCollisions(this.chassisMesh, this.gates);
     this.showGamePosition(collidee);
 
@@ -310,6 +316,7 @@ export class Main extends PureComponent {
       this.interaction,
       this.brakeLights,
       this.showStatus,
+      this.frameCount,
     );
   }
 
@@ -344,8 +351,8 @@ export class Main extends PureComponent {
   }
 
   showStatus = (message) => {
-    // debounce this!!
-    //this.props.setStatus(message);
+    // debounce this!!x
+    this.props.setStatus(message);
   }
 
   showGamePosition = (gate) => {

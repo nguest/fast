@@ -92,7 +92,7 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
   const suspensionDamping = 2.3;
   const suspensionCompression = 1;// 1.4;
   const suspensionRestLength = 0.5;
-  const rollInfluence = 0.05; // 0 no roll
+  const rollInfluence = 0;//0.05; // 0 no roll
 
   // const steeringIncrement = 0.04;
   // const steeringClamp = 0.5;
@@ -172,11 +172,11 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
 };
 
 // Sync keybord actions and physics and graphics
-export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showStatus) => {
+export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showStatus, frameCount) => {
   const vehicle = chassisMesh.userData.physicsBody;
   const speed = vehicle.getCurrentSpeedKmHour();
 
-  if (speed > 1.0) showStatus(`${(speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1)} km/h`);
+  if (speed >= 0.0 && frameCount === 1) showStatus(`${(speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(0)} km/h`);
 
   breakingForce = 10;
   engineForce = 0;
@@ -200,7 +200,7 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
     setBrakeLights(brakeLights, false);
   }
 
-  let sasi = speed > 20 ? steeringIncrement : steeringIncrement * 3;// / speed; // speed adjusted steering
+  const sasi = speed > 20 ? steeringIncrement : steeringIncrement * 3;// / speed; // speed adjusted steering
 
   if (interaction.keyboard.pressed('A')) {
     if (vehicleSteering < steeringClamp) vehicleSteering += sasi;

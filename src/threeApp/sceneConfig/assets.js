@@ -22,6 +22,7 @@ export const assetsIndex = {
     Concrete_Normal: { name: 'Concrete_Normal', path: './assets/textures/concrete_normal.png' },
     Skyline_Map: { name: 'Skyline_Map', path: './assets/textures/skyline_map.png' },
     Perlin: { name: 'Perlin', path: './assets/textures/perlin_map.png' },
+    TestQuadrants_Map: { name: 'TestQuadrants_Map', path: './assets/textures/testQuadrants_map.jpg' },
   },
   SkyBox: {
     One: { name: 'One', path: './assets/textures/skybox1.png', type: '4x3' },

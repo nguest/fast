@@ -30,10 +30,11 @@ export const createMaterial = ({
   let material;
   if (customMaterial) {
     if (typeof customMaterial === 'function') {
-      material = customMaterial({ 
+      material = customMaterial({
         map: assets[map.name],
         normalMap: assets[normalMap.name],
         shininess: 5,
+        color,
       });
       material.uniforms.map.value.repeat.set(...map.repeat);
       material.uniforms.map.value.wrapS = THREE.RepeatWrapping;
@@ -43,12 +44,20 @@ export const createMaterial = ({
       material.name = name;
     } else {
       material = customMaterial;
-      material.map = assets[map.name];
-      material.map.wrapT = THREE[map.wrapping] || THREE.RepeatWrapping;
-      material.map.wrapS = THREE[map.wrapping] || THREE.RepeatWrapping;
-      material.map.preMultiplyAlpha = true;
-      if (map.repeat) material.map.repeat.set(...map.repeat);
-      if (map.offset) material.map.repeat.set(...map.offset);
+      material.name = name;
+      //material.color = color;
+      console.log({ material })
+
+      if (map) {
+        material.map = assets[map.name];
+        material.map.wrapT = THREE[map.wrapping] || THREE.RepeatWrapping;
+        material.map.wrapS = THREE[map.wrapping] || THREE.RepeatWrapping;
+        material.minFilter = THREE.NearestMipmapNearestFilter;
+
+        //material.map.preMultiplyAlpha = true;
+        if (map.repeat) material.map.repeat.set(...map.repeat);
+        if (map.offset) material.map.repeat.set(...map.offset);
+      }
     }
 
     // ({

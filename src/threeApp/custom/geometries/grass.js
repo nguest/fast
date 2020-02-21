@@ -67,34 +67,36 @@ GrassClumpMaterial.onBeforeCompile = (shader) => {
 const loader = new THREE.TextureLoader();
 
 export const GrassMaterial = new THREE.MeshLambertMaterial({
-  onBeforeCompile: (shader) => {
-    patchShader(shader, {
-      uniforms: {
-        uDecal: new THREE.Vector4(0, 0, 0.2, 0.8), //(p.u, pv, scale (0.5 is fill uv))
-        uDecal2: new THREE.Vector4(-0.5, -0.5, 0.2, 0.2),
-        tDecal: loader.load('https://threejs.org/examples/textures/sprite0.png'),
-        clipDistance: 200.0,
-        // tDecal: loader.load('./assets/textures/UV_Grid_Sm.png')
-      },
-      header: `
-      uniform sampler2D tDecal;
-      uniform vec4 uDecal;
-      uniform vec4 uDecal2;
-      uniform float clipDistance;`,
-
-      vertex: {
-        // Inserts the line after #include <fog_vertex>
-        // '#define USE_MAP true;': '#define USE_UV true;',
-        // '#include <fog_vertex>': 'vEye = normalize(cameraPosition - w.xyz);',
-        // Replaces a line (@ prefix) inside of the project_vertex include
-        project_vertex: {
-          '@gl_Position = projectionMatrix * mvPosition;':
-          `
-          gl_Position = projectionMatrix * mvPosition;
-          if (gl_Position.z > clipDistance) gl_Position.w = 0.0/0.0;
-          `,
-        },
-      },
-    });
-  },
+  color: 0x777777,
 });
+
+GrassMaterial.onBeforeCompile = (shader) => {
+  patchShader(shader, {
+    uniforms: {
+      uDecal: new THREE.Vector4(0, 0, 0.2, 0.8), //(p.u, pv, scale (0.5 is fill uv))
+      uDecal2: new THREE.Vector4(-0.5, -0.5, 0.2, 0.2),
+      tDecal: loader.load('https://threejs.org/examples/textures/sprite0.png'),
+      clipDistance: 200.0,
+      // tDecal: loader.load('./assets/textures/UV_Grid_Sm.png')
+    },
+    header: `
+    uniform sampler2D tDecal;
+    uniform vec4 uDecal;
+    uniform vec4 uDecal2;
+    uniform float clipDistance;`,
+
+    vertex: {
+      // Inserts the line after #include <fog_vertex>
+      // '#define USE_MAP true;': '#define USE_UV true;',
+      // '#include <fog_vertex>': 'vEye = normalize(cameraPosition - w.xyz);',
+      // Replaces a line (@ prefix) inside of the project_vertex include
+      project_vertex: {
+        '@gl_Position = projectionMatrix * mvPosition;':
+        `
+        gl_Position = projectionMatrix * mvPosition;
+        if (gl_Position.z > clipDistance) gl_Position.w = 0.0/0.0;
+        `,
+      },
+    },
+  });
+};

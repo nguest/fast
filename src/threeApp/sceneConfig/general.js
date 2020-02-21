@@ -1,4 +1,5 @@
 import TWEEN from '@tweenjs/tween.js';
+import * as THREE from 'three';
 
 // This object contains the state of the app
 export const Config = {
@@ -11,16 +12,24 @@ export const Config = {
   isMouseOver: false,
   maxAnisotropy: 1,
   gammaFactor: 1.1,
-  dpr: 2,
+  dpr: 1.5,
   easing: TWEEN.Easing.Quadratic.InOut,
   duration: 500,
   renderer: {
     antialias: false, // 'true' has serious framerate implications!
     alpha: false,
+    //logarithmicDepthBuffer: true,
+    toneMapping: THREE.CineonToneMapping,//ACESFilmicToneMapping,
+
+    //precision: 'lowP'
   },
   container: {
     width: window.innerWidth,
     height: window.innerHeight,
+  },
+  res: {
+    x: 2560,
+    y: 1440,
   },
   mesh: {
     enableHelper: false,
@@ -45,9 +54,9 @@ export const Config = {
     lookAt: [0, 0, 0],
   },
   followCam: {
-    fov: 55,
+    fov: 60,
     near: 2,
-    far: 20000,
+    far: 10000,
     aspect: 1,
     position: [0, 1.35, -4.5],
     ß: 30,

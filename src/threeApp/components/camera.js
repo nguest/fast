@@ -41,8 +41,8 @@ export class Camera {
     //this.renderer.setSize(window.innerWidth, window.innerHeight);
     // this.renderer.setPixelRatio();
     // 2560 1440
-    this.renderer.setSize(1920 * 0.5, 1080 * 0.5);
-    this.threeCamera.aspect = 1920 / 1080;
+    this.renderer.setSize(Config.res.x * 0.5, Config.res.y * 0.5);
+    this.threeCamera.aspect = Config.res.x / Config.res.y;
 
     // Always call updateProjectionMatrix on camera change
     this.threeCamera.updateProjectionMatrix();

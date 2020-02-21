@@ -112,7 +112,7 @@ function ExtrudeBufferGeometry(shapes, options) {
     /* Vertices */
 
     const contour = vertices; // vertices has all points but contour has only points of circumferenc
-
+    console.log({ contour })
     let vert;
     const vlen = vertices.length;
 
@@ -146,7 +146,7 @@ function ExtrudeBufferGeometry(shapes, options) {
 
         position2.copy(extrudePts[s]).add(normal).add(binormal);
 
-        v(position2.x, position2.y, position2.z);
+        v(position2.x, position2.y + Math.random() * 0.02, position2.z);
 
         //}
       }

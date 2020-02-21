@@ -57,7 +57,7 @@ export const objectsIndex = [
     },
     shadows: {
       receive: true,
-      cast: true,
+      cast: false,
     },
     add: true,
     uv2Params: [1, 0.1],
@@ -118,7 +118,7 @@ export const objectsIndex = [
     },
     shadows: {
       receive: true,
-      cast: true,
+      cast: false,
     },
     add: true,
   },
@@ -271,7 +271,7 @@ export const objectsIndex = [
     material: 'GrassMaterial',
     shadows: {
       receive: true,
-      cast: true,
+      cast: false,
     },
     add: false,
   },

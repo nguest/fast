@@ -52,25 +52,23 @@ export const materialsIndex = [
       name: 'Road_Normal',
       wrapping: 'MirroredRepeatWrapping',
       //repeat: [2, 1],
-      normalScale: [0.1, 0.1],
+      normalScale: [0.25, 0.25],
     },
-    shininess: 10,
+    shininess: 1,
     specular: 0x555555,
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,
     clipping: true,
-
-   // transparent: true,
   },
   {
     name: 'GrassMaterial',
     type: 'MeshLambertMaterial',
-    color: 0xffffff,
+    color: 0xdddddd,
     customMaterial: GrassMaterial,
     map: {
       name: 'Grass_Map',
-      repeat: [1, 1],
+      repeat: [1.5, 1.5],
       wrapping: 'MirroredRepeatWrapping',
     },
     // normalMap: {
@@ -83,11 +81,6 @@ export const materialsIndex = [
     //   name: 'LightMap_Map',
     //   repeat: [1, 1],
     //   lightMapIntensity: 0.1,
-    // },
-    // bumpMap: {
-    //   name: 'Perlin',
-    //   repeat: [15, 15],
-    //   bumpScale: 1,
     // },
     side: 'FrontSide',
     wireframe: false,
@@ -153,26 +146,6 @@ export const materialsIndex = [
     emissive: 0x000000,
     //shininess: 10,
   },
-  // {
-  //   name: 'metalPlate',
-  //   type: 'MeshPhongMaterial',
-  //   color: 0xffffff,
-  //   map: {
-  //     name: 'Metalplate_Map',
-  //     wrapping: 'RepeatWrapping',
-  //     repeat: [10, 1],
-  //   },
-  //   normalMap: {
-  //     name: 'Metalplate_Normal',
-  //     wrapping: 'RepeatWrapping',
-  //     repeat: [10, 1],
-  //   },
-  //   shininess: 0,
-  //   specular: 0xaaaaaa,
-  //   side: 'DoubleSide',
-  //   wireframe: false,
-  //   emissive: 0x000000,
-  // },
   {
     name: 'kerb',
     type: 'MeshPhongMaterial',
@@ -198,16 +171,16 @@ export const materialsIndex = [
   {
     name: 'guardRails',
     type: 'MeshPhongMaterial',
-    color: 0x888888,
+    color: 0xffffff,
     map: {
       name: 'GuardRails_Map',
       wrapping: 'RepeatWrapping',
-      repeat: [10, 3],
+      repeat: [1, 4],
     },
     normalMap: {
       name: 'GuardRails_Normal',
       wrapping: 'RepeatWrapping',
-      repeat: [10, 3],
+      repeat: [1, 4],
     },
     //metalness: 1.0,
     shininess: 100,
@@ -217,30 +190,6 @@ export const materialsIndex = [
     emissive: 0x000000,
     clipping: true,
 
-  },
-  {
-    name: 'wheel',
-    type: 'MeshPhongMaterial',
-    color: 0xffffff,
-    map: {
-      name: 'Wheel_Map',
-      wrapping: 'RepeatWrapping',
-      repeat: [10, 1],
-      offset: [-0.1, 0]
-    },
-    // bumpMap: {
-    //   name: 'Wheel_Map',
-    // },
-    // normalMap: {
-    //   name: 'Metalplate_Normal',
-    //   wrapping: 'RepeatWrapping',
-    //   repeat: [1, 20],
-    // },
-    shininess: 50,
-    specular: 0xaaaaaa,
-    side: 'FrontSide',
-    wireframe: false,
-    emissive: 0x000000,
   },
   {
     name: 'skyline',

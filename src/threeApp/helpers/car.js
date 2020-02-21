@@ -15,10 +15,10 @@ export const decorateCar = (car, brakelights, envCube) => {
         child.material.reflectivity = 1;
         child.material.envMap = envCube;
         //child.material.roughness = 0;//.48608993902439024
-        child.material.clearcoat = 0.5,
+        child.material.clearcoat = 1.0,
         child.material.clearcoatRoughness = 0.2;
         child.material.roughness = 0.5;
-        child.material.metalness = 0.4;
+        child.material.metalness = 1.0;
         child.material.specular = 0xffffff;
         child.castShadow = true;
         child.receiveShadow = true;

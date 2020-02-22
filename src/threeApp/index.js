@@ -239,9 +239,19 @@ export class Main extends PureComponent {
 
       if (Config.isDev) this.gui = new DatGUI(this);
 
-      // this.goal = new THREE.Object3D();
-      // this.goal.position.set(0, 1.5, -7);
-      // this.chassisMesh.add(this.goal);
+      //this.goal = new THREE.Object3D();
+      this.localGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1,1,0.1), materials['green'])
+      this.localGoal.position.set(0, 0, 50);
+      this.chassisMesh.add(this.localGoal);
+
+      this.worldGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1,1,0.1), materials['mappedFlat'])
+      this.scene.add(this.worldGoal)
+      this.lights[1].target = this.worldGoal;
+      //this.goal.lookAt(new THREE.Vector3(0,0,1))
+      //this.scene.add(this.goal);
+      //this.lights[1].position.set(100,20,40)
+      //this.followCam.threeCamera.add(this.lights[1]);
+           // this.chassisMesh.add(this.lights[1])
 
       this.animate();
     };
@@ -275,9 +285,11 @@ export class Main extends PureComponent {
   }
 
   updateShadowCamera() {
-    const posn = this.chassisMesh.position.add(new THREE.Vector3(...lightsIndex[1].position));
-    this.lights[1].position.set(posn.x, posn.y, posn.z);
-    this.lights[1].target = this.chassisMesh;
+    // get the vehicleGoal position, copy it to the worldGoal to avoid local rotations of light
+    const targetPosn = this.localGoal.getWorldPosition(new THREE.Vector3());
+    this.worldGoal.position.copy(targetPosn);
+    const lightPosition = this.worldGoal.position.clone().add(new THREE.Vector3(...lightsIndex[1].position));
+    this.lights[1].position.copy(lightPosition);
   }
 
   updateFollowCam() {

@@ -38,7 +38,7 @@ export const createTrees = ({ scene }) => {
   const depthMaterial = new InstancesDepthMaterial({
     depthPacking: THREE.RGBADepthPacking,
     map,
-    //alphaTest: 0.5,
+    alphaTest: 0.5,
   });
 
   const { treeCurveLeft, treeCurveRight } = getTreeline();
@@ -47,7 +47,7 @@ export const createTrees = ({ scene }) => {
     const instancedMesh = createInstancedMesh({
       geometry: treePlane,
       curve,
-      count: 5000,
+      count: 2000,
       offset: new THREE.Vector3(0, 0, 0),//treeHeight * 0.5,
       name: `treesInstance-${i}`,
       material,
@@ -60,8 +60,8 @@ export const createTrees = ({ scene }) => {
 
 const OVERRIDE_PROJECT_VERTEX = `
   //!! orig // vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
-
-  vec4 mvPosition = modelViewMatrix * vec4(getBillboardInstancePosition(transformed), 1.0);
+  transformed = getBillboardInstancePosition(transformed);
+  vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
   gl_Position = projectionMatrix * mvPosition;
 
   if (gl_Position.z > 200.0) gl_Position.w = 0.0/0.0;
@@ -143,9 +143,10 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
 
         // scale shadows' scale and position, but no rotating towards camera because that looks mental
         // vec3 getBillboardInstancePosition(vec3 position) {
-        //   position += instanceOffset; 
-        //   position *= instanceScale;
-        //   return position;
+        //   vec3 pos = position;
+        //   pos += instanceOffset; 
+        //   pos *= instanceScale;
+        //   return pos;
         // }
         vec3 getBillboardInstancePosition(vec3 position) {
           vec3 look = cameraPosition - instanceOffset;

@@ -51,7 +51,7 @@ export const createInstancedMesh = ({ geometry, curve, count, offset, name, mate
   instancedGeo.setAttribute('instanceScale',
     new THREE.InstancedBufferAttribute(new Float32Array(instanceScale), 3, false));
   instancedGeo.setAttribute('instanceMapUV',
-  new THREE.InstancedBufferAttribute(new Float32Array(instanceMapUV), 2, false));
+    new THREE.InstancedBufferAttribute(new Float32Array(instanceMapUV), 2, false));
   // treeGeo1.setAttribute('instanceQuaternion',
   //   new THREE.InstancedBufferAttribute(new Float32Array(instanceQuaternion), 4, false));
 
@@ -65,7 +65,7 @@ export const createInstancedMesh = ({ geometry, curve, count, offset, name, mate
   mesh.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 10);
 
   if (depthMaterial) mesh.customDepthMaterial = depthMaterial;
-  // mesh1.frustumCulled = false; // this is probably not best: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+  // mesh.frustumCulled = false; // this is probably not best: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
   mesh.castShadow = true;
   mesh.userData.type = 'instancedMesh';
   mesh.name = name;

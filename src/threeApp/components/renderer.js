@@ -9,7 +9,6 @@ export class Renderer {
     this.scene = scene;
     this.container = container;
 
-    
     // Create WebGL renderer and set its antialias
     this.threeRenderer = new THREE.WebGLRenderer(Config.renderer);
 

@@ -24,15 +24,12 @@ export const createTrees = ({ scene }) => {
 
   const material = new InstancesStandardMaterial({
     map,
-    //side: THREE.DoubleSide,
+    side: THREE.DoubleSide,
     normalMap,
     normalScale: new THREE.Vector2(0.5, 0.5),
     depthFunc: THREE.LessDepth,
-    color: 0x444444,
+    color: 0x888888,
     specular: 0x000000,
-    // extensions: {
-    //   derivatives: true,
-    // },
   });
 
   const depthMaterial = new InstancesDepthMaterial({
@@ -67,7 +64,6 @@ const OVERRIDE_PROJECT_VERTEX = `
   if (gl_Position.z > 200.0) gl_Position.w = 0.0/0.0;
 `;
 
-
 export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
   name = 'InstancesStandardMaterial';
 
@@ -93,7 +89,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
           look = normalize(look);
           vec3 billboardUp = vec3(0, 1, 0);
           vec3 billboardRight = cross(billboardUp, look);
-          vec3 pos = instanceOffset + billboardRight * position.x * instanceScale.x + billboardUp * position.y * instanceScale.y;
+          vec3 pos = instanceOffset + (billboardRight * position.x * instanceScale.x) + (billboardUp * position.y * instanceScale.y);
           return pos;
         }
         
@@ -104,7 +100,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
     shader.fragmentShader = shader.fragmentShader
       .replace(
         'gl_FragColor = vec4( outgoingLight, diffuseColor.a );',
-        `if ( diffuseColor.a < 0.95 ) discard; // remove low alpha values
+        `if ( diffuseColor.a < 0.9 ) discard; // remove low alpha values
         gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`,
       );
   }
@@ -118,7 +114,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
           // ! orig: // vUv = ( uvTransform * vec3(uv, 1.0)).xy;
           vUv = ( uvTransform * vec3( uv.x * 0.5 + instanceMapUV.x, uv.y * 0.5 + instanceMapUV.y, 1 ) ).xy ;
         #endif
-        `);
+      `);
   };
 }
 
@@ -154,7 +150,7 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
           look = normalize(look);
           vec3 billboardUp = vec3(0, 1, 0);
           vec3 billboardRight = cross(billboardUp, look);
-          vec3 pos = instanceOffset + billboardRight * position.x * instanceScale.x + billboardUp * position.y * instanceScale.y;
+          vec3 pos = instanceOffset + (billboardRight * position.x * instanceScale.x) + (billboardUp * position.y * instanceScale.y);
           return pos;
         }
         

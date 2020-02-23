@@ -111,7 +111,6 @@ export class Mesh {
         geometry.elementsNeedUpdate = true;
         geometry.verticesNeedUpdate = true;
         geometry.uvsNeedUpdate = true;
-
       }
 
       this.orientObject(geometry);
@@ -146,35 +145,56 @@ export class Mesh {
     }
     this.mesh = new THREE.Mesh(geometry, loadedMaterial || this.material);
 
-   
 
-    if (false === true) {
+    if (this.name === 'barriers') {
       this.mesh.material.vertexColors = THREE.VertexColors;
        //this.mesh.geometry.attributes
-    console.log({ rrr: this.mesh })
-    const vCount = this.mesh.geometry.attributes.position.count;
+      console.log({ rrr: this.mesh })
+      const vCount = this.mesh.geometry.attributes.position.count;
     //const colors = new Array(vCount * 3).fill('').map(c => Math.random());
-    let colors = [];
-    for (let i = 0; i < vCount; i++) {
-      const rand = Math.random() * 0.25 + 0.75;
-      if (
-        (i) % 36 === 0
-        || (i+1) % 36 === 0
-        || (i+4) % 36 === 0
-        //|| (i - 5) % 36 === 0
-      ) {
-        colors.push(0.75, 0.75, 0.75);
-      } else {
-        colors.push(1,1,1)
-      }
+      const colors = [];
+    // for (let i = 0; i < vCount; i++) {
+    //   const rand = Math.random() * 0.25 + 0.75;
+    //   if (
+    //     (i) % 36 === 0
+    //     || (i+1) % 36 === 0
+    //     || (i+4) % 36 === 0
+    //     //|| (i - 5) % 36 === 0
+    //   ) {
+    //     colors.push(0.75, 0.75, 0.75);
+    //   } else {
+    //     colors.push(1,1,1)
+    //   }
+    //   //colors.push(rand, rand, rand);
+    // }
+      for (let i = 0; i < vCount; i += 3) {
+        const rand = Math.random();
+        
+        if (
+          (i % 4 === 0
+            || i % 8 === 0)
+          && rand > 0.6
+          // || i % 4 === 0
+          //|| (i - 5) % 36 === 0
+        ) {
+          for (let j = 0; j < 6; j++) {
+            colors.push(0.55, 0.55, 0.55);
+          }
+
+        } else {
+          for (let j = 0; j< 6; j++) {
+
+            colors.push(1,1,1)
+          }
+
+        }
       //colors.push(rand, rand, rand);
-    }
-    //console.log({ colors })
-    this.mesh.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ));//.onUpload( disposeArray ) );
-    //console.log({ h: this.mesh.geometry.attributes })
+      }
+      console.log({ colors })
+      this.mesh.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ));//.onUpload( disposeArray ) );
 
     }
-   
+
     this.mesh.position.set(...this.position);
     this.mesh.rotation.set(...this.rotation);
     this.mesh.geometry.scale(...this.scale);

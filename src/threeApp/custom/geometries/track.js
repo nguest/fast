@@ -61,36 +61,36 @@ export const trackUVGenerator = {
   },
 };
 
-export const createTrackDecalsOld = (trackMesh, scene, material) => {
-  const pointsCount = 2000;
-  const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
-  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
+// export const createTrackDecalsOld = (trackMesh, scene, material) => {
+//   const pointsCount = 2000;
+//   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
+//   const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
 
-  console.log({ tangents })
+//   console.log({ tangents })
 
-  material.polygonOffset = true;
-  material.polygonOffsetFactor = -1;
-  material.blending = THREE.AdditiveBlending;
+//   material.polygonOffset = true;
+//   material.polygonOffsetFactor = -1;
+//   material.blending = THREE.AdditiveBlending;
 
-  const scale = new THREE.Vector3(10, 10, 10);
+//   const scale = new THREE.Vector3(10, 10, 10);
 
-  for (let i = 0; i < pointsCount; i++) {
-    const geometry = new DecalGeometry(
-      trackMesh,
-      positions[i],
-      new THREE.Euler().setFromVector3(tangents[i]),
-      scale,
-    );
-    const decalMesh = new THREE.Mesh(geometry, material);
-    decalMesh.name = `trackDecal-${i}`;
-    decalMesh.userData.type = 'decal';
-    scene.add(decalMesh);
-  }
-};
+//   for (let i = 0; i < pointsCount; i++) {
+//     const geometry = new DecalGeometry(
+//       trackMesh,
+//       positions[i],
+//       new THREE.Euler().setFromVector3(tangents[i]),
+//       scale,
+//     );
+//     const decalMesh = new THREE.Mesh(geometry, material);
+//     decalMesh.name = `trackDecal-${i}`;
+//     decalMesh.userData.type = 'decal';
+//     scene.add(decalMesh);
+//   }
+// };
 
 export const createTrackDecals = (trackMesh, scene, material) => {
 
-  const plane = new THREE.PlaneBufferGeometry(0.25, 5);
+  const plane = new THREE.PlaneBufferGeometry(0.2, 10);
   //plane.rotateX(-Math.PI * 0.5);
   //plane.rotateZ(Math.PI * 0.5);
   //plane.translate(0, 0.125, 0);

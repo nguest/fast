@@ -18,6 +18,9 @@ export const styles = {
         sans-serif;`,
     },
   },
+  app: {
+    position: 'relative',
+  },
   appHeader: {
     backgroundColor: 'grey',
     display: 'flex',
@@ -46,15 +49,17 @@ export const styles = {
     backgroundColor: 'black',
   },
   statusBar: {
-    padding: 10,
+    padding: 5,
     color: 'white',
     right: 0,
+    fontSize: 10,
   },
   gamePosition: {
     left: 100,
     width: 100,
-    padding: 10,
+    padding: 5,
     color: 'white',
+    fontSize: 10,
   },
   resetButton: {
   },

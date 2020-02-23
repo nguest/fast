@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { patchShader } from './extend';
+import { Config } from '../sceneConfig/general';
 
 export const createMaterial = ({
   bumpMap,
@@ -23,6 +24,7 @@ export const createMaterial = ({
   specular,// = 0x000000,
   transparent,
   type,
+  useVertexColors = false,
   wireframe = false,
   vertexShader,
   fragmentShader,
@@ -53,6 +55,7 @@ export const createMaterial = ({
         material.map.wrapT = THREE[map.wrapping] || THREE.RepeatWrapping;
         material.map.wrapS = THREE[map.wrapping] || THREE.RepeatWrapping;
         material.minFilter = THREE.NearestMipmapNearestFilter;
+        material.map.anisotropy = Config.maxAnisotropy;
 
         //material.map.preMultiplyAlpha = true;
         if (map.repeat) material.map.repeat.set(...map.repeat);
@@ -126,20 +129,33 @@ export const createMaterial = ({
     };
   }
 
+  /*
+  [map, normalMap, bumpMap, lightMap].forEach((texture) => {
+    if (texture) {
+        material[texture] = assets[texture.name]
+        material[texture].wrapT = THREE[texture.wrapping] || THREE.RepeatWrapping;
+        material[texture].wrapS = THREE[texture.wrapping] || THREE.RepeatWrapping;
+        if (texture.repeat) material[texture].repeat.set(...texture.repeat);
+        if (texture.offset) material[texture].offset.set(...texture.offset);
+    }
+  })
+
+  */
   if (map) {
     material.map = assets[map.name];
     material.map.wrapT = THREE[map.wrapping] || THREE.RepeatWrapping;
     material.map.wrapS = THREE[map.wrapping] || THREE.RepeatWrapping;
     material.map.preMultiplyAlpha = true;
     if (map.repeat) material.map.repeat.set(...map.repeat);
-    if (map.offset) material.map.repeat.set(...map.offset);
+    if (map.offset) material.map.offset.set(...map.offset);
+    material.map.anisotropy = Config.maxAnisotropy;
   }
   if (normalMap) {
     material.normalMap = assets[normalMap.name];
     material.normalMap.wrapT = THREE[normalMap.wrapping] || THREE.RepeatWrapping;
     material.normalMap.wrapS = THREE[normalMap.wrapping] || THREE.RepeatWrapping;
     if (normalMap.repeat) material.normalMap.repeat.set(...normalMap.repeat);
-    if (normalMap.offset) material.normalMap.repeat.set(...normalMap.offset);
+    if (normalMap.offset) material.normalMap.offset.set(...normalMap.offset);
     if (normalMap.normalScale && material.normalScale) material.normalScale.set(...normalMap.normalScale);
   }
   if (bumpMap) {
@@ -147,7 +163,7 @@ export const createMaterial = ({
     material.bumpMap.wrapT = THREE[bumpMap.wrapping] || THREE.RepeatWrapping;
     material.bumpMap.wrapS = THREE[bumpMap.wrapping] || THREE.RepeatWrapping;
     if (bumpMap.repeat) material.normalMap.repeat.set(...bumpMap.repeat);
-    if (bumpMap.offset) material.normalMap.repeat.set(...bumpMap.offset);
+    if (bumpMap.offset) material.normalMap.offset.set(...bumpMap.offset);
     if (bumpMap.bumpScale) material.bumpScale = bumpMap.bumpScale;
     // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
   }

@@ -189,6 +189,7 @@ export const materialsIndex = [
     wireframe: false,
     emissive: 0x000000,
     clipping: true,
+    useVertexColors: true,
 
   },
   {

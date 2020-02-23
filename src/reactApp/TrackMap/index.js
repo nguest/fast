@@ -35,6 +35,8 @@ export const TrackMap = ({ gamePosition, trackParams }) => {
       css={styles.map}
       viewBox={` ${e.minX} ${e.minZ} ${-e.minX + e.maxX} ${-e.minZ + e.maxZ}`}
     >
+      <polyline points={points} fill="none" stroke="white" strokeWidth="70" />
+
       <polyline points={points} fill="none" stroke="black" strokeWidth="50" />
       <circle cx="0" cy="0" r="60" fill="white" />
       <circle cx={gamePosition.vehiclePosition.x} cy={gamePosition.vehiclePosition.z} r="50" fill="red" />

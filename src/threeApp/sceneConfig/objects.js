@@ -167,7 +167,7 @@ export const objectsIndex = [
     position: [0, -0.3, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: ['mappedFlat', 'guardRails'],//'asphalt',//'mappedFlat',//wireFrame',//,//'asphalt',
+    material: 'guardRails',
     physics: {
       mass: 0,
       friction: 1,

@@ -11,7 +11,7 @@ export const createInstancedMesh = ({ geometry, curve, count, offset, name, mate
   const instancedGeo = new THREE.InstancedBufferGeometry().copy(geometry);
 
   const positions = curve.getSpacedPoints(count);
-  const { binormals, normals, tangents } = computeFrenetFrames(curve, count);
+  //const { binormals, normals, tangents } = computeFrenetFrames(curve, count);
 
   const instanceOffset = [];
   const instanceScale = [];
@@ -69,7 +69,6 @@ export const createInstancedMesh = ({ geometry, curve, count, offset, name, mate
   mesh.castShadow = true;
   mesh.userData.type = 'instancedMesh';
   mesh.name = name;
-  console.log({ 'iii': mesh })
   return mesh;
 };
 

@@ -224,7 +224,6 @@ export class Main extends PureComponent {
       // set chassisMesh in position, attach car and decorate
       this.chassisMesh = getObjByName(this.scene, 'chassisMesh');
       const baseCar = getObjByName(this.scene, 'car');
-      console.log({ baseCar, a: this.chassisMesh })
       const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, envCube);
       this.brakeLights = brakeLights;
       if (this.chassisMesh.children.length === 1) this.chassisMesh.add(car);
@@ -239,19 +238,15 @@ export class Main extends PureComponent {
 
       if (Config.isDev) this.gui = new DatGUI(this);
 
-      //this.goal = new THREE.Object3D();
+      // setup light camera goal
+      //this.localGoal = new THREE.Object3D();
       this.localGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1,1,0.1), materials['green'])
       this.localGoal.position.set(0, 0, 50);
       this.chassisMesh.add(this.localGoal);
 
       this.worldGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1,1,0.1), materials['mappedFlat'])
-      this.scene.add(this.worldGoal)
+      this.scene.add(this.worldGoal);
       this.lights[1].target = this.worldGoal;
-      //this.goal.lookAt(new THREE.Vector3(0,0,1))
-      //this.scene.add(this.goal);
-      //this.lights[1].position.set(100,20,40)
-      //this.followCam.threeCamera.add(this.lights[1]);
-           // this.chassisMesh.add(this.lights[1])
 
       this.animate();
     };

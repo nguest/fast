@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as Ammo from 'ammonext';
+import { getObjByName } from '../../helpers/helpers';
 
 
 // https://docs.google.com/document/u/0/d/18edpOwtGgCwNyvakS78jxMajCuezotCU_0iezcwiFQc/mobilebasic?urp=gmail_link
@@ -29,7 +30,8 @@ const BACK_LEFT = 2;
 const BACK_RIGHT = 3;
 const wheelMeshes = [];
 
-const createWheelMesh = ({ radius, width, index, scene }) => {
+const createWheelMeshOLD = ({ radius, width, index, scene }) => {
+  console.log({ scene })
   const t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
   t.rotateZ(Math.PI / 2);
   const mesh = new THREE.Mesh(t, materialInteractive);
@@ -49,6 +51,18 @@ const createWheelMesh = ({ radius, width, index, scene }) => {
   return mesh;
 };
 
+
+const createWheelMesh = ({ index, scene }) => {
+  const mesh = new THREE.Mesh();
+  mesh.name = `wheel_${index}`;
+  if (index === 0 || index === 3) {
+    mesh.scale.x = -1
+  }
+  mesh.userData = { type: 'wheelMesh', index };
+  scene.add(mesh);
+  return mesh;
+};
+
 const createChassisMesh = ({ w, h, l, material, scene }) => {
   const shape = new THREE.BoxGeometry(w, h, l, 1, 1, 1);
   const mesh = new THREE.Mesh(shape, material);
@@ -61,6 +75,7 @@ const createChassisMesh = ({ w, h, l, material, scene }) => {
 };
 
 export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, material, scene }) => {
+  console.log({ zzzzzzz: scene })
   // Vehicle constants
   const chassisW = 1.8;
   const chassisH = 0.6;
@@ -156,7 +171,12 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
     wheelInfo.set_m_frictionSlip(friction);
     wheelInfo.set_m_rollInfluence(rollInfluence);
 
-    wheelMeshes[index] = createWheelMesh({ radius, width, material, index, scene });
+    const wheelMesh = getObjByName(scene, 'wheel');
+    console.log({ wheelMesh })
+    wheelMeshes[index] = createWheelMesh({ wheelMesh, index, scene })
+
+   // wheelMeshes[index] = createWheelMesh({ radius, width, material, index, scene });
+    
   };
 
   addWheel(true, new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);

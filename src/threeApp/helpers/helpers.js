@@ -61,6 +61,8 @@ export const getPosQuatFromGamePosition = (gate) => {
 
 export const getObjByName = (scene, name) => scene.children.find((object) => object.name === name);
 
+export const getObjectsByType = (scene, type) => scene.children.filter((object) => object.userData.type === type);
+
 export const scaleBackground = (scene) => {
   const track = getObjByName(scene, 'track');
   track.geometry.computeBoundingSphere();

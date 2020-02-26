@@ -72,7 +72,7 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, imageFile, til
   skyBox.name = 'SkyBox';
   skyBox.scale.set(1, 1, 1);
   scene.add(skyBox);
-
+  scene.environment = skyBoxMaterialArray;
     //scene.background = skyBoxMaterialArray
     return skyBoxMaterialArray;
   //};

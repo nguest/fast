@@ -4,7 +4,7 @@ export const materialsIndex = [
   {
     name: 'green',
     type: 'MeshLambertMaterial',
-    color: 0x5f753c,
+    color: 0x3f451c,
     side: 'FrontSide',
     wireframe: false,
   },
@@ -42,12 +42,12 @@ export const materialsIndex = [
       wrapping: 'MirroredRepeatWrapping',
       repeat: [2, 1],
     },
-    lightMap: {
-      name: 'LightMap_Map',
-      repeat: [0.25, 0.25],
-      lightMapIntensity: 0.5,//0.1,
-      //wrapping: 'MirroredRepeatWrapping',
-    },
+    // lightMap: {
+    //   name: 'LightMap_Map',
+    //   repeat: [0.25, 0.25],
+    //   lightMapIntensity: 0.5,//0.1,
+    //   //wrapping: 'MirroredRepeatWrapping',
+    // },
     normalMap: {
       name: 'Road_Normal',
       wrapping: 'MirroredRepeatWrapping',

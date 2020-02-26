@@ -14,6 +14,7 @@ treesCrossSection2.lineTo(-8, trackParams.trackHalfWidth + 10);
 export const treesCrossSection = [treesCrossSection1, treesCrossSection2];
 
 export const createTrees = ({ scene }) => {
+  console.log({ l:trackParams.length })
   const treeHeight = 12;
   const treePlane = new THREE.PlaneBufferGeometry(7, treeHeight, 1, 1);
   treePlane.translate(0, treeHeight * 0.5, 0);
@@ -44,7 +45,7 @@ export const createTrees = ({ scene }) => {
     const instancedMesh = createInstancedMesh({
       geometry: treePlane,
       curve,
-      count: 2000,
+      count: Math.floor(trackParams.length / 4),
       offset: new THREE.Vector3(0, 0, 0),//treeHeight * 0.5,
       name: `treesInstance-${i}`,
       material,

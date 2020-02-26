@@ -58,7 +58,7 @@ export const Config = {
     near: 2,
     far: 10000,
     aspect: 1,
-    position: [0, 1.35, -4.5],
+    position: [0, 1.45, -4.5],
     ß: 30,
     clipDistance: 20,
   },

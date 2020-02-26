@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 export const decorateCar = (car, brakelights, envCube) => {
-  let brakeLights;
+  let brakeLights = new THREE.Mesh();
   car.traverse((child) => {
     if (child.isMesh) {
       //console.log(child.name)
@@ -27,7 +27,7 @@ export const decorateCar = (car, brakelights, envCube) => {
         child.material = new THREE.MeshPhongMaterial({
           color: 0x666666,
           //specular: 0xffffff,
-          reflectivity: 1,
+          reflectivity: 0.8,
           envMap: envCube,
         });
       }

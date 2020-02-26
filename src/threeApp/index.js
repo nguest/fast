@@ -24,7 +24,7 @@ import { decorateGrass } from './custom/geometries/grass';
 import { trackParams } from './custom/geometries/trackParams';
 
 // Helpers
-import { promisifyLoader, getPosQuatFromGamePosition, getObjByName, scaleBackground } from './helpers/helpers';
+import { promisifyLoader, getPosQuatFromGamePosition, getObjByName, getObjectsByType, scaleBackground } from './helpers/helpers';
 import { createSkyBoxFrom4x3 } from './helpers/skyBoxHelper';
 
 // Assets & Materials
@@ -194,10 +194,10 @@ export class Main extends PureComponent {
     });
     createTrees({ scene: this.scene });
     createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
-    console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
     decorateGrass(getObjByName(this.scene, 'grass'), this.scene);
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
+    console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
 
     createApexes(this.scene);
     const helper = new THREE.GridHelper(10, 2, 0xffffff, 0xffffff);
@@ -223,10 +223,20 @@ export class Main extends PureComponent {
 
       // set chassisMesh in position, attach car and decorate
       this.chassisMesh = getObjByName(this.scene, 'chassisMesh');
-      const baseCar = getObjByName(this.scene, 'car');
+      const baseCar = getObjByName(this.scene, 'porsche_911gt2');
+      const wheel = getObjByName(this.scene, 'wheel');
+
+      const wheelMeshes = getObjectsByType(this.scene, 'wheelMesh');
+      console.log({ wheelMeshes })
+
       const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, envCube);
       this.brakeLights = brakeLights;
-      if (this.chassisMesh.children.length === 1) this.chassisMesh.add(car);
+      //if (this.chassisMesh.children.length === 1)
+      // wheel1.add(wheelMesh)
+      wheelMeshes.forEach((mesh) => {
+        mesh.add(wheel.clone())
+      });
+      this.chassisMesh.add(car);
       this.resetObjects(0);
 
       // create followCam
@@ -304,7 +314,7 @@ export class Main extends PureComponent {
     // this.temp.setFromMatrixPosition(this.goal.matrixWorld);
     // this.followCam.threeCamera.position.lerp(this.temp, 0.1);
 
-    this.followCam.threeCamera.lookAt(x, y + 0.5, z);
+    this.followCam.threeCamera.lookAt(x, y + 0.6, z);
 
     // update instancedMeshes so frustrum culling works correctly
     // https://stackoverflow.com/questions/51025071/instance-geometry-frustum-culling

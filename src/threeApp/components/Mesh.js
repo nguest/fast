@@ -120,18 +120,50 @@ export class Mesh {
   initLoader(url, manager) {
     const loader = new GLTFLoader(manager).setPath(url.path);
     loader.load(url.file, (gltf) => {
-      gltf.scene.traverse((child) => {
-        if (child.isMesh) {
+      console.log({ gltf });
+      let mesh = gltf.scene.children[0];
 
-        }
-      });
+      if (url.file === 'porsche_911gt2.gltf') {
+        mesh = gltf.scene.children[0];
+      // if (url.file === 'porsche_911gt2.gltfxx') {
+      //   mesh = new THREE.Object3D();
 
-      const mesh = gltf.scene.children[0];
+        gltf.scene.traverse((child) => {
+          if (child.isMesh) {
+
+           // console.log(child.name, child.material)
+            if (child.material.name === 'GlassMat') {
+              child.material = new THREE.MeshPhysicalMaterial({ color: 0x444444, envMap: this.scene.environment, reflectivity: 1.0 });
+            }
+            if (child.material.name === 'CarbonMat') {
+              child.material = new THREE.MeshPhongMaterial({ color: 0x444444, envMap: this.scene.environment, reflectivity: 1.0 });
+            }
+            if (child.name === 'Black') {
+              child.material = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            }
+            if (child.name === 'Middle_Body') {
+              child.castShadow = true;
+            }
+            // const x = child.clone();
+            // mesh.add(x);
+          }
+            //child.castShadow = true;
+            //mesh.add(child)
+            //child.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+          //}
+        });
+      // }
+
+      }
+
+      //const mesh = gltf.scene.children[0];
       mesh.position.set(...this.position);
+      mesh.rotation.set(...this.rotation);
       mesh.scale.set(...this.scale);
       mesh.name = this.name;
       mesh.castShadow = this.shadows.cast;
       mesh.receiveShadow = this.shadows.receive;
+      console.log({ [mesh.name]: mesh.material })
       this.scene.add(mesh);
     });
   }

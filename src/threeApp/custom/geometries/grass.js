@@ -6,10 +6,10 @@ import { createSampledInstanceMesh } from '../../helpers/InstancedBufferGeometry
 
 const grassCrossSection1 = new THREE.Shape();
 grassCrossSection1.moveTo(0.1, -trackParams.trackHalfWidth + 0.3);
-grassCrossSection1.lineTo(-1, -20);
+grassCrossSection1.lineTo(-0.7, -16);
 
 const grassCrossSection2 = new THREE.Shape();
-grassCrossSection2.moveTo(-1, 20);
+grassCrossSection2.moveTo(-0.7, 16);
 grassCrossSection2.lineTo(0.1, trackParams.trackHalfWidth - 0.3);
 
 export const grassCrossSection = [grassCrossSection1, grassCrossSection2];

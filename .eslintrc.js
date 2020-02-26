@@ -45,7 +45,7 @@ module.exports = {
         varsIgnorePattern: "React"
       }
     ],
-    "no-param-reassign": "warn",
+    "no-param-reassign": "off",
     "max-classes-per-file": "off",
   }
 }

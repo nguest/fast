@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 
-export const decorateCar = (car, brakelights, envCube) => {
+export const decorateCar = (car, brakelights, envCube, scene) => {
   let brakeLights = new THREE.Mesh();
   car.traverse((child) => {
     if (child.isMesh) {
+      // FIRST CAR
       //console.log(child.name)
       if (child.name === 'ty_rims_0') {
         //child.position.set(0, 4, 0);
@@ -42,19 +43,39 @@ export const decorateCar = (car, brakelights, envCube) => {
           reflectivity: 1,
         });
       }
+      // SECOND CAR
+
+      if (child.material.name === 'GlassMat') {
+        child.material = new THREE.MeshPhongMaterial({ color: 0x444444, envMap: scene.environment, reflectivity: 1.0 });
+      }
+      if (child.material.name === 'CarbonMat') {
+        child.material = new THREE.MeshPhongMaterial({ color: 0x444444, envMap: scene.environment, reflectivity: 0.7 });
+      }
+      if (child.material.name === 'CarpaintMat') {
+        child.receiveShadow = true;
+      }
+
+      if (child.name === 'ShadowMesh') {
+        child.castShadow = true;
+      }
     }
   });
 
-  const shadowPlane = new THREE.PlaneBufferGeometry(200, 500);
-  shadowPlane.translate(0, -15, 5);
-  const material = new THREE.MeshLambertMaterial({ 
-    color: 0x000000,
+  const shadowPlane = new THREE.PlaneBufferGeometry(200, 470);
+  shadowPlane.translate(0, 0, -5);
+  const material = new THREE.MeshLambertMaterial({
+    color: 0xff0000,
     transparent: true,
     opacity: 0.7,
-    map: new THREE.TextureLoader().load(('./assets/textures/carShadow_map.png'))
+    side: THREE.DoubleSide,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    map: new THREE.TextureLoader().load(('./assets/textures/carShadow_map.png')),
   });
   const mesh = new THREE.Mesh(shadowPlane, material);
+  mesh.name = 'shadowPlane';
   car.add(mesh);
+  console.log({ 2: car })
 
   car.position.set(0, -0.5, 0);
   return { car, brakeLights };

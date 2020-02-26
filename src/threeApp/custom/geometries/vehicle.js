@@ -88,7 +88,7 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
   const wheelHalfTrackBack = 0.75;
   const wheelAxisHeightBack = 0.3;// 0.3;
 
-  const wheelAxisFrontPosition = 1.15;
+  const wheelAxisFrontPosition = 1.2;
   const wheelHalfTrackFront = 0.75;
   const wheelRadiusFront = 0.33;
   const wheelWidthFront = 0.3;

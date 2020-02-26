@@ -159,7 +159,7 @@ const signedTriangleArea = (a, b, c) => (
 const TrackMarksMaterial = new THREE.MeshLambertMaterial({
   color: 0x000000,
   //map: new THREE.TextureLoader().load('./assets/textures/grassClump64_map.png'),
-  //side: THREE.DoubleSide,
+  side: THREE.FrontSide,
   polygonOffset: true,
   polygonOffsetFactor: -1,
   transparent: true,

@@ -229,12 +229,16 @@ export class Main extends PureComponent {
       const wheelMeshes = getObjectsByType(this.scene, 'wheelMesh');
       console.log({ wheelMeshes })
 
-      const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, envCube);
+      const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, envCube, this.scene);
+      console.log({ car })
       this.brakeLights = brakeLights;
-      //if (this.chassisMesh.children.length === 1)
-      // wheel1.add(wheelMesh)
-      wheelMeshes.forEach((mesh) => {
-        mesh.add(wheel.clone())
+
+      wheelMeshes.forEach((mesh, i) => {
+        if (i === 0) {
+          mesh.add(wheel);
+        } else {
+          mesh.add(wheel.clone());
+        }
       });
       this.chassisMesh.add(car);
       this.resetObjects(0);
@@ -249,7 +253,6 @@ export class Main extends PureComponent {
       if (Config.isDev) this.gui = new DatGUI(this);
 
       // setup light camera goal
-      //this.localGoal = new THREE.Object3D();
       this.localGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1,1,0.1), materials['green'])
       this.localGoal.position.set(0, 0, 50);
       this.chassisMesh.add(this.localGoal);

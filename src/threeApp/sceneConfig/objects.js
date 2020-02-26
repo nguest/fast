@@ -124,7 +124,7 @@ export const objectsIndex = [
         UVGenerator: barriersUVGenerator,
         extrudePath: trackParams.centerLine,
         widthFactor: trackParams.widthFactor,
-        // includeSegments: [[0, 0.05], [0.1, 0.2]]
+        //includeSegments: [[0, 0.05], [0.1, 0.2]]
       },
     ],
     position: [0, -0.3, 0],
@@ -133,7 +133,7 @@ export const objectsIndex = [
     material: 'guardRails',
     physics: {
       mass: 0,
-      friction: 1,
+      friction: 0,
       restitution: 0.5,
     },
     shadows: {
@@ -194,7 +194,7 @@ export const objectsIndex = [
       path: 'assets/objects/', //porsche_911gt2/',
       file: 'wheel.gltf',//'wheel.gltf',
     },
-    position: [0.2, 0, 0], // [-4, 2, 0],
+    position: [0.16, 0, 0], // [-4, 2, 0],
     rotation: [0, 0, 0],
     scale: [0.01, 0.01, 0.01],
     // physics: {

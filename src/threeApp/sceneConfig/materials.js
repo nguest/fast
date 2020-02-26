@@ -52,7 +52,7 @@ export const materialsIndex = [
       name: 'Road_Normal',
       wrapping: 'MirroredRepeatWrapping',
       //repeat: [2, 1],
-      normalScale: [0.25, 0.25],
+      normalScale: [0.5, 0.5],
     },
     shininess: 1,
     specular: 0x555555,

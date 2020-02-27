@@ -11,9 +11,11 @@ const trackPoints = converLatLngToVector(coordinates);
 const section2 = trackPoints.splice(0, startPoint);
 const adjustedTrackPoints = trackPoints.concat(section2).map((p) => p.clone().sub(trackPoints[0]));
 
+// create centerLine from adjustedTrackPoints and compute steps
 const centerLine = new CatmullRomCurve3(adjustedTrackPoints);
 const length = centerLine.getLength();
 const steps = Math.floor(length * 0.5); // total extrusion segments
+
 centerLine.arcLengthDivisions = steps;
 centerLine.closed = true;
 centerLine.name = 'centerLine';
@@ -27,9 +29,6 @@ const widthCurve = new CubicBezierCurve(
   new Vector2(1, 0),
   new Vector2(1, 0),
 );
-
-
-
 const widthFactor = widthCurve.getPoints(steps);
 
 export const trackParams = {

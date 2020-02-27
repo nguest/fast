@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const decorateCar = (car, brakelights, envCube, scene) => {
+export const decorateCar = (car, brakelights, scene) => {
   let brakeLights = new THREE.Mesh();
   car.traverse((child) => {
     if (child.isMesh) {
@@ -29,7 +29,7 @@ export const decorateCar = (car, brakelights, envCube, scene) => {
           color: 0x666666,
           //specular: 0xffffff,
           reflectivity: 0.8,
-          envMap: envCube,
+          envMap: scene.environment,
         });
       }
       if (child.name === 'gum_details_glossy_0') { // brakelights
@@ -54,7 +54,10 @@ export const decorateCar = (car, brakelights, envCube, scene) => {
       if (child.material.name === 'CarpaintMat') {
         child.receiveShadow = true;
       }
-
+      if (child.name === 'Rearlight_Glass_02') { // brakelights
+        child.material.emissive = new THREE.Color(0x550000);
+        brakeLights = child;
+      }
       if (child.name === 'ShadowMesh') {
         child.castShadow = true;
       }

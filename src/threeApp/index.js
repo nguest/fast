@@ -211,9 +211,9 @@ export class Main extends PureComponent {
     const envCube = createSkyBoxFrom4x3({
       scene: this.scene,
       boxDimension: 10000,
-      imageFile: './assets/textures/skybox1.png',
+      //imageFile: './assets/textures/skybox5-512.png',
       image: assets.Skybox,
-      tileSize: 1024,
+      tileSize: 512,
       manager: this.manager,
     });
 
@@ -229,7 +229,7 @@ export class Main extends PureComponent {
       const wheelMeshes = getObjectsByType(this.scene, 'wheelMesh');
       console.log({ wheelMeshes })
 
-      const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, envCube, this.scene);
+      const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, this.scene);
       console.log({ car })
       this.brakeLights = brakeLights;
 

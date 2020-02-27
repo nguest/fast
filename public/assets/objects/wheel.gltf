@@ -184,21 +184,30 @@
     "materials" : [
         {
             "doubleSided" : true,
-            "emissiveFactor" : [
-                0,
-                0,
-                0
-            ],
-            "name" : "tire",
+            "name" : "RimMat",
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
-                    0.0036418200470507145,
-                    0.0036418200470507145,
-                    0.0036418200470507145,
+                    0.06372231245040894,
+                    0.06372231245040894,
+                    0.06372231245040894,
                     1
                 ],
                 "metallicFactor" : 0,
-                "roughnessFactor" : 0.9763333201408386
+                "roughnessFactor" : 0.5
+            }
+        },
+        {
+            "doubleSided" : true,
+            "name" : "tire",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.7408602237701416
             }
         }
     ],
@@ -290,7 +299,8 @@
                         "NORMAL" : 25,
                         "TEXCOORD_0" : 26
                     },
-                    "indices" : 27
+                    "indices" : 27,
+                    "material" : 0
                 }
             ]
         },
@@ -317,7 +327,7 @@
                         "TEXCOORD_0" : 34
                     },
                     "indices" : 35,
-                    "material" : 0
+                    "material" : 1
                 }
             ]
         }

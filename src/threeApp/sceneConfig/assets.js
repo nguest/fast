@@ -1,6 +1,7 @@
 export const assetsIndex = {
   images: {
-    Skybox: { name: 'Skybox', path: './assets/textures/skybox4.png' },
+    //Skybox: { name: 'Skybox', path: './assets/textures/skybox4.png' },
+    Skybox: { name: 'Skybox', path: './assets/textures/skybox5-512.jpg', type: '4x3' },
   },
   textures: {
     UVGrid: { name: 'UVGrid', path: './assets/textures/UV_Grid_Sm.png' },
@@ -26,5 +27,6 @@ export const assetsIndex = {
   },
   SkyBox: {
     One: { name: 'One', path: './assets/textures/skybox1.png', type: '4x3' },
+    Two: { name: 'Five', path: './assets/textures/skybox5-512.png', type: '4x3' },
   },
 };

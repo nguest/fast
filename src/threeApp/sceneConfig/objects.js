@@ -218,7 +218,7 @@ export const objectsIndex = [
     material: 'wireFrame',//wireFrame',//,//'asphalt',
     physics: {
       mass: 0,
-      friction: 0.8,
+      friction: 0.1,
       restitution: 0.5,
     },
     shadows: {

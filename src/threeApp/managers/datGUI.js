@@ -21,16 +21,21 @@ export class DatGUI {
     gui.add(Config, 'useBasicMaterials').name('useBasicMaterials').onChange((value) => {
       Config.useBasicMaterials = value;
       this.meshes.forEach((mesh) => {
-        if (mesh.material) {
-          mesh.material = new THREE.MeshLambertMaterial({ color: 0x990000 })
+        if (mesh.material && mesh.material.visible) {
+          mesh.material = new THREE.MeshLambertMaterial({ color: 0x990000, wireframe: true });
         }
-      })
+      });
     });
     /* Camera */
     const cameraFolder = gui.addFolder('Camera');
     cameraFolder.open();
     cameraFolder.add(Config, 'useFollowCam').name('Follow Cam').onChange((value) => {
       Config.useFollowCam = value;
+      if (value) {
+        Config.clipping = 200
+      } else {
+        Config.clipping = 10000
+      }
     });
     const cameraFOVGui = cameraFolder.add(Config.camera, 'fov', 0, 180).name('Camera FOV');
     cameraFOVGui.onChange((value) => {

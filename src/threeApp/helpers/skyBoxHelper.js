@@ -53,7 +53,7 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, imageFile, til
 
 
   // Required sequence of tile view directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
-  const imagePieceIdx = [7, 1, 3, 5, 4, 10];
+  const imagePieceIdx = [7, 1, 5, 3, 4, 10]; // swap the y directions so .flipY works
 
   const loader = new THREE.CubeTextureLoader(manager);
   const skyBoxMaterialArray = loader.load(imagePieceIdx.map((idx) => imagePieces[idx]));
@@ -65,20 +65,18 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, imageFile, til
     envMap: skyBoxMaterialArray,
     side: THREE.BackSide,
     fog: false,
+    //flipY: true,
     //opacity: 0.5,
     //transparent: true,
    // blending: THREE.AdditiveBlending,
   });
   const skyBox = new THREE.Mesh(skyBoxGeometry, material);
   skyBox.name = 'SkyBox';
-  skyBox.position.set(0, -boxDimension * 0.1, 0);
-  console.log({ skyBox })
+  skyBox.position.set(0, 0, 0);
+  //skyBox.rotateX(Math.PI)
+  //skyBox.scale.set(-1, -1, -1);
   scene.add(skyBox);
   scene.environment = skyBoxMaterialArray;
-    //scene.background = skyBoxMaterialArray
-    return skyBoxMaterialArray;
-  //};
-  //return skyBoxMaterialArray;
-  //return skyBoxMaterialArray;
-
+  //scene.background = skyBoxMaterialArray
+  return skyBoxMaterialArray;
 };

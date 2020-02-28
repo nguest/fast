@@ -227,10 +227,8 @@ export class Main extends PureComponent {
       const wheel = getObjByName(this.scene, 'wheel');
 
       const wheelMeshes = getObjectsByType(this.scene, 'wheelMesh');
-      console.log({ wheelMeshes })
 
       const { car, brakeLights } = decorateCar(baseCar, this.brakeLights, this.scene);
-      console.log({ car })
       this.brakeLights = brakeLights;
 
       wheelMeshes.forEach((mesh, i) => {
@@ -253,7 +251,7 @@ export class Main extends PureComponent {
       if (Config.isDev) this.gui = new DatGUI(this);
 
       // setup light camera goal
-      this.localGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1,1,0.1), materials['green'])
+      this.localGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 0.1), materials['green'])
       this.localGoal.position.set(0, 0, 50);
       this.chassisMesh.add(this.localGoal);
 
@@ -344,8 +342,9 @@ export class Main extends PureComponent {
     console.log('resetObjects: ', gate);
     this.showGamePosition(gate);
     if (!this.physicsWorld) return;
-
+    console.log({ ccc: this.controls })
     const { position, quat } = getPosQuatFromGamePosition(gate);
+    this.controls.target.copy(position);
     const objThree = this.physicsWorld.bodies.find((o) => o.name === 'chassisMesh');
     const objPhys = objThree.userData.physicsBody;
 

@@ -113,7 +113,7 @@ export const createMaterial = ({
     material.onBeforeCompile = (shader) => {
       patchShader(shader, {
         uniforms: {
-          clipDistance: 200.0,
+          clipDistance: Config.clipDistance,//200.0,
         },
         header: 'uniform float clipDistance;',
         vertex: {

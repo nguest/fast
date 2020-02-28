@@ -16,7 +16,7 @@ export const materialsIndex = [
       name: 'UVGrid',
       repeat: [1, 1],
     },
-    side: 'DoubleSide',
+    side: 'FrontSide',
     wireframe: false,
     emissive: 0x000022,
     shininess: 100,
@@ -71,11 +71,11 @@ export const materialsIndex = [
       repeat: [1.5, 1.5],
       wrapping: 'MirroredRepeatWrapping',
     },
-    // normalMap: {
-    //   name: 'Grass_Normal',
-    //   repeat: [0.5, 0.5],
-    //   normalScale: [0.2, 0.2],
-    // },
+    normalMap: {
+      name: 'Grass_Normal',
+      //repeat: [0.5, 0.5],
+      normalScale: [1, 1],
+    },
 
     // lightMap: {
     //   name: 'LightMap_Map',

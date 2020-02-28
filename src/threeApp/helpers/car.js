@@ -55,6 +55,7 @@ export const decorateCar = (car, brakelights, scene) => {
         child.receiveShadow = true;
       }
       if (child.name === 'Rearlight_Glass_02') { // brakelights
+        console.log({ x: child })
         child.material.emissive = new THREE.Color(0x550000);
         brakeLights = child;
       }

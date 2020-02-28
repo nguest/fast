@@ -342,7 +342,6 @@ const px = new CubicPoly(); const py = new CubicPoly(); const
 
 export const getPoint = (curve, t, optionalTarget) => {
   const point = optionalTarget || new Vector3();
-
   const { points } = curve;
   const l = points.length;
 

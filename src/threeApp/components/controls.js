@@ -13,7 +13,7 @@ export class Controls {
   }
 
   init() {
-    this.threeControls.target.set(...Config.camera.lookAt);
+    this.threeControls.target.set(...Config.controls.target);
     this.threeControls.autoRotate = Config.controls.autoRotate;
     this.threeControls.autoRotateSpeed = Config.controls.autoRotateSpeed;
     this.threeControls.rotateSpeed = Config.controls.rotateSpeed;

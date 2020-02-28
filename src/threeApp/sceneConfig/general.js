@@ -15,6 +15,7 @@ export const Config = {
   dpr: 1.5,
   easing: TWEEN.Easing.Quadratic.InOut,
   duration: 500,
+  clipDistance: 200,
   renderer: {
     antialias: false, // 'true' has serious framerate implications!
     alpha: false,
@@ -78,11 +79,7 @@ export const Config = {
     enableDamping: true,
     dampingFactor: 0.5,
     enableZoom: true,
-    target: {
-      x: 0,
-      y: 0,
-      z: 0,
-    },
+    target: [0,0,0],
   },
   skyBox: {
     position: [0, 0, 0],

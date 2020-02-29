@@ -1,22 +1,27 @@
 import * as THREE from 'three';
+import { getObjByName, getObjectsByType } from './helpers';
 
 export const decorateCar = (car, brakelights, scene) => {
+  // add wheels to base meshes
+  const wheel = getObjByName(scene, 'wheel');
+  const wheelMeshes = getObjectsByType(scene, 'wheelMesh');
+  wheelMeshes.forEach((mesh, i) => {
+    if (i === 0) {
+      mesh.add(wheel);
+    } else {
+      mesh.add(wheel.clone());
+    }
+  });
+
+  // decorate car(s)
   let brakeLights = new THREE.Mesh();
   car.traverse((child) => {
     if (child.isMesh) {
       // FIRST CAR
-      //console.log(child.name)
-      if (child.name === 'ty_rims_0') {
-        //child.position.set(0, 4, 0);
-        //rim = child;
-      }
       if (child.name === 'gum001_carpaint_0') { // body
-        //child.material.color = new THREE.Color(0x0000ff);
-        //child.material.emissive = new THREE.Color(0x550000);
         child.material.reflectivity = 1;
-        child.material.envMap = envCube;
-        //child.material.roughness = 0;//.48608993902439024
-        child.material.clearcoat = 1.0,
+        child.material.envMap = scene.environment;
+        child.material.clearcoat = 1.0;
         child.material.clearcoatRoughness = 0.2;
         child.material.roughness = 0.5;
         child.material.metalness = 0.7;
@@ -27,7 +32,6 @@ export const decorateCar = (car, brakelights, scene) => {
       if (child.name === 'gum012_glass_0') { // glass
         child.material = new THREE.MeshPhongMaterial({
           color: 0x666666,
-          //specular: 0xffffff,
           reflectivity: 0.8,
           envMap: scene.environment,
         });
@@ -43,6 +47,7 @@ export const decorateCar = (car, brakelights, scene) => {
           reflectivity: 1,
         });
       }
+
       // SECOND CAR
 
       if (child.material.name === 'GlassMat') {
@@ -55,7 +60,6 @@ export const decorateCar = (car, brakelights, scene) => {
         child.receiveShadow = true;
       }
       if (child.name === 'Rearlight_Glass_02') { // brakelights
-        console.log({ x: child })
         child.material.emissive = new THREE.Color(0x550000);
         brakeLights = child;
       }
@@ -65,6 +69,14 @@ export const decorateCar = (car, brakelights, scene) => {
     }
   });
 
+  const shadowPlaneMesh = createShadow();
+  car.add(shadowPlaneMesh);
+
+  car.position.set(0, -0.5, 0);
+  return { car, brakeLights };
+};
+
+const createShadow = () => {
   const shadowPlane = new THREE.PlaneBufferGeometry(200, 470);
   shadowPlane.translate(0, 0, -5);
   const material = new THREE.MeshLambertMaterial({
@@ -76,11 +88,7 @@ export const decorateCar = (car, brakelights, scene) => {
     polygonOffsetFactor: -1,
     map: new THREE.TextureLoader().load(('./assets/textures/carShadow_map.png')),
   });
-  const mesh = new THREE.Mesh(shadowPlane, material);
-  mesh.name = 'shadowPlane';
-  car.add(mesh);
-  console.log({ 2: car })
-
-  car.position.set(0, -0.5, 0);
-  return { car, brakeLights };
+  const shadowPlaneMesh = new THREE.Mesh(shadowPlane, material);
+  shadowPlaneMesh.name = 'shadowPlane';
+  return shadowPlaneMesh;
 };

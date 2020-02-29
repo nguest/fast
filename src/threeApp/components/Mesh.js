@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import Ammo from 'ammonext';
-import { promisifyLoader } from '../helpers/helpers';
 import { GLTFLoader } from '../loaders/GLTFLoader';
 import { ExtrudeBufferGeometry } from '../helpers/ExtrudeGeometry';
 
@@ -64,17 +63,17 @@ export class Mesh {
         }
         geometry.setAttribute('uv2', new THREE.BufferAttribute(uv, 2));
         if (name === 'barriers') {
-          //console.log({ xxx: geometry.attributes.position.count * 3 })
-                    //geometry.clearGroups(); // just in case
+          // console.log({ xxx: geometry.attributes.position.count * 3 })
+          // geometry.clearGroups(); // just in case
 
           // for (let i = 0; i < geometry.attributes.position.count * 3; i+=50) {
           //   geometry.addGroup( i, i+50, 0 ); // first 3 vertices use material 0
           //   geometry.addGroup( i+50, i+50, 1 ); // next 3 vertices use materia
           // }
-          ///geometry.addGroup( 0, 100, 0 ); // first 3 vertices use material 0
-         // geometry.addGroup( 100, Infinity, 1 ); // next 3 vertices use material 1
-          //geometry.addGroup( 200, Infinity, 0 ); // remaining vertices use material 2
-          //console.log({ttt:geometry})
+          // geometry.addGroup( 0, 100, 0 ); // first 3 vertices use material 0
+          // geometry.addGroup( 100, Infinity, 1 ); // next 3 vertices use material 1
+          // geometry.addGroup( 200, Infinity, 0 ); // remaining vertices use material 2
+          // console.log({ttt:geometry})
 
         }
       }
@@ -88,7 +87,7 @@ export class Mesh {
 
       if (params === 'custom') {
         if (customFunction) {
-          return this.createCustom(physics.physicsWorld);
+          return this.createCustom(physics.physicsWorld); /* eslint-disable-line */
         }
         // must be custom type
         if (!calculateVertices || !calculateFaces) {
@@ -120,7 +119,6 @@ export class Mesh {
   initLoader(url, manager) {
     const loader = new GLTFLoader(manager).setPath(url.path);
     loader.load(url.file, (gltf) => {
-      console.log({ gltf });
       const mesh = gltf.scene.children[0];
 
       mesh.position.set(...this.position);
@@ -145,51 +143,42 @@ export class Mesh {
 
     if (this.name === 'barriers') {
       this.mesh.material.vertexColors = THREE.VertexColors;
-       //this.mesh.geometry.attributes
-      console.log({ rrr: this.mesh })
       const vCount = this.mesh.geometry.attributes.position.count;
-    //const colors = new Array(vCount * 3).fill('').map(c => Math.random());
       const colors = [];
-    // for (let i = 0; i < vCount; i++) {
-    //   const rand = Math.random() * 0.25 + 0.75;
-    //   if (
-    //     (i) % 36 === 0
-    //     || (i+1) % 36 === 0
-    //     || (i+4) % 36 === 0
-    //     //|| (i - 5) % 36 === 0
-    //   ) {
-    //     colors.push(0.75, 0.75, 0.75);
-    //   } else {
-    //     colors.push(1,1,1)
-    //   }
-    //   //colors.push(rand, rand, rand);
-    // }
+      // for (let i = 0; i < vCount; i++) {
+      //   const rand = Math.random() * 0.25 + 0.75;
+      //   if (
+      //     (i) % 36 === 0
+      //     || (i+1) % 36 === 0
+      //     || (i+4) % 36 === 0
+      //     //|| (i - 5) % 36 === 0
+      //   ) {
+      //     colors.push(0.75, 0.75, 0.75);
+      //   } else {
+      //     colors.push(1,1,1)
+      //   }
+      //   //colors.push(rand, rand, rand);
+      // }
       for (let i = 0; i < vCount; i += 3) {
         const rand = Math.random();
-        
+
         if (
           (i % 4 === 0
-            || i % 8 === 0)
-          && rand > 0.6
+            || i % 20 === 0)
+          && rand > 0.5
           // || i % 4 === 0
-          //|| (i - 5) % 36 === 0
+          // || (i - 5) % 36 === 0
         ) {
           for (let j = 0; j < 6; j++) {
-            colors.push(0.55, 0.55, 0.55);
+            colors.push(0.75, 0.75, 0.75);
           }
-
         } else {
-          for (let j = 0; j< 6; j++) {
-
-            colors.push(1,1,1)
+          for (let j = 0; j < 6; j++) {
+            colors.push(1, 1, 1);
           }
-
         }
-      //colors.push(rand, rand, rand);
       }
-      console.log({ colors })
-      this.mesh.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ));//.onUpload( disposeArray ) );
-
+      this.mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));// .onUpload(disposeArray);
     }
 
     this.mesh.position.set(...this.position);
@@ -240,7 +229,7 @@ export class Mesh {
       colShape = new Ammo.btBvhTriangleMeshShape(concaveGeometryProcessor(mesh.geometry), true, true); break;
     }
 
-    //colShape.setMargin(0.1);
+    // colShape.setMargin(0.1);
 
     const localInertia = new Ammo.btVector3(0, 0, 0);
     colShape.calculateLocalInertia(physics.mass, localInertia);

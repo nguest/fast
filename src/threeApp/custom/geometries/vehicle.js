@@ -2,18 +2,12 @@ import * as THREE from 'three';
 import * as Ammo from 'ammonext';
 import { getObjByName } from '../../helpers/helpers';
 
-
 // https://docs.google.com/document/u/0/d/18edpOwtGgCwNyvakS78jxMajCuezotCU_0iezcwiFQc/mobilebasic?urp=gmail_link
 
 // - Global variables -
 const DISABLE_DEACTIVATION = 4;
 const TRANSFORM_AUX = new Ammo.btTransform();
 const ZERO_QUATERNION = new THREE.Quaternion(0, 0, 0, 1);
-const materialInteractive = new THREE.MeshPhongMaterial({
-  color: 0x222222,
-  shininess: 50,
-  specular: 0x555555,
-});
 
 let engineForce = 0;
 let vehicleSteering = 0;
@@ -30,33 +24,33 @@ const BACK_LEFT = 2;
 const BACK_RIGHT = 3;
 const wheelMeshes = [];
 
-const createWheelMeshOLD = ({ radius, width, index, scene }) => {
-  console.log({ scene })
-  const t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
-  t.rotateZ(Math.PI / 2);
-  const mesh = new THREE.Mesh(t, materialInteractive);
-  mesh.add(new THREE.Mesh(
-    new THREE.BoxGeometry(
-      width * 1.5,
-      radius * 1.75,
-      radius * 0.25,
-      1, 1, 1,
-    ),
-    materialInteractive,
-  ));
-  mesh.name = `wheel_${index}`;
-  mesh.castShadow = true;
+// const createWheelMeshOLD = ({ radius, width, index, scene }) => {
+//   console.log({ scene })
+//   const t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
+//   t.rotateZ(Math.PI / 2);
+//   const mesh = new THREE.Mesh(t, materialInteractive);
+//   mesh.add(new THREE.Mesh(
+//     new THREE.BoxGeometry(
+//       width * 1.5,
+//       radius * 1.75,
+//       radius * 0.25,
+//       1, 1, 1,
+//     ),
+//     materialInteractive,
+//   ));
+//   mesh.name = `wheel_${index}`;
+//   mesh.castShadow = true;
 
-  scene.add(mesh);
-  return mesh;
-};
+//   scene.add(mesh);
+//   return mesh;
+// };
 
 
 const createWheelMesh = ({ index, scene }) => {
   const mesh = new THREE.Mesh();
   mesh.name = `wheel_${index}`;
   if (index === 0 || index === 3) {
-    mesh.scale.x = -1
+    mesh.scale.x = -1;
   }
   mesh.userData = { type: 'wheelMesh', index };
   scene.add(mesh);
@@ -75,7 +69,6 @@ const createChassisMesh = ({ w, h, l, material, scene }) => {
 };
 
 export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, material, scene }) => {
-  console.log({ zzzzzzz: scene })
   // Vehicle constants
   const chassisW = 1.8;
   const chassisH = 0.6;
@@ -107,7 +100,7 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
   const suspensionDamping = 2.3;
   const suspensionCompression = 1;// 1.4;
   const suspensionRestLength = 0.5;
-  const rollInfluence = 0;//0.05; // 0 no roll
+  const rollInfluence = 0;// 0.05; // 0 no roll
 
   // const steeringIncrement = 0.04;
   // const steeringClamp = 0.5;
@@ -144,11 +137,6 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
   physicsWorld.addAction(vehicle);
 
   // Wheels
-  // const FRONT_LEFT = 0;
-  // const FRONT_RIGHT = 1;
-  // const BACK_LEFT = 2;
-  // const BACK_RIGHT = 3;
-  // const wheelMeshes = [];
   const wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0);
   const wheelAxleCS = new Ammo.btVector3(-1, 0, 0);
 
@@ -162,8 +150,6 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
       tuning,
       isFront,
     );
-    //    mVehicle->addWheel( connectionPointCS0, wheelDirectionCS0, wheelAxleCS, mSuspensionRestLength, mWheelRadius, mTuning, isFrontWheel );
-
 
     wheelInfo.set_m_suspensionStiffness(suspensionStiffness);
     wheelInfo.set_m_wheelsDampingRelaxation(suspensionDamping);
@@ -172,17 +158,15 @@ export const createVehicle = ({ pos, quat = ZERO_QUATERNION, physicsWorld, mater
     wheelInfo.set_m_rollInfluence(rollInfluence);
 
     const wheelMesh = getObjByName(scene, 'wheel');
-    console.log({ wheelMesh })
-    wheelMeshes[index] = createWheelMesh({ wheelMesh, index, scene })
-
-   // wheelMeshes[index] = createWheelMesh({ radius, width, material, index, scene });
-    
+    wheelMeshes[index] = createWheelMesh({ wheelMesh, index, scene });
   };
 
+  /* eslint-disable */
   addWheel(true, new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
   addWheel(true, new Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
   addWheel(false, new Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
   addWheel(false, new Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
+  /* eslint-enable */
 
   vehicle.name = 'vehicle';
   chassisMesh.name = 'chassisMesh';
@@ -235,9 +219,6 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
   vehicle.applyEngineForce(engineForce, BACK_LEFT);
   vehicle.applyEngineForce(engineForce, BACK_RIGHT);
 
-  //console.log(engineForce)
-
-
   vehicle.setBrake(breakingForce / 2, FRONT_LEFT);
   vehicle.setBrake(breakingForce / 2, FRONT_RIGHT);
   vehicle.setBrake(breakingForce, BACK_LEFT);
@@ -247,7 +228,7 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
   vehicle.setSteeringValue(vehicleSteering, FRONT_RIGHT);
 
   let tm; let p; let q; let i;
-  const n = 4;//vehicle.getNumWheels();
+  const n = 4; // vehicle.getNumWheels();
 
   for (i = 0; i < n; i++) {
     vehicle.updateWheelTransform(i, true);

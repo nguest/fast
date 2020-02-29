@@ -1,13 +1,11 @@
 import * as THREE from 'three';
 import { trackParams } from './trackParams';
-import { DecalGeometry } from '../../helpers/DecalGeometry';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
 import { createSampledInstanceMesh } from '../../helpers/InstancedBufferGeometry';
 import { patchShader } from '../../materials/extend';
 
 export const trackCrossSection = new THREE.Shape();
 trackCrossSection.moveTo(0, trackParams.trackHalfWidth);
-//trackCrossSection.lineTo(0, 0);
 trackCrossSection.lineTo(0, -trackParams.trackHalfWidth);
 
 export const trackUVGenerator = {
@@ -89,28 +87,23 @@ export const trackUVGenerator = {
 // };
 
 export const createTrackDecals = (trackMesh, scene, material) => {
-
   const plane = new THREE.PlaneBufferGeometry(0.2, 10);
-  //plane.rotateX(-Math.PI * 0.5);
-  //plane.rotateZ(Math.PI * 0.5);
-  //plane.translate(0, 0.125, 0);
 
   const instancedMesh = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh: trackMesh,
     material: TrackMarksMaterial,
-    count: 20000,
+    count: trackParams.length * 3,
     name: 'trackMarks',
     lookAtNormal: true,
   });
   scene.add(instancedMesh);
-
-}
+};
 
 
 export const createApexes = (scene) => {
-  const threshold = 0.12;
-  const pointsCount = 500;
+  const threshold = 0.02; // 0.12;
+  const pointsCount = Math.floor(trackParams.length * 0.05);
   const { binormals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
   const points = trackParams.centerLine.getSpacedPoints(pointsCount);
 

@@ -17,7 +17,7 @@ import {
  * - https://stackoverflow.com/a/4322940/1314762
  */
 export const MeshSurfaceSampler = (function () {
-  const _face = new Triangle();
+  const face = new Triangle();
 
   function MeshSurfaceSampler(mesh) {
     let { geometry } = mesh;
@@ -67,10 +67,10 @@ export const MeshSurfaceSampler = (function () {
             + weightAttribute.getX(i + 2);
         }
 
-        _face.a.fromBufferAttribute(positionAttribute, i);
-        _face.b.fromBufferAttribute(positionAttribute, i + 1);
-        _face.c.fromBufferAttribute(positionAttribute, i + 2);
-        faceWeight *= _face.getArea();
+        face.a.fromBufferAttribute(positionAttribute, i);
+        face.b.fromBufferAttribute(positionAttribute, i + 1);
+        face.c.fromBufferAttribute(positionAttribute, i + 2);
+        faceWeight *= face.getArea();
 
         faceWeights[i / 3] = faceWeight;
       }
@@ -109,7 +109,7 @@ export const MeshSurfaceSampler = (function () {
       while (start <= end) {
         const mid = Math.floor((start + end) / 2);
 
-        if (mid === 0 || dist[mid - 1] <= x && dist[mid] > x) {
+        if ((mid === 0 || dist[mid - 1]) <= x && dist[mid] > x) {
           index = mid;
 
           break;
@@ -132,17 +132,17 @@ export const MeshSurfaceSampler = (function () {
         v = 1 - v;
       }
 
-      _face.a.fromBufferAttribute(this.positionAttribute, faceIndex * 3);
-      _face.b.fromBufferAttribute(this.positionAttribute, faceIndex * 3 + 1);
-      _face.c.fromBufferAttribute(this.positionAttribute, faceIndex * 3 + 2);
+      face.a.fromBufferAttribute(this.positionAttribute, faceIndex * 3);
+      face.b.fromBufferAttribute(this.positionAttribute, faceIndex * 3 + 1);
+      face.c.fromBufferAttribute(this.positionAttribute, faceIndex * 3 + 2);
 
       targetPosition
         .set(0, 0, 0)
-        .addScaledVector(_face.a, u)
-        .addScaledVector(_face.b, v)
-        .addScaledVector(_face.c, 1 - (u + v));
+        .addScaledVector(face.a, u)
+        .addScaledVector(face.b, v)
+        .addScaledVector(face.c, 1 - (u + v));
 
-      _face.getNormal(targetNormal);
+      face.getNormal(targetNormal);
 
       return this;
     },
@@ -151,5 +151,3 @@ export const MeshSurfaceSampler = (function () {
 
   return MeshSurfaceSampler;
 }());
-
-//export { MeshSurfaceSampler };

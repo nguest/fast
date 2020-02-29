@@ -20,8 +20,6 @@ export const materialsIndex = [
     wireframe: false,
     emissive: 0x000022,
     shininess: 100,
-    //opacity: 1.0,
-    //transparent: true,
   },
   {
     name: 'wireFrame',
@@ -36,7 +34,6 @@ export const materialsIndex = [
     name: 'road',
     type: 'MeshPhongMaterial',
     color: 0xffffff,
-    //roughness: 1.0,//.1,
     map: {
       name: 'Road_Map',
       wrapping: 'MirroredRepeatWrapping',
@@ -51,7 +48,6 @@ export const materialsIndex = [
     normalMap: {
       name: 'Road_Normal',
       wrapping: 'MirroredRepeatWrapping',
-      //repeat: [2, 1],
       normalScale: [0.5, 0.5],
     },
     shininess: 1,
@@ -73,7 +69,6 @@ export const materialsIndex = [
     },
     normalMap: {
       name: 'Grass_Normal',
-      //repeat: [0.5, 0.5],
       normalScale: [1, 1],
     },
 
@@ -144,7 +139,7 @@ export const materialsIndex = [
     side: 'DoubleSide',
     wireframe: false,
     emissive: 0x000000,
-    //shininess: 10,
+    // shininess: 10,
   },
   {
     name: 'kerb',
@@ -182,7 +177,6 @@ export const materialsIndex = [
       wrapping: 'RepeatWrapping',
       repeat: [1, 4],
     },
-    //metalness: 1.0,
     shininess: 100,
     specular: 0xaaaaaa,
     side: 'DoubleSide',
@@ -200,7 +194,6 @@ export const materialsIndex = [
       name: 'Skyline_Map',
       wrapping: 'RepeatWrapping',
       repeat: [10, 1],
-      //offset: [0, 0],
     },
     shininess: 0,
     smartAlpha: true,

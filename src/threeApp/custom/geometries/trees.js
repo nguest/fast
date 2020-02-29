@@ -14,13 +14,12 @@ treesCrossSection2.lineTo(-8, trackParams.trackHalfWidth + 10);
 export const treesCrossSection = [treesCrossSection1, treesCrossSection2];
 
 export const createTrees = ({ scene }) => {
-  console.log({ l:trackParams.length })
   const treeHeight = 12;
   const treePlane = new THREE.PlaneBufferGeometry(7, treeHeight, 1, 1);
   treePlane.translate(0, treeHeight * 0.5, 0);
   treePlane.name = 'treePlane';
   const loader = new THREE.TextureLoader();
-  const map = loader.load('./assets/textures/tiledTrees_map.png');//loader.load('./assets/textures/tree_map_2.png');
+  const map = loader.load('./assets/textures/tiledTrees_map.png');
   const normalMap = loader.load('./assets/textures/tree_block_normal2.png');
 
   const material = new InstancesStandardMaterial({
@@ -46,7 +45,7 @@ export const createTrees = ({ scene }) => {
       geometry: treePlane,
       curve,
       count: Math.floor(trackParams.length / 4),
-      offset: new THREE.Vector3(0, 0, 0),//treeHeight * 0.5,
+      offset: new THREE.Vector3(0, 0, 0), // treeHeight * 0.5,
       name: `treesInstance-${i}`,
       material,
       depthMaterial,
@@ -90,7 +89,8 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
           look = normalize(look);
           vec3 billboardUp = vec3(0, 1, 0);
           vec3 billboardRight = cross(billboardUp, look);
-          vec3 pos = instanceOffset + (billboardRight * position.x * instanceScale.x) + (billboardUp * position.y * instanceScale.y);
+          vec3 pos = instanceOffset + (billboardRight * position.x * instanceScale.x)
+            + (billboardUp * position.y * instanceScale.y);
           return pos;
         }
         
@@ -151,7 +151,8 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
           look = normalize(look);
           vec3 billboardUp = vec3(0, 1, 0);
           vec3 billboardRight = cross(billboardUp, look);
-          vec3 pos = instanceOffset + (billboardRight * position.x * instanceScale.x) + (billboardUp * position.y * instanceScale.y);
+          vec3 pos = instanceOffset + (billboardRight * position.x * instanceScale.x) 
+           + (billboardUp * position.y * instanceScale.y);
           return pos;
         }
         
@@ -179,7 +180,8 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
         //   position *= instanceScale;
         //   vec4 instanceQuaternion = vec4(0, 0, 0, 1);
         //   vec3 vcV = cross( instanceQuaternion.xyz, position );
-        //   position = vcV * ( 2.0 * instanceQuaternion.w ) + ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
+        //   position = vcV * ( 2.0 * instanceQuaternion.w ) +
+        // ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
         //   position += instanceOffset;
 
         //   return position;

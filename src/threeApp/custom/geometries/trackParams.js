@@ -1,7 +1,6 @@
-import { CatmullRomCurve3, CubicBezierCurve, Vector2, Vector3 } from 'three';
+import { CatmullRomCurve3, CubicBezierCurve, Vector2 } from 'three';
 import { converLatLngToVector } from '../../helpers/latlngConverter';
-//import { coordinates } from './nordschleife';
-import { coordinates } from './SpaFrancorchamps';
+import coordinates from '../../sceneConfig/tracks';
 
 const startPoint = 30;
 
@@ -13,7 +12,7 @@ const adjustedTrackPoints = trackPoints.concat(section2).map((p) => p.clone().su
 
 // create centerLine from adjustedTrackPoints and compute steps
 const centerLine = new CatmullRomCurve3(adjustedTrackPoints);
-const length = centerLine.getLength();
+const length = Math.floor(centerLine.getLength());
 const steps = Math.floor(length * 0.5); // total extrusion segments
 
 centerLine.arcLengthDivisions = steps;

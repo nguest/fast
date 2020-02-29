@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, imageFile, tileSize = 1024, manager }) => {
+export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, tileSize = 1024, manager }) => {
   /* adapted from https://stackoverflow.com/questions/25193649/make-three-js-skybox-from-tilemap/25224912#25224912
 
   assume any source image is tiled 4 columns(x) by 3 rows(y)
@@ -61,22 +61,20 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, imageFile, til
   skyBoxMaterialArray.flipY = true;
 
   const material = new THREE.MeshBasicMaterial({
-    //color: 0xaaaabb,
+    // color: 0xaaaabb,
     envMap: skyBoxMaterialArray,
     side: THREE.BackSide,
     fog: false,
-    //flipY: true,
-    //opacity: 0.5,
-    //transparent: true,
-   // blending: THREE.AdditiveBlending,
+    // flipY: true,
+    // opacity: 0.5,
+    // transparent: true,
+    // blending: THREE.AdditiveBlending,
   });
   const skyBox = new THREE.Mesh(skyBoxGeometry, material);
   skyBox.name = 'SkyBox';
   skyBox.position.set(0, 0, 0);
-  //skyBox.rotateX(Math.PI)
-  //skyBox.scale.set(-1, -1, -1);
   scene.add(skyBox);
   scene.environment = skyBoxMaterialArray;
-  //scene.background = skyBoxMaterialArray
+
   return skyBoxMaterialArray;
 };

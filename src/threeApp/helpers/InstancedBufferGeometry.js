@@ -1,39 +1,79 @@
-
 import * as THREE from 'three';
 
 import { MeshSurfaceSampler } from './MeshSurfaceSampler';
 import { BufferGeometryUtils } from './BufferGeometryUtils';
 import { computeFrenetFrames } from './curveHelpers';
+import { getQuatFromNormal } from './helpers'
 
 import { rand } from './helpers';
+import { CatmullRomCurve3 } from 'three';
 
-export const createInstancedMesh = ({ geometry, curve, count, offset, name, material, depthMaterial }) => {
+export const createInstancedMesh = ({
+  count,
+  curve,
+  depthMaterial,
+  geometry,
+  material,
+  name,
+  offset,
+  positions,
+  rotation,
+}) => {
   const instancedGeo = new THREE.InstancedBufferGeometry().copy(geometry);
 
-  const positions = curve.getSpacedPoints(count);
+  positions = curve ? curve.getSpacedPoints(count) : positions;
   //const { binormals, normals, tangents } = computeFrenetFrames(curve, count);
+  console.log({ positions });
 
-  const instanceOffset = [];
+  let instanceOffset = [];
   const instanceScale = [];
   const instanceQuaternion = [];
   const instanceMapUV = [];
+  const up = new THREE.Vector3(1,1,0);
+  const quaternion = new THREE.Quaternion();
+
+  // if (!curve ) {
+  //   instanceOffset = positions;
+  // }
 
   for (let i = 0; i < count; i++) {
-    // quaternion.setFromUnitVectors(
+    // quaternion.setFromAxisAngle(
     //   up,
-    //   //new THREE.Vector3(binormals[i].x, 0, binormals[i].z);
-    //   new THREE.Vector3(Math.random() * Math.PI, 0, Math.random() * Math.PI)
+    //   //new THREE.Vector3(binormals[i].x, 0, binormals[i].z),
+    //   Math.random() * Math.PI,
     // );
-    // quaternion.normalize();
+    if (material.userData.faceToQuat) {
+      
+      // const quat = getQuatFromNormal(up.normalize(), quaternion);
+      // quat.normalize();
+      // instanceQuaternion.push(quat.x, quat.y, quat.z, quat.w);
+      const r = new THREE.Vector3(rotation[i * 3], rotation[i * 3 + 1], rotation[i * 3 + 2])
+      // .add(
+      //   positions[i * 3],
+      //   positions[i * 3 + 1],
+      //   positions[i * 3 + 2],
+      // );
+      const quat = getQuatFromNormal(r.normalize(), quaternion);
+      instanceQuaternion.push(quat.x, quat.y, quat.z, quat.w);
+
+    }
 
     const scale = Math.random() * 0.75 + 0.75;
 
-    instanceOffset.push(
-      positions[i].x + rand(1),
-      positions[i].y + scale * offset.y - 1,
-      positions[i].z + rand(1),
-    );
-    //instanceQuaternion.push(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+    if (curve) {
+      instanceOffset.push(
+        positions[i].x + rand(1),
+        positions[i].y + scale * offset.y - 1,
+        positions[i].z + rand(1),
+      );
+    } else {
+      instanceOffset.push(
+        positions[i * 3],
+        positions[i * 3 + 1],
+        positions[i * 3 + 2],
+      );
+    }
+
     instanceScale.push(
       scale,
       scale,
@@ -52,8 +92,13 @@ export const createInstancedMesh = ({ geometry, curve, count, offset, name, mate
     new THREE.InstancedBufferAttribute(new Float32Array(instanceScale), 3, false));
   instancedGeo.setAttribute('instanceMapUV',
     new THREE.InstancedBufferAttribute(new Float32Array(instanceMapUV), 2, false));
-  // treeGeo1.setAttribute('instanceQuaternion',
-  //   new THREE.InstancedBufferAttribute(new Float32Array(instanceQuaternion), 4, false));
+  if (material.userData.faceToQuat) {
+    instancedGeo.setAttribute('instanceQuaternion',
+      new THREE.InstancedBufferAttribute(new Float32Array(instanceQuaternion), 4, false));
+      console.log({ instanceQuaternion });
+      
+  }
+
 
 
   material.needsUpdate = true;
@@ -61,7 +106,7 @@ export const createInstancedMesh = ({ geometry, curve, count, offset, name, mate
 
   const mesh = new THREE.Mesh(instancedGeo, material);
 
-
+  console.log({xxxxx: mesh})
   mesh.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 10);
 
   if (depthMaterial) mesh.customDepthMaterial = depthMaterial;
@@ -96,7 +141,7 @@ export const createSampledInstanceMesh = ({ baseGeometry, mesh, material, count,
 
     dummy.position.copy(position);
     if (lookAtNormal) {
-      
+
       dummy.lookAt(normal);
       dummy.rotateOnWorldAxis(up, rand(0.2));
       // dummy,

@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { trackParams } from './trackParams';
 import { patchShader } from '../../materials/extend';
-import { createSampledInstanceMesh } from '../../helpers/InstancedBufferGeometry';
+import { createSampledInstanceMesh, createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
+import { InstancesStandardMaterial } from '../materials/InstancesStandardMaterials';
 
 
 const grassCrossSection1 = new THREE.Shape();
@@ -14,10 +15,9 @@ grassCrossSection2.lineTo(0.1, trackParams.trackHalfWidth - 0.3);
 
 export const grassCrossSection = [grassCrossSection1, grassCrossSection2];
 
-export const decorateGrass = (mesh, scene) => {
+const createGrassClumps = (mesh, scene) => {
   const plane = new THREE.PlaneBufferGeometry(0.5, 0.25);
-  //plane.rotateX(-Math.PI * 0.5);
-  //plane.rotateZ(Math.PI * 0.5);
+
   plane.translate(0, 0.125, 0);
 
   const instancedMesh = createSampledInstanceMesh({
@@ -30,8 +30,43 @@ export const decorateGrass = (mesh, scene) => {
   scene.add(instancedMesh);
 };
 
+const createDirt = (mesh, scene) => {
+  const plane = new THREE.PlaneBufferGeometry(2, 2);
+  plane.rotateX(-Math.PI/2)
+  const material = new InstancesStandardMaterial({
+    side: THREE.DoubleSide,
+    //depthFunc: THREE.LessDepth,
+    color: 0xff0000,
+    userData: {
+      faceToQuat: true,
+    },
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+  });
 
+  const quaternion = new THREE.Quaternion();
 
+  const instancedMesh = createInstancedMesh({
+    geometry: plane,
+    count: 200000,//Math.floor(trackParams.length / 4),
+    offset: new THREE.Vector3(0, 0.2, 0), // treeHeight * 0.5,
+    name: 'dirt',
+    material,
+    // userData: {
+    //   faceToQuat: true,
+    // },
+    //depthMaterial,
+    positions: mesh.geometry.attributes.position.array,
+    rotation: mesh.geometry.attributes.normal.array,
+  });
+  scene.add(instancedMesh);
+
+}
+
+export const decorateGrass = (mesh, scene) => {
+  createGrassClumps(mesh, scene);
+  createDirt(mesh, scene);
+};
 
 // create custom material with vertex clipping and proper alpha
 const GrassClumpMaterial = new THREE.MeshLambertMaterial({

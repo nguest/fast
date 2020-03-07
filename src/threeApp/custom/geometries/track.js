@@ -3,6 +3,7 @@ import { trackParams } from './trackParams';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
 import { createSampledInstanceMesh } from '../../helpers/InstancedBufferGeometry';
 import { patchShader } from '../../materials/extend';
+import { rand } from '../../helpers/helpers';
 
 export const trackCrossSection = new THREE.Shape();
 trackCrossSection.moveTo(0, trackParams.trackHalfWidth);
@@ -96,6 +97,7 @@ export const createTrackDecals = (trackMesh, scene, material) => {
     count: trackParams.length * 3,
     name: 'trackMarks',
     lookAtNormal: true,
+    scaleFunc: () => rand(2),
   });
   scene.add(instancedMesh);
 };

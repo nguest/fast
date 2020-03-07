@@ -3,10 +3,7 @@ import * as THREE from 'three';
 import { MeshSurfaceSampler } from './MeshSurfaceSampler';
 import { BufferGeometryUtils } from './BufferGeometryUtils';
 import { computeFrenetFrames } from './curveHelpers';
-import { getQuatFromNormal } from './helpers'
-
-import { rand } from './helpers';
-import { CatmullRomCurve3 } from 'three';
+import { getQuatFromNormal, rand } from './helpers';
 
 export const createInstancedMesh = ({
   count,
@@ -17,20 +14,21 @@ export const createInstancedMesh = ({
   name,
   offset,
   positions,
-  rotation,
+  quaternions,
+  scaleFunc,
 }) => {
   const instancedGeo = new THREE.InstancedBufferGeometry().copy(geometry);
 
   positions = curve ? curve.getSpacedPoints(count) : positions;
   //const { binormals, normals, tangents } = computeFrenetFrames(curve, count);
-  console.log({ positions });
 
   let instanceOffset = [];
   const instanceScale = [];
-  const instanceQuaternion = [];
+  let instanceQuaternion = [];
   const instanceMapUV = [];
   const up = new THREE.Vector3(1,1,0);
   const quaternion = new THREE.Quaternion();
+  const rotationV = new THREE.Vector3();
 
   // if (!curve ) {
   //   instanceOffset = positions;
@@ -43,22 +41,29 @@ export const createInstancedMesh = ({
     //   Math.random() * Math.PI,
     // );
     if (material.userData.faceToQuat) {
-      
+
       // const quat = getQuatFromNormal(up.normalize(), quaternion);
       // quat.normalize();
       // instanceQuaternion.push(quat.x, quat.y, quat.z, quat.w);
-      const r = new THREE.Vector3(rotation[i * 3], rotation[i * 3 + 1], rotation[i * 3 + 2])
-      // .add(
-      //   positions[i * 3],
-      //   positions[i * 3 + 1],
-      //   positions[i * 3 + 2],
+      // rotationV.set(
+      //   rotation[i * 3],
+      //   rotation[i * 3 + 1],
+      //   rotation[i * 3 + 2],
       // );
-      const quat = getQuatFromNormal(r.normalize(), quaternion);
-      instanceQuaternion.push(quat.x, quat.y, quat.z, quat.w);
+      // // .add(
+      // //   positions[i * 3],
+      // //   positions[i * 3 + 1],
+      // //   positions[i * 3 + 2],
+      // // );
+      // const quat = getQuatFromNormal(rotationV.normalize(), quaternion);
+      // instanceQuaternion.push(quat.x, quat.y, quat.z, quat.w);
+      //console.log({ positions, quaternions });
+      
+      instanceQuaternion = quaternions;
 
     }
 
-    const scale = Math.random() * 0.75 + 0.75;
+    const scale = scaleFunc ? scaleFunc() : 1;
 
     if (curve) {
       instanceOffset.push(
@@ -67,11 +72,12 @@ export const createInstancedMesh = ({
         positions[i].z + rand(1),
       );
     } else {
-      instanceOffset.push(
-        positions[i * 3],
-        positions[i * 3 + 1],
-        positions[i * 3 + 2],
-      );
+      // instanceOffset.push(
+      //   positions[i * 3],
+      //   positions[i * 3 + 1],
+      //   positions[i * 3 + 2],
+      // );
+      instanceOffset = positions;//.push(positions[i]);
     }
 
     instanceScale.push(
@@ -106,7 +112,6 @@ export const createInstancedMesh = ({
 
   const mesh = new THREE.Mesh(instancedGeo, material);
 
-  console.log({xxxxx: mesh})
   mesh.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 10);
 
   if (depthMaterial) mesh.customDepthMaterial = depthMaterial;
@@ -118,7 +123,16 @@ export const createInstancedMesh = ({
 };
 
 
-export const createSampledInstanceMesh = ({ baseGeometry, mesh, material, count, name, lookAtNormal }) => {
+export const createSampledInstanceMesh = ({ 
+  baseGeometry,
+  mesh,
+  material,
+  count,
+  name,
+  lookAtNormal,
+  rotateFunc,
+  scaleFunc,
+}) => {
   const geometry = new THREE.InstancedBufferGeometry().copy(baseGeometry);
   geometry.computeBoundingSphere();
 
@@ -143,12 +157,12 @@ export const createSampledInstanceMesh = ({ baseGeometry, mesh, material, count,
     if (lookAtNormal) {
 
       dummy.lookAt(normal);
-      dummy.rotateOnWorldAxis(up, rand(0.2));
+      if (rotateFunc) dummy.rotateOnWorldAxis(up, rotateFunc());
       // dummy,
 
       //if (i < 50) console.log(dummy)
     }
-    dummy.scale.setY(rand(2))
+    if (scaleFunc) dummy.scale.setY(scaleFunc());
     dummy.updateMatrix();
     instancedMesh.setMatrixAt(i, dummy.matrix);
     instancedMesh.instanceMatrix.needsUpdate = true;

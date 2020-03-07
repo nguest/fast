@@ -56,6 +56,7 @@ export const createTrees = ({ scene }) => {
       name: `treesInstance-${i}`,
       material,
       depthMaterial,
+      scaleFunc: () => Math.random() * 0.75 + 0.75,
     });
     scene.add(instancedMesh);
   });

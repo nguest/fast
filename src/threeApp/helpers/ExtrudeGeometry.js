@@ -112,7 +112,6 @@ function ExtrudeBufferGeometry(shapes, options) {
     /* Vertices */
 
     const contour = vertices; // vertices has all points but contour has only points of circumferenc
-    console.log({ contour })
     let vert;
     const vlen = vertices.length;
 

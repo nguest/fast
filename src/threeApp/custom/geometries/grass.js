@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import { trackParams } from './trackParams';
 import { patchShader } from '../../materials/extend';
 import { createSampledInstanceMesh, createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
-import { InstancesStandardMaterial } from '../materials/InstancesStandardMaterials';
+import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
+import { getQuatFromNormal, rand } from '../../helpers/helpers';
+import { computeFrenetFrames } from '../../helpers/curveHelpers';
 
 
 const grassCrossSection1 = new THREE.Shape();
@@ -26,38 +28,117 @@ const createGrassClumps = (mesh, scene) => {
     material: GrassClumpMaterial,
     count: 100000,
     name: 'grassClumps',
+    lookAtNormal: true,
+    scaleFunc: () => rand(2),
+    rotateFunc: () => rand(0.2),
   });
-  scene.add(instancedMesh);
 };
 
 const createDirt = (mesh, scene) => {
-  const plane = new THREE.PlaneBufferGeometry(2, 2);
-  plane.rotateX(-Math.PI/2)
-  const material = new InstancesStandardMaterial({
-    side: THREE.DoubleSide,
-    //depthFunc: THREE.LessDepth,
+  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.steps);
+  console.log({ tangents });
+  const centerLinePoints = trackParams.centerLine.getSpacedPoints(trackParams.steps);
+
+
+  const plane = new THREE.PlaneBufferGeometry(4, 1);
+  //plane.rotateX(-Math.PI / 2);
+  // plane.rotateY(-Math.PI / 2);
+  // plane.rotateZ(-Math.PI / 2);
+
+
+  plane.receiveShadows = true;
+  const material = new THREE.MeshLambertMaterial({
     color: 0xff0000,
+    //map: new THREE.TextureLoader().load('./assets/textures/grassClump64_map.png'),
+    side: THREE.FrontSide,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    transparent: true,
+    opacity: 1.0,
+    //renderOrder: 1,
+  
+  });
+  // const material = new InstancesStandardMaterial({
+  //   side: THREE.DoubleSide,
+  //   //depthFunc: THREE.LessDepth,
+  //   color: 0xff0000,
+  //   userData: {
+  //     faceToQuat: true,
+  //   },
+  //   polygonOffset: true,
+  //   polygonOffsetFactor: -1,
+  // });
+
+  const depthMaterial = new InstancesDepthMaterial({
+    depthPacking: THREE.RGBADepthPacking,
+    alphaTest: 0.5,
     userData: {
       faceToQuat: true,
     },
-    polygonOffset: true,
-    polygonOffsetFactor: -1,
   });
 
-  const quaternion = new THREE.Quaternion();
+  const dummyQuat = new THREE.Quaternion();
+  const dummyRot = new THREE.Vector3();
+  const positions = [];
+  const quaternions = [];
 
-  const instancedMesh = createInstancedMesh({
-    geometry: plane,
-    count: 200000,//Math.floor(trackParams.length / 4),
-    offset: new THREE.Vector3(0, 0.2, 0), // treeHeight * 0.5,
-    name: 'dirt',
+  const count = 50;
+  const k = 18;
+
+  for (let i = 0; i < count; i++) {
+    positions.push(
+      mesh.geometry.attributes.position.array[i * 3 * k],
+      mesh.geometry.attributes.position.array[i * 3 * k + 1]+0.5,
+      mesh.geometry.attributes.position.array[i * 3 * k + 2],
+    );
+
+    dummyRot.set(
+      mesh.geometry.attributes.normal.array[i * 3 * k],
+      mesh.geometry.attributes.normal.array[i * 3 * k + 1],
+      mesh.geometry.attributes.normal.array[i * 3 * k + 2],
+    );
+    //const quat = getQuatFromNormal(dummyRot.normalize(), dummyQuat);
+    const t = tangents[Math.floor(i * 0.166666 * k)];
+    const rotation = new THREE.Vector3(0, 0.2, 0.8);//.rotateX(Math.PI/2)
+    const quat = getQuatFromNormal(rotation//[Math.floor(k * i)]
+      //.sub(centerLinePoints[Math.floor(i * 0.25 * k)])
+      // .add(new THREE.Vector3(
+      //   mesh.geometry.attributes.position.array[i * 3 * k],
+      //   mesh.geometry.attributes.position.array[i * 3 * k + 1],
+      //   mesh.geometry.attributes.position.array[i * 3 * k + 2],
+      // ))
+      .normalize(), dummyQuat);
+    //rotate.multiply(quat);
+    //console.log({ rotation });
+
+    quaternions.push(quat.x, quat.y, quat.z, quat.w);
+  }
+
+  
+
+
+  // const instancedMesh = createInstancedMesh({
+  //   geometry: plane,
+  //   count,//Math.floor(trackParams.length / 4),
+  //   offset: new THREE.Vector3(0, 1, 0), // treeHeight * 0.5,
+  //   name: 'dirt',
+  //   material,
+  //   // userData: {
+  //   //   faceToQuat: true,
+  //   // },
+  //   depthMaterial,
+  //   positions,//: mesh.geometry.attributes.position.array,
+  //   quaternions,//: mesh.geometry.attributes.normal.array,
+  // });
+  // scene.add(instancedMesh);
+
+  const instancedMesh = createSampledInstanceMesh({
+    baseGeometry: plane,
+    mesh,
     material,
-    // userData: {
-    //   faceToQuat: true,
-    // },
-    //depthMaterial,
-    positions: mesh.geometry.attributes.position.array,
-    rotation: mesh.geometry.attributes.normal.array,
+    count: 100000,
+    name: 'dirt',
+    lookAtNormal: true,
   });
   scene.add(instancedMesh);
 

@@ -75,7 +75,7 @@ export const objectsIndex = [
       receive: false,
       cast: false,
     },
-    add: true,
+    add: false,
     uv2Params: [1, 0.1],
   },
   {

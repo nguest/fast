@@ -19,8 +19,9 @@ import {
 export const MeshSurfaceSampler = (function () {
   const face = new Triangle();
 
-  function MeshSurfaceSampler(mesh) {
+  function MeshSurfaceSampler(mesh, uv) {
     let { geometry } = mesh;
+    this.uv = uv;
 
     if (!geometry.isBufferGeometry || geometry.attributes.position.itemSize !== 3) {
       throw new Error('THREE.MeshSurfaceSampler: Requires BufferGeometry triangle mesh.');
@@ -124,13 +125,13 @@ export const MeshSurfaceSampler = (function () {
     },
 
     sampleFace(faceIndex, targetPosition, targetNormal) {
-      let u = Math.random();
-      let v = Math.random();
+      let u = (this.uv && this.uv.u) || Math.random();
+      let v = (this.uv && this.uv.v) || Math.random();
 
-      if (u + v > 1) {
-        u = 1 - u;
-        v = 1 - v;
-      }
+      // if (u + v > 1) {
+      //   u = 1 - u;
+      //   v = 1 - v;
+      // }
 
       face.a.fromBufferAttribute(this.positionAttribute, faceIndex * 3);
       face.b.fromBufferAttribute(this.positionAttribute, faceIndex * 3 + 1);

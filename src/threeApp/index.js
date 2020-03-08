@@ -21,6 +21,7 @@ import { createGates, detectGateCollisions } from './components/Gates';
 import { createTrackDecals, createApexes } from './custom/geometries/track';
 import { decorateGrass } from './custom/geometries/grass';
 // import { trackParams } from './custom/geometries/trackParams';
+import { createTerrain } from './custom/geometries/terrain';
 
 // Helpers
 import { promisifyLoader, getPosQuatFromGamePosition, getObjByName, scaleBackground } from './helpers/helpers';
@@ -186,7 +187,8 @@ export class Main extends PureComponent {
     });
     createTrees({ scene: this.scene });
     createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
-    decorateGrass(getObjByName(this.scene, 'grass'), this.scene);
+    decorateGrass(getObjByName(this.scene, 'grassL'), this.scene);
+    createTerrain(this.scene)
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
     console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
@@ -306,7 +308,7 @@ export class Main extends PureComponent {
     // Update rigid bodies (just vehicle)
     this.vehicleState = updateVehicle(
       deltaTime,
-      this.physicsWorld.bodies[3],
+      this.physicsWorld.bodies[4],
       this.interaction,
       this.brakeLights,
       this.showStatus,

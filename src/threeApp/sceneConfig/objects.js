@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { trackCrossSection, trackUVGenerator } from '../custom/geometries/track';
 import { trackKerbCrossSection, getIncludeSegments } from '../custom/geometries/trackKerb';
-import { grassCrossSection } from '../custom/geometries/grass';
+import { grassCrossSectionL, grassCrossSectionR } from '../custom/geometries/grass';
 import { treesCrossSection } from '../custom/geometries/trees';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 import { terrainCrossSection, getTerrainCurve } from '../custom/geometries/terrain';
@@ -110,10 +110,39 @@ export const objectsIndex = [
     add: true,
   },
   {
-    name: 'grass',
+    name: 'grassL',
     type: 'ExtrudeGeometry',
     params: [
-      grassCrossSection,
+      grassCrossSectionL,
+      {
+        steps: trackParams.steps,
+        depth: 0,
+        // UVGenerator: trackUVGenerator,
+        extrudePath: trackParams.centerLine,
+        widthFactor: trackParams.widthFactor,
+        autoCloseShape: true,
+      },
+    ],
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'GrassMaterial',
+    physics: {
+      mass: 0,
+      friction: 100,
+      restitution: 0.5,
+    },
+    shadows: {
+      receive: true,
+      cast: false,
+    },
+    add: true,
+  },
+  {
+    name: 'grassR',
+    type: 'ExtrudeGeometry',
+    params: [
+      grassCrossSectionR,
       {
         steps: trackParams.steps,
         depth: 0,

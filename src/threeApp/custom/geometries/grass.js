@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { VertexTangentsHelper } from '../../helpers/VertexTangentsHelper';
+import { BufferGeometryUtils } from '../../helpers/BufferGeometryUtils';
 import { trackParams } from './trackParams';
 import { patchShader } from '../../materials/extend';
 import { createSampledInstanceMesh, createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
@@ -7,15 +9,15 @@ import { getQuatFromNormal, rand } from '../../helpers/helpers';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
 
 
-const grassCrossSection1 = new THREE.Shape();
-grassCrossSection1.moveTo(0.1, -trackParams.trackHalfWidth + 0.3);
-grassCrossSection1.lineTo(-0.7, -16);
+export const grassCrossSectionR = new THREE.Shape();
+grassCrossSectionR.moveTo(0.1, -trackParams.trackHalfWidth + 0.3);
+grassCrossSectionR.lineTo(-0.7, -16);
 
-const grassCrossSection2 = new THREE.Shape();
-grassCrossSection2.moveTo(-0.7, 16);
-grassCrossSection2.lineTo(0.1, trackParams.trackHalfWidth - 0.3);
+export const grassCrossSectionL = new THREE.Shape();
+grassCrossSectionL.moveTo(-0.7, 16);
+grassCrossSectionL.lineTo(0.1, trackParams.trackHalfWidth - 0.3);
 
-export const grassCrossSection = [grassCrossSection1, grassCrossSection2];
+//export const grassCrossSection = [grassCrossSection1, grassCrossSection2];
 
 const createGrassClumps = (mesh, scene) => {
   const plane = new THREE.PlaneBufferGeometry(0.5, 0.25);
@@ -32,6 +34,7 @@ const createGrassClumps = (mesh, scene) => {
     scaleFunc: () => rand(2),
     rotateFunc: () => rand(0.2),
   });
+  scene.add(instancedMesh);
 };
 
 const createDirt = (mesh, scene) => {
@@ -40,21 +43,28 @@ const createDirt = (mesh, scene) => {
   const centerLinePoints = trackParams.centerLine.getSpacedPoints(trackParams.steps);
 
 
-  const plane = new THREE.PlaneBufferGeometry(4, 1);
+  //const plane = new THREE.PlaneBufferGeometry(4, 1);
+  const plane = new THREE.PlaneBufferGeometry(10, 1.5);
+
   //plane.rotateX(-Math.PI / 2);
   // plane.rotateY(-Math.PI / 2);
   // plane.rotateZ(-Math.PI / 2);
 
+  const loader = new THREE.TextureLoader()
+  const map = loader.load('./assets/textures/sand_map.png');
+  map.repeat.set(10, 1.5);
+  map.wrapS = THREE.MirroredRepeatWrapping;
+  map.wrapT = THREE.MirroredRepeatWrapping;
 
-  plane.receiveShadows = true;
   const material = new THREE.MeshLambertMaterial({
-    color: 0xff0000,
+    color: 0x555555,
     //map: new THREE.TextureLoader().load('./assets/textures/grassClump64_map.png'),
     side: THREE.FrontSide,
     polygonOffset: true,
     polygonOffsetFactor: -1,
     transparent: true,
     opacity: 1.0,
+    map,
     //renderOrder: 1,
   
   });
@@ -77,42 +87,42 @@ const createDirt = (mesh, scene) => {
     },
   });
 
-  const dummyQuat = new THREE.Quaternion();
-  const dummyRot = new THREE.Vector3();
-  const positions = [];
-  const quaternions = [];
+  // const dummyQuat = new THREE.Quaternion();
+  // const dummyRot = new THREE.Vector3();
+  // const positions = [];
+  // const quaternions = [];
 
-  const count = 50;
-  const k = 18;
+  // const count = 50;
+  // const k = 18;
 
-  for (let i = 0; i < count; i++) {
-    positions.push(
-      mesh.geometry.attributes.position.array[i * 3 * k],
-      mesh.geometry.attributes.position.array[i * 3 * k + 1]+0.5,
-      mesh.geometry.attributes.position.array[i * 3 * k + 2],
-    );
+  // for (let i = 0; i < count; i++) {
+  //   positions.push(
+  //     mesh.geometry.attributes.position.array[i * 3 * k],
+  //     mesh.geometry.attributes.position.array[i * 3 * k + 1]+0.5,
+  //     mesh.geometry.attributes.position.array[i * 3 * k + 2],
+  //   );
 
-    dummyRot.set(
-      mesh.geometry.attributes.normal.array[i * 3 * k],
-      mesh.geometry.attributes.normal.array[i * 3 * k + 1],
-      mesh.geometry.attributes.normal.array[i * 3 * k + 2],
-    );
-    //const quat = getQuatFromNormal(dummyRot.normalize(), dummyQuat);
-    const t = tangents[Math.floor(i * 0.166666 * k)];
-    const rotation = new THREE.Vector3(0, 0.2, 0.8);//.rotateX(Math.PI/2)
-    const quat = getQuatFromNormal(rotation//[Math.floor(k * i)]
-      //.sub(centerLinePoints[Math.floor(i * 0.25 * k)])
-      // .add(new THREE.Vector3(
-      //   mesh.geometry.attributes.position.array[i * 3 * k],
-      //   mesh.geometry.attributes.position.array[i * 3 * k + 1],
-      //   mesh.geometry.attributes.position.array[i * 3 * k + 2],
-      // ))
-      .normalize(), dummyQuat);
-    //rotate.multiply(quat);
-    //console.log({ rotation });
+  //   dummyRot.set(
+  //     mesh.geometry.attributes.normal.array[i * 3 * k],
+  //     mesh.geometry.attributes.normal.array[i * 3 * k + 1],
+  //     mesh.geometry.attributes.normal.array[i * 3 * k + 2],
+  //   );
+  //   //const quat = getQuatFromNormal(dummyRot.normalize(), dummyQuat);
+  //   const t = tangents[Math.floor(i * 0.166666 * k)];
+  //   const rotation = new THREE.Vector3(0, 0.2, 0.8);//.rotateX(Math.PI/2)
+  //   const quat = getQuatFromNormal(rotation//[Math.floor(k * i)]
+  //     //.sub(centerLinePoints[Math.floor(i * 0.25 * k)])
+  //     // .add(new THREE.Vector3(
+  //     //   mesh.geometry.attributes.position.array[i * 3 * k],
+  //     //   mesh.geometry.attributes.position.array[i * 3 * k + 1],
+  //     //   mesh.geometry.attributes.position.array[i * 3 * k + 2],
+  //     // ))
+  //     .normalize(), dummyQuat);
+  //   //rotate.multiply(quat);
+  //   //console.log({ rotation });
 
-    quaternions.push(quat.x, quat.y, quat.z, quat.w);
-  }
+  //   quaternions.push(quat.x, quat.y, quat.z, quat.w);
+  // }
 
   
 
@@ -131,14 +141,18 @@ const createDirt = (mesh, scene) => {
   //   quaternions,//: mesh.geometry.attributes.normal.array,
   // });
   // scene.add(instancedMesh);
+  const helper = new THREE.VertexNormalsHelper(mesh, 2, 0x00ffff, 1);
+  scene.add(helper);
 
   const instancedMesh = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh,
     material,
-    count: 100000,
+    count: 5000,
     name: 'dirt',
     lookAtNormal: true,
+    uv: { u: 0.0, v: 0.95, },
+    //rotateFunc: () => Math.PI / 2,
   });
   scene.add(instancedMesh);
 

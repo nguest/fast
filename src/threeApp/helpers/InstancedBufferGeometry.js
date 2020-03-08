@@ -132,6 +132,7 @@ export const createSampledInstanceMesh = ({
   lookAtNormal,
   rotateFunc,
   scaleFunc,
+  uv,
 }) => {
   const geometry = new THREE.InstancedBufferGeometry().copy(baseGeometry);
   geometry.computeBoundingSphere();
@@ -140,7 +141,7 @@ export const createSampledInstanceMesh = ({
   instancedMesh.name = name;
   instancedMesh.userData.type = 'instancedMesh';
 
-  const sampler = new MeshSurfaceSampler(mesh)
+  const sampler = new MeshSurfaceSampler(mesh, uv)
     .setWeightAttribute(null)
     .build();
 
@@ -167,6 +168,7 @@ export const createSampledInstanceMesh = ({
     instancedMesh.setMatrixAt(i, dummy.matrix);
     instancedMesh.instanceMatrix.needsUpdate = true;
   }
-  console.log({ instancedMesh })
+  console.log({ vvv: instancedMesh })
+  instancedMesh.receiveShadow = true
   return instancedMesh;
 };

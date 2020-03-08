@@ -88,6 +88,11 @@ export const trackUVGenerator = {
 // };
 
 export const createTrackDecals = (trackMesh, scene, material) => {
+
+  const helper = new THREE.VertexNormalsHelper(trackMesh, 2, 0x00ff00, 1);
+
+  scene.add(helper);
+
   const plane = new THREE.PlaneBufferGeometry(0.2, 10);
 
   const instancedMesh = createSampledInstanceMesh({
@@ -98,6 +103,7 @@ export const createTrackDecals = (trackMesh, scene, material) => {
     name: 'trackMarks',
     lookAtNormal: true,
     scaleFunc: () => rand(2),
+    //rotateFunc: () => Math.PI * 0.5
   });
   scene.add(instancedMesh);
 };
@@ -184,4 +190,35 @@ TrackMarksMaterial.onBeforeCompile = (shader) => {
       },
     },
   });
+};
+TrackMarksMaterial.customDistanceMaterial = CustomDistanceMaterial;
+
+const CustomDistanceMaterial = new THREE.MeshDistanceMaterial({
+  depthPacking: THREE.RGBADepthPacking,
+  alphaTest: 0.5
+});
+
+CustomDistanceMaterial.onBeforeCompile = shader => {
+  // app specific instancing shader code
+  shader.vertexShader =
+    `#define DEPTH_PACKING 3201
+        attribute vec3 offset;
+        attribute vec4 orientation;
+
+        vec3 applyQuaternionToVector( vec4 q, vec3 v ){
+           return v + 2.0 * cross( q.xyz, cross( q.xyz, v ) + q.w * v );
+        }
+  ` + shader.vertexShader;
+  shader.vertexShader = shader.vertexShader.replace(
+    "#include <project_vertex>",
+    `                     
+        vec3 vPosition = offset + applyQuaternionToVector( orientation, transformed );
+ 
+        vec4 mvPosition = modelMatrix * vec4( vPosition, 1.0 );
+        transformed = vPosition;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( transformed, 1.0 );`
+  );
+
+  shader.fragmentShader =
+    "#define DEPTH_PACKING 3201" + "\n" + shader.fragmentShader;
 };

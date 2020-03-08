@@ -30,7 +30,7 @@ var ShapeUtils = {
 	},
 
 	triangulateShape: function ( contour, holes ) {
-
+    
 		var vertices = []; // flat array of vertices like [ x0,y0, x1,y1, x2,y2, ... ]
 		var holeIndices = []; // array of hole indices
 		var faces = []; // final array of vertex indices like [ [ a,b,d ], [ b,c,d ] ]
@@ -45,17 +45,15 @@ var ShapeUtils = {
 		holes.forEach( removeDupEndPts );
 
 		for ( var i = 0; i < holes.length; i ++ ) {
-
-			holeIndices.push( holeIndex );
+      holeIndices.push( holeIndex );
 			holeIndex += holes[ i ].length;
 			addContour( vertices, holes[ i ] );
 
 		}
 
     //
-    console.log({vertices, holeIndices })
-		var triangles = Earcut.triangulate( vertices, holeIndices );
-    console.log({ triangles });
+    
+    var triangles = Earcut.triangulate( vertices, holeIndices );
     
 		//
 
@@ -89,7 +87,7 @@ function addContour( vertices, contour ) {
 
 		vertices.push( contour[ i ].x );
 		vertices.push( contour[ i ].y );
-
+    
 	}
 
 }

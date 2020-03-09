@@ -35,98 +35,87 @@ export const getTerrainCurve = () => {
 };
 
 export const createTerrain = (scene) => {
-  const pointsCount = 100;
 
-  // compute offset paths from centerline
-  const centerPoints = trackParams.centerLine.getSpacedPoints(pointsCount);
+  const { outerPoints, innerPoints } = computeOffsetPaths([-20, -100]);
 
-  const path = centerPoints.map(p => ({ X: p.x, Y: p.z }));
+  // create correct form of shape for triangulation- hole points must be reverse direction
+  const innerShape = new THREE.Shape(innerPoints.reverse());
+  innerShape.autoClose = true;
+  const outerShape = new THREE.Shape(outerPoints);
+  outerShape.holes = [innerShape];
+  outerShape.autoClose = true;
 
-  const co = new ClipperLib.ClipperOffset(2, 0.25);
-  co.AddPath(path, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedPolygon);
-  const offsettedPaths = new ClipperLib.Paths();
-  co.Execute(offsettedPaths, -20);
+  const { shape, holes } = outerShape.extractPoints();
 
-  const co2 = new ClipperLib.ClipperOffset(2, 0.25);
-  co2.AddPath(path, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedPolygon);
-  const offsettedPaths2 = new ClipperLib.Paths();
-  co.Execute(offsettedPaths2, -100);
-
-  const material = new THREE.LineDashedMaterial({
-    color: 0xffffff,
-    linewidth: 1,
-    scale: 0.1,
-    dashSize: 3,
-    gapSize: 1,
-  });
-
-  // map offsetted paths to points arrays
-  const points1 = offsettedPaths[0].map((p) => new THREE.Vector2(p.X, p.Y));
-  const points2 = offsettedPaths2[0].map((p) => new THREE.Vector2(p.X, p.Y));
-  console.log({ points1, points2 });
+  const { nearestIndex, adjustedCenterPoints } = getNearestZeroIndex(shape, outerPoints);
+  console.log({ nearestIndex, adjustedCenterPoints, shape });
   
-  const geometry1 = new THREE.BufferGeometry().setFromPoints([...points1, points1[0]]);
-  const line = new THREE.Line(geometry1, material);
-  scene.add(line);
 
-  const geometry2 = new THREE.BufferGeometry().setFromPoints([...points2, points2[0]]);
-  const line2 = new THREE.Line( geometry2, material);
-  scene.add(line2);
-
-
-  //console.log({ shape1, shape2 });
-  const pointso = //points2);
-  [
-    new THREE.Vector2(0, 0), 
-    new THREE.Vector2(0, -200), 
-    new THREE.Vector2(200, -200), 
-    new THREE.Vector2(200, 0),
-    new THREE.Vector2(0, 0), 
-  ];
-
-  
-  const theholes = new THREE.Shape(//points2);
-  [
-    new THREE.Vector2(50, -50), 
-    new THREE.Vector2(50, -150), 
-    new THREE.Vector2(150, -150), 
-    new THREE.Vector2(150, -50),
-    new THREE.Vector2(50, -50), 
-  ].reverse());
-
-
-  const shape1 = new THREE.Shape(pointso);
-  shape1.holes = [theholes];
-  //shape1.autoClose = true;
-  //const shape2 = new THREE.Shape(points2)
-console.log({ shape1 });
-
-//console.log('pppp', [...points1, points]);
-
-  const { shape, holes } = shape1.extractPoints();
-  console.log({ shape, holes });
-
-
+  // triangulate shape and receive face indices
   const indices = ShapeUtils.triangulateShape([...shape, ...holes[0]].flat(), [holes]).flat();
 
-  console.log({ indices, max: Math.max(...indices) });
+  const verticesOuter = shape.reduce((a, c, i) => ([...a, c.x, adjustedCenterPoints[i].y, c.y]), []);
+  const verticesInner = holes[0].reduce((a, c, i) => ([...a, c.x, 0, c.y]), []);
 
+  console.log({ verticesOuter });
+  
 
-  const vertices = [...shape, ...holes[0]].reduce((a, c) => ([...a, c.x, 20, c.y]), []);
+  const vertices = verticesOuter.concat(verticesInner);
 
-  console.log({ vertices, indices });
- 
-  //const vertices = [...vertices1]
-
+  // create buffergeo from vertices and computed face indices:
   const geometry = new THREE.BufferGeometry();
   geometry.setIndex(indices);
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
   geometry.computeVertexNormals();
-  console.log({ geometry });
+
+  const mat = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, wireframe: true });
+  const mesh = new THREE.Mesh(geometry, mat);
+  scene.add(mesh);
+};
+
+// http://jsclipper.sourceforge.net/6.4.2.2/index.html?p=sources_as_text/starter_offset.txt
+const computeOffsetPaths = ([outerOffset, innerOffset]) => {
+  const pointsCount = 200;
+  // compute offset paths from centerline
+  const centerPoints = trackParams.centerLine.getSpacedPoints(pointsCount);
+
+  const centerPath = centerPoints.map(p => ({ X: p.x, Y: p.z }));
+
+  const co = new ClipperLib.ClipperOffset(2, 0.25);
+  co.AddPath(centerPath, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedPolygon);
+  const offsettedPaths = new ClipperLib.Paths();
+  co.Execute(offsettedPaths, outerOffset);
+
+  const co2 = new ClipperLib.ClipperOffset(2, 0.25);
+  co2.AddPath(centerPath, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedPolygon);
+  const offsettedPaths2 = new ClipperLib.Paths();
+  co.Execute(offsettedPaths2, innerOffset);
+
+  // map offsetted paths to points arrays
+  const outerPoints = offsettedPaths[0].map((p) => new THREE.Vector2(p.X, p.Y));
+  const innerPoints = offsettedPaths2[0].map((p) => new THREE.Vector2(p.X, p.Y));
+
+  return { outerPoints, innerPoints };
+};
+
+const getNearestZeroIndex = (shape, outerPoints) => {
+  const outerPointsCount = shape.length;
+  const centerPoints = trackParams.centerLine.getSpacedPoints(outerPointsCount);
+  console.log({ outerPointsCount, centerPoints });
+  const dist = centerPoints.reduce((a, c, i) => {
+    const d = outerPoints[0].distanceTo(new THREE.Vector2(c.x, c.z));
+    if (d < a.d) {
+      return { d, i };
+    }
+    return a;
+  }, { d: 100000, i: 0 });
+  console.log({ dist });
+
+  const section2 = centerPoints.splice(0, dist.i);
+  console.log({ section2, centerPoints });
   
-  //const count = shape.length;
-  const mat = new THREE.MeshPhongMaterial({color: 0xff0000, side: THREE.DoubleSide, wireframe: false });
-  const mesh = new THREE.Mesh(geometry, mat)
-  scene.add(mesh)
-    
+  const adjustedCenterPoints = centerPoints.concat(section2);//.map((p) => p.clone().sub(trackPoints[0]));
+  
+  return { nearestIndex: dist.i, adjustedCenterPoints };
+
 }

@@ -54,8 +54,8 @@ export const createTerrain = (scene) => {
   // triangulate shape and receive face indices
   const indices = ShapeUtils.triangulateShape([...shape, ...holes[0]].flat(), [holes]).flat();
 
-  const verticesOuter = shape.reduce((a, c, i) => ([...a, c.x, adjustedCenterPoints[i].y, c.y]), []);
-  const verticesInner = holes[0].reduce((a, c, i) => ([...a, c.x, 0, c.y]), []);
+  const verticesOuter = shape.reduce((a, c, i) => ([...a, c.x, adjustedCenterPoints[i].y - 20, c.y]), []);
+  const verticesInner = holes[0].reduce((a, c, i) => ([...a, c.x, 100, c.y]), []);
 
   console.log({ verticesOuter });
   
@@ -68,16 +68,16 @@ export const createTerrain = (scene) => {
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
   geometry.computeVertexNormals();
 
-  const mat = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, wireframe: true });
+  const mat = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, wireframe: false });
   const mesh = new THREE.Mesh(geometry, mat);
-  scene.add(mesh);
+  //scene.add(mesh);
 };
 
 // http://jsclipper.sourceforge.net/6.4.2.2/index.html?p=sources_as_text/starter_offset.txt
 const computeOffsetPaths = ([outerOffset, innerOffset]) => {
-  const pointsCount = 200;
+  const pointsCount = 100;
   // compute offset paths from centerline
-  const centerPoints = trackParams.centerLine.getSpacedPoints(pointsCount);
+  const centerPoints = trackParams.centerLine.clone().getSpacedPoints(pointsCount);
 
   const centerPath = centerPoints.map(p => ({ X: p.x, Y: p.z }));
 
@@ -91,9 +91,9 @@ const computeOffsetPaths = ([outerOffset, innerOffset]) => {
   const offsettedPaths2 = new ClipperLib.Paths();
   co.Execute(offsettedPaths2, innerOffset);
 
-  // map offsetted paths to points arrays
-  const outerPoints = offsettedPaths[0].map((p) => new THREE.Vector2(p.X, p.Y));
-  const innerPoints = offsettedPaths2[0].map((p) => new THREE.Vector2(p.X, p.Y));
+  // map offsetted paths to points arrays - for some reason they are clockwise
+  const outerPoints = offsettedPaths[0].map((p) => new THREE.Vector2(p.X, p.Y)).reverse();
+  const innerPoints = offsettedPaths2[0].map((p) => new THREE.Vector2(p.X, p.Y)).reverse();
 
   return { outerPoints, innerPoints };
 };

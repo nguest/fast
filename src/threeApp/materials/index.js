@@ -148,6 +148,7 @@ export const createMaterial = ({
     material.map.preMultiplyAlpha = true;
     if (map.repeat) material.map.repeat.set(...map.repeat);
     if (map.offset) material.map.offset.set(...map.offset);
+    if (map.rotation) material.map.rotation = map.rotation;
     material.map.anisotropy = Config.maxAnisotropy;
   }
   if (normalMap) {

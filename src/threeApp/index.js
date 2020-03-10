@@ -188,7 +188,7 @@ export class Main extends PureComponent {
     createTrees({ scene: this.scene });
     createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
     decorateGrass(getObjByName(this.scene, 'grassL'), this.scene);
-    createTerrain(this.scene)
+    //createTerrain(this.scene)
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
     console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });

@@ -5,7 +5,8 @@ import { trackKerbCrossSection, getIncludeSegments } from '../custom/geometries/
 import { grassCrossSectionL, grassCrossSectionR } from '../custom/geometries/grass';
 import { treesCrossSection } from '../custom/geometries/trees';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
-import { terrainCrossSection, getTerrainCurve } from '../custom/geometries/terrain';
+import { getTerrainCurve } from '../custom/geometries/terrain';
+import { terrainCrossSection } from '../custom/geometries/terrainSmall'
 
 import { trackParams } from '../custom/geometries/trackParams';
  
@@ -76,6 +77,30 @@ export const objectsIndex = [
       cast: false,
     },
     add: false,
+    uv2Params: [1, 0.1],
+  },
+  {
+    name: 'terrainSmall',
+    type: 'ExtrudeGeometry',
+    params: [
+      terrainCrossSection,
+      {
+        steps: trackParams.steps,
+        depth: 0,
+        // UVGenerator: trackUVGenerator,
+        extrudePath: trackParams.centerLine,
+        widthFactor: trackParams.widthFactor,
+      },
+    ],
+    position: [0, 0.0, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'LongGrassMaterial',
+    shadows: {
+      receive: true,
+      cast: false,
+    },
+    add: true,
     uv2Params: [1, 0.1],
   },
   {

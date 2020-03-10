@@ -82,6 +82,33 @@ export const materialsIndex = [
     emissive: 0x000000,
     shininess: 0,
   },
+  {
+    name: 'LongGrassMaterial',
+    type: 'MeshLambertMaterial',
+    color: 0x555555,
+    //customMaterial: GrassMaterial,
+    map: {
+      name: 'LongGrass_Map',
+      repeat: [1, 3],
+      wrapping: 'MirroredRepeatWrapping',
+      rotation: Math.PI * 0.5,
+    },
+    //flatShading: true,
+    // normalMap: {
+    //   name: 'Grass_Normal',
+    //   normalScale: [1, 1],
+    // },
+
+    // lightMap: {
+    //   name: 'LightMap_Map',
+    //   repeat: [1, 1],
+    //   lightMapIntensity: 0.1,
+    // },
+    side: 'FrontSide',
+    wireframe: false,
+    emissive: 0x000000,
+    shininess: 0,
+  },
   // {
   //   name: 'grassShader',
   //   type: 'ShaderMaterial',

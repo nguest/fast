@@ -116,7 +116,6 @@ export const objectsIndex = [
         renderEndCaps: false,
         autoCloseShape: false,
         includeSegments: getIncludeSegments(),
-
       },
     ],
     position: [0, 0, 0],

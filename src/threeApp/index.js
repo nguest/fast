@@ -22,6 +22,8 @@ import { createTrackDecals, createApexes } from './custom/geometries/track';
 import { decorateGrass } from './custom/geometries/grass';
 // import { trackParams } from './custom/geometries/trackParams';
 import { createTerrain } from './custom/geometries/terrain';
+import { decorateTerrainSmall } from './custom/geometries/terrainSmall';
+
 
 // Helpers
 import { promisifyLoader, getPosQuatFromGamePosition, getObjByName, scaleBackground } from './helpers/helpers';
@@ -188,6 +190,7 @@ export class Main extends PureComponent {
     createTrees({ scene: this.scene });
     createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
     decorateGrass(getObjByName(this.scene, 'grassL'), this.scene);
+    decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene)
     //createTerrain(this.scene)
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');

@@ -21,6 +21,8 @@ export const createInstancedMesh = ({
 
   positions = curve ? curve.getSpacedPoints(count) : positions;
   //const { binormals, normals, tangents } = computeFrenetFrames(curve, count);
+  console.log({ positions });
+  
 
   let instanceOffset = [];
   const instanceScale = [];
@@ -101,11 +103,7 @@ export const createInstancedMesh = ({
   if (material.userData.faceToQuat) {
     instancedGeo.setAttribute('instanceQuaternion',
       new THREE.InstancedBufferAttribute(new Float32Array(instanceQuaternion), 4, false));
-      console.log({ instanceQuaternion });
-      
   }
-
-
 
   material.needsUpdate = true;
   material.uniformsNeedUpdate = true;
@@ -119,11 +117,13 @@ export const createInstancedMesh = ({
   mesh.castShadow = true;
   mesh.userData.type = 'instancedMesh';
   mesh.name = name;
+  console.log({ aye: mesh });
+  
   return mesh;
 };
 
 
-export const createSampledInstanceMesh = ({ 
+export const createSampledInstanceMesh = ({
   baseGeometry,
   mesh,
   material,

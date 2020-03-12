@@ -90,8 +90,7 @@ export const trackUVGenerator = {
 export const createTrackDecals = (trackMesh, scene, material) => {
 
   const helper = new THREE.VertexNormalsHelper(trackMesh, 2, 0x00ff00, 1);
-
-  scene.add(helper);
+  //scene.add(helper);
 
   const plane = new THREE.PlaneBufferGeometry(0.2, 10);
 
@@ -141,10 +140,10 @@ export const createApexes = (scene) => {
     return agg;
   }, []);
 
-  const spriteMap = new THREE.TextureLoader().load('./assets/textures/UV_Grid_Sm.png');
-  const spriteMaterial = new THREE.SpriteMaterial({ map: spriteMap, color: 0xffffff });
+  const map = new THREE.TextureLoader().load('./assets/textures/location_map.png');
+  const material = new THREE.SpriteMaterial({map});
   apexes.forEach((apex, i) => {
-    const sprite = new THREE.Sprite(spriteMaterial);
+    const sprite = new THREE.Sprite(material);
     const apexMarkerPosn = apex.p.sub(binormals[apex.i].clone().multiplyScalar(trackParams.trackHalfWidth * apex.dir));
     sprite.position.set(apexMarkerPosn.x, apexMarkerPosn.y + 1, apexMarkerPosn.z);
 

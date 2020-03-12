@@ -142,7 +142,7 @@ const createDirt = (mesh, scene) => {
   // });
   // scene.add(instancedMesh);
   const helper = new THREE.VertexNormalsHelper(mesh, 2, 0x00ffff, 1);
-  scene.add(helper);
+  //scene.add(helper);
 
   const instancedMesh = createSampledInstanceMesh({
     baseGeometry: plane,

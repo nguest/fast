@@ -1,9 +1,6 @@
 import * as THREE from 'three';
-
 import { MeshSurfaceSampler } from './MeshSurfaceSampler';
-import { BufferGeometryUtils } from './BufferGeometryUtils';
-import { computeFrenetFrames } from './curveHelpers';
-import { getQuatFromNormal, rand } from './helpers';
+import { rand } from './helpers';
 
 export const createInstancedMesh = ({
   count,
@@ -16,55 +13,22 @@ export const createInstancedMesh = ({
   positions,
   quaternions,
   scaleFunc,
+  shadow,
 }) => {
   const instancedGeo = new THREE.InstancedBufferGeometry().copy(geometry);
 
   positions = curve ? curve.getSpacedPoints(count) : positions;
-  //const { binormals, normals, tangents } = computeFrenetFrames(curve, count);
-  console.log({ positions });
-  
 
   let instanceOffset = [];
   const instanceScale = [];
   let instanceQuaternion = [];
   const instanceMapUV = [];
-  const up = new THREE.Vector3(1,1,0);
-  const quaternion = new THREE.Quaternion();
-  const rotationV = new THREE.Vector3();
 
-  // if (!curve ) {
-  //   instanceOffset = positions;
-  // }
+  if (material.userData.faceToQuat) {
+    instanceQuaternion = quaternions;
+  }
 
   for (let i = 0; i < count; i++) {
-    // quaternion.setFromAxisAngle(
-    //   up,
-    //   //new THREE.Vector3(binormals[i].x, 0, binormals[i].z),
-    //   Math.random() * Math.PI,
-    // );
-    if (material.userData.faceToQuat) {
-
-      // const quat = getQuatFromNormal(up.normalize(), quaternion);
-      // quat.normalize();
-      // instanceQuaternion.push(quat.x, quat.y, quat.z, quat.w);
-      // rotationV.set(
-      //   rotation[i * 3],
-      //   rotation[i * 3 + 1],
-      //   rotation[i * 3 + 2],
-      // );
-      // // .add(
-      // //   positions[i * 3],
-      // //   positions[i * 3 + 1],
-      // //   positions[i * 3 + 2],
-      // // );
-      // const quat = getQuatFromNormal(rotationV.normalize(), quaternion);
-      // instanceQuaternion.push(quat.x, quat.y, quat.z, quat.w);
-      //console.log({ positions, quaternions });
-      
-      instanceQuaternion = quaternions;
-
-    }
-
     const scale = scaleFunc ? scaleFunc() : 1;
 
     if (curve) {
@@ -74,12 +38,7 @@ export const createInstancedMesh = ({
         positions[i].z + rand(1),
       );
     } else {
-      // instanceOffset.push(
-      //   positions[i * 3],
-      //   positions[i * 3 + 1],
-      //   positions[i * 3 + 2],
-      // );
-      instanceOffset = positions;//.push(positions[i]);
+      instanceOffset = positions;
     }
 
     instanceScale.push(
@@ -113,12 +72,15 @@ export const createInstancedMesh = ({
   mesh.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 10);
 
   if (depthMaterial) mesh.customDepthMaterial = depthMaterial;
-  // mesh.frustumCulled = false; // this is probably not best: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
-  mesh.castShadow = true;
+  // mesh.frustumCulled = false; //
+  // this is probably not best:
+  // https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+  if (shadow) {
+    mesh.castShadow = shadow.cast;
+    mesh.receiveShadow = shadow.receive;
+  }
   mesh.userData.type = 'instancedMesh';
   mesh.name = name;
-  console.log({ aye: mesh });
-  
   return mesh;
 };
 
@@ -156,19 +118,14 @@ export const createSampledInstanceMesh = ({
 
     dummy.position.copy(position);
     if (lookAtNormal) {
-
       dummy.lookAt(normal);
       if (rotateFunc) dummy.rotateOnWorldAxis(up, rotateFunc());
-      // dummy,
-
-      //if (i < 50) console.log(dummy)
     }
     if (scaleFunc) dummy.scale.setY(scaleFunc());
     dummy.updateMatrix();
     instancedMesh.setMatrixAt(i, dummy.matrix);
     instancedMesh.instanceMatrix.needsUpdate = true;
   }
-  console.log({ vvv: instancedMesh })
-  instancedMesh.receiveShadow = true
+  instancedMesh.receiveShadow = true;
   return instancedMesh;
 };

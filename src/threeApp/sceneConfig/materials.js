@@ -33,7 +33,7 @@ export const materialsIndex = [
   {
     name: 'road',
     type: 'MeshPhongMaterial',
-    color: 0xffffff,
+    color: 0xaaaaaa,
     map: {
       name: 'Road_Map',
       wrapping: 'MirroredRepeatWrapping',
@@ -51,7 +51,7 @@ export const materialsIndex = [
       normalScale: [0.5, 0.5],
     },
     shininess: 1,
-    specular: 0x555555,
+    specular: 0x777777,
     side: 'FrontSide',
     wireframe: false,
     emissive: 0x000000,
@@ -108,65 +108,6 @@ export const materialsIndex = [
     wireframe: false,
     emissive: 0x000000,
     shininess: 0,
-  },
-  // {
-  //   name: 'grassShader',
-  //   type: 'ShaderMaterial',
-  //   color: 0xffffff,
-  //   map: {
-  //     name: 'Grass_Map',
-  //     repeat: [0.1, 20],
-  //     wrapping: 'MirroredRepeatWrapping',
-  //   },
-  //   normalMap: {
-  //     name: 'Grass_Normal',
-  //     repeat: [0.5, 0.5],
-  //     normalScale: [0.2, 0.2],
-  //   },
-  //   // lightMap: {
-  //   //   name: 'LightMap_Map',
-  //   //   repeat: [1, 1],
-  //   //   lightMapIntensity: 0.1,
-  //   // },
-  //   // bumpMap: {
-  //   //   name: 'UVGrid',
-  //   //   repeat: [15, 15],
-  //   //   bumpScale: 2,
-  //   // },
-  //   side: 'FrontSide',
-  //   wireframe: false,
-  //   emissive: 0x000000,
-  //   shininess: 0,
-  // },
-  {
-    name: 'forest',
-    type: 'MeshBasicMaterial',
-    color: 0xffffff,
-    map: {
-      name: 'Forest_Map',
-      repeat: [1, 1],
-      wrapping: 'RepeatWrapping',
-    },
-    // normalMap: {
-    //   name: 'Grass_Normal',
-    //   repeat: [15, 15],
-    //   normalScale: [0.2, 0.2],
-    // },
-    // lightMap: {
-    //   name: 'LightMap_Map',
-    //   repeat: [1, 1],
-    //   lightMapIntensity: 0.1,
-    // },
-    // bumpMap: {
-    //   name: 'UVGrid',
-    //   repeat: [15, 15],
-    //   bumpScale: 2,
-    // },
-    transparent: true,
-    side: 'DoubleSide',
-    wireframe: false,
-    emissive: 0x000000,
-    // shininess: 10,
   },
   {
     name: 'kerb',
@@ -229,5 +170,13 @@ export const materialsIndex = [
     wireframe: false,
     emissive: 0x000000,
     transparent: true,
+  },
+  {
+    name: 'LocationIcon',
+    type: 'SpriteMaterial',
+    color: 0xffffff,
+    map: {
+      name: 'LocationIcon_Map',
+    },
   },
 ];

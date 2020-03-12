@@ -190,13 +190,14 @@ export class Main extends PureComponent {
     createTrees({ scene: this.scene });
     createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
     decorateGrass(getObjByName(this.scene, 'grassL'), this.scene);
-    decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene)
+    decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
+    createApexes(this.scene);
+
     //createTerrain(this.scene)
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
     console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
 
-    createApexes(this.scene);
     const helper = new THREE.GridHelper(10, 2, 0xffffff, 0xffffff);
     this.scene.add(helper);
   }

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { trackParams } from './trackParams';
 import { createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
-import { InstancesStandardMaterial } from '../materials/InstancesStandardMaterials';
+import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
 import { MeshSurfaceSampler } from '../../helpers/MeshSurfaceSampler';
 
 export const terrainCrossSection = new THREE.Shape([
@@ -10,16 +10,17 @@ export const terrainCrossSection = new THREE.Shape([
 ]);
 
 export const decorateTerrainSmall = (mesh, scene) => {
-  console.log({ mesh });
-
   const plane = new THREE.PlaneBufferGeometry(0.5, 0.5);
   plane.name = 'bushes';
+  const loader = new THREE.TextureLoader();
+  const map = loader.load('./assets/textures/longgrassclumps_map.png');
   const material = new InstancesStandardMaterial({
-    color: 0x118800,
+    color: 0xffffff,
     side: THREE.DoubleSide,
     userData: {
       faceToCamera: true,
     },
+    map,
   });
 
   const sampler = new MeshSurfaceSampler(mesh)
@@ -34,21 +35,31 @@ export const decorateTerrainSmall = (mesh, scene) => {
 
   for (let i = 0; i < count; i++) {
     sampler.sample(position, normal);
-    positions.push(position.x, position.y + 0.25, position.z);
+    positions.push(position.x, position.y + 0.15, position.z);
   }
+
+  const depthMaterial = new InstancesDepthMaterial({
+    depthPacking: THREE.RGBADepthPacking,
+    map,
+    alphaTest: 0.5,
+    userData: {
+      faceToCamera: true,
+    },
+  });
 
   const instancedMesh = createInstancedMesh({
     geometry: plane,
     mesh,
     material,
+    depthMaterial,
     count,
-    name: 'gg',
+    name: 'longGrasses',
     lookAtCamera: true,
     positions,
-    //offset: new THREE.Vector3(0, 0.25, 0),
-    scaleFunc: () => 1,//Math.random() * 0.75 + 0.75,
-    //uv: { u: 0.0, v: 0.95, },
-    //rotateFunc: () => Math.PI / 2,
+    scaleFunc: () => Math.random() * 0.75 + 0.5,
+    shadow: {
+      receive: true,
+    },
   });
   scene.add(instancedMesh);
 }

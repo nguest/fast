@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { getTreeline } from './treeline';
 import { trackParams } from './trackParams';
 import { createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
-import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials'
+import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
 
 const treesCrossSection1 = new THREE.Shape();
 treesCrossSection1.moveTo(0.1, -trackParams.trackHalfWidth - 10);
@@ -57,6 +57,9 @@ export const createTrees = ({ scene }) => {
       material,
       depthMaterial,
       scaleFunc: () => Math.random() * 0.75 + 0.75,
+      shadow: {
+        cast: true,
+      },
     });
     scene.add(instancedMesh);
   });

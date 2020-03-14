@@ -18,7 +18,7 @@ import { Mesh } from './components/Mesh';
 import { createTrees } from './custom/geometries/trees';
 // import { Sky } from './components/Sky';
 import { createGates, detectGateCollisions } from './components/Gates';
-import { createTrackDecals, createApexes } from './custom/geometries/track';
+import { decorateTrack, createApexes } from './custom/geometries/track';
 import { decorateGrass } from './custom/geometries/grass';
 // import { trackParams } from './custom/geometries/trackParams';
 import { createTerrain } from './custom/geometries/terrain';
@@ -188,15 +188,14 @@ export class Main extends PureComponent {
       return new Mesh(params).getMesh();
     });
     createTrees({ scene: this.scene });
-    createTrackDecals(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
+    decorateTrack(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
     decorateGrass(getObjByName(this.scene, 'grassL'), this.scene);
     decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
     createApexes(this.scene);
-
     //createTerrain(this.scene)
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
-    console.log({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
+    console.info({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });
 
     const helper = new THREE.GridHelper(10, 2, 0xffffff, 0xffffff);
     this.scene.add(helper);

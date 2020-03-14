@@ -60,34 +60,7 @@ export const trackUVGenerator = {
   },
 };
 
-// export const createTrackDecalsOld = (trackMesh, scene, material) => {
-//   const pointsCount = 2000;
-//   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
-//   const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
-
-//   console.log({ tangents })
-
-//   material.polygonOffset = true;
-//   material.polygonOffsetFactor = -1;
-//   material.blending = THREE.AdditiveBlending;
-
-//   const scale = new THREE.Vector3(10, 10, 10);
-
-//   for (let i = 0; i < pointsCount; i++) {
-//     const geometry = new DecalGeometry(
-//       trackMesh,
-//       positions[i],
-//       new THREE.Euler().setFromVector3(tangents[i]),
-//       scale,
-//     );
-//     const decalMesh = new THREE.Mesh(geometry, material);
-//     decalMesh.name = `trackDecal-${i}`;
-//     decalMesh.userData.type = 'decal';
-//     scene.add(decalMesh);
-//   }
-// };
-
-export const createTrackDecals = (trackMesh, scene, material) => {
+export const decorateTrack = (trackMesh, scene) => {
 
   const helper = new THREE.VertexNormalsHelper(trackMesh, 2, 0x00ff00, 1);
   //scene.add(helper);

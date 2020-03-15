@@ -48,7 +48,6 @@ export class Mesh {
       this.initLoader(url, manager);
     } else {
       let geometry = THREE[type] && new THREE[type](...params);
-
       // use custom extrude function
       if (type === 'ExtrudeGeometry' || type === 'ExtrudeBufferGeometry') {
         geometry = new ExtrudeBufferGeometry(...params);

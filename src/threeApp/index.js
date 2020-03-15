@@ -207,7 +207,7 @@ export class Main extends PureComponent {
     // calculate global envmap and skybox
     createSkyBoxFrom4x3({
       scene: this.scene,
-      boxDimension: 10000,
+      boxDimension: 8000,
       image: assets.Skybox,
       tileSize: 512,
       manager: this.manager,

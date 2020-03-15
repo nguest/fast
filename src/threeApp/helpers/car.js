@@ -16,6 +16,8 @@ export const decorateCar = (car, brakelights, scene) => {
   // decorate car(s)
   let brakeLights = new THREE.Mesh();
   car.traverse((child) => {
+    //console.log({ [child.name]: child });
+    
     if (child.isMesh) {
       // FIRST CAR
       if (child.name === 'gum001_carpaint_0') { // body
@@ -49,7 +51,12 @@ export const decorateCar = (car, brakelights, scene) => {
       }
 
       // SECOND CAR
-
+      let carbonMat;
+      if (child.material.name === 'CarbonMat') {
+        carbonMat = child.material;
+        console.log({ carbonMat });
+        
+      }
       if (child.material.name === 'GlassMat') {
         child.material = new THREE.MeshPhongMaterial({ color: 0x444444, envMap: scene.environment, reflectivity: 1.0 });
       }
@@ -65,6 +72,22 @@ export const decorateCar = (car, brakelights, scene) => {
       }
       if (child.name === 'ShadowMesh') {
         child.castShadow = true;
+      }
+
+
+      if (child.material.name === 'CarbonWithMapMat') {
+        //child.material = new THREE.MeshPhongMaterial({ color: 0xff0000, envMap: scene.environment, reflectivity: 0.7 });
+        //child.material.color = new THREE.Color(0xff4444);
+        console.log({ CCCCCCCCC: child.material });
+        console.log({ child });
+        child.material.envMap = scene.environment;
+        child.material.reflectivity = 0.7;
+        //child.material.alphaTest = 0.5
+        //child.material.transparent = true;
+        //child.material.opacity = 0.6;
+        //child.material.depthWrite= false;
+        // child.material.depthTest= false
+        //child.material.map = new THREE.TextureLoader().load('./assets/objects/porsche911_gt2/Textures/porsche_map.png')
       }
     }
   });

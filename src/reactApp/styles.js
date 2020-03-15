@@ -17,6 +17,9 @@ export const styles = {
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
         sans-serif;`,
     },
+    canvas: {
+      display: 'block',
+    },
   },
   app: {
     position: 'relative',
@@ -31,37 +34,6 @@ export const styles = {
     position: 'absolute',
     right: 0,
     top: 0,
-  },
-  info: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    zIndex: 10,
-    width: 200,
-    backgroundColor: 'black',
-  },
-  info2: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    zIndex: 10,
-    width: 200,
-    backgroundColor: 'black',
-  },
-  statusBar: {
-    padding: 5,
-    color: 'white',
-    right: 0,
-    fontSize: 10,
-  },
-  gamePosition: {
-    left: 100,
-    width: 100,
-    padding: 5,
-    color: 'white',
-    fontSize: 10,
-  },
-  resetButton: {
   },
   loadingScreen: {
     background: 'rgba(0,0,0,0.5)',

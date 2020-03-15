@@ -16,15 +16,8 @@ export const App = () => {
       <header css={styles.appHeader}>
         <p>App Header</p>
       </header>
-      <section css={styles.info}>
-        <div css={styles.statusBar}>
-          { status }
-        </div>
-        <div css={styles.gamePosition}>
-          { `${gamePosition.gate} / 500` }
-        </div>
-      </section>
       <ThreeContainer
+        status={status}
         setStatus={setStatus}
         setGamePosition={setGamePosition}
         gamePosition={gamePosition}

@@ -18,7 +18,7 @@ import { Mesh } from './components/Mesh';
 import { createTrees } from './custom/geometries/trees';
 // import { Sky } from './components/Sky';
 import { createGates, detectGateCollisions } from './components/Gates';
-import { decorateTrack, createApexes } from './custom/geometries/track';
+import { decorateTrack, createApexMarkers } from './custom/geometries/track';
 import { decorateGrass } from './custom/geometries/grass';
 // import { trackParams } from './custom/geometries/trackParams';
 import { createTerrain } from './custom/geometries/terrain';
@@ -191,7 +191,8 @@ export class Main extends PureComponent {
     decorateTrack(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
     decorateGrass(getObjByName(this.scene, 'grassL'), this.scene);
     decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
-    createApexes(this.scene);
+    createApexMarkers(this.scene);
+   // createRacingLine(apexes);
     //createTerrain(this.scene)
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');

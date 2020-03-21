@@ -17,6 +17,8 @@ export const createMaterial = ({
   name,
   normalMap,
   opacity = 1,
+  polygonOffset,
+  polygonOffsetFactor,
   roughness,
   shininess = 30,
   side,
@@ -47,8 +49,6 @@ export const createMaterial = ({
     } else {
       material = customMaterial;
       material.name = name;
-      //material.color = color;
-      console.log({ material })
 
       if (map) {
         material.map = assets[map.name];
@@ -56,8 +56,6 @@ export const createMaterial = ({
         material.map.wrapS = THREE[map.wrapping] || THREE.RepeatWrapping;
         material.minFilter = THREE.NearestMipmapNearestFilter;
         material.map.anisotropy = Config.maxAnisotropy;
-
-        //material.map.preMultiplyAlpha = true;
         if (map.repeat) material.map.repeat.set(...map.repeat);
         if (map.offset) material.map.repeat.set(...map.offset);
       }
@@ -96,6 +94,8 @@ export const createMaterial = ({
   material.transparent = material.transparent !== undefined ? transparent : false;
   material.roughness = material.roughness !== undefined ? roughness : material.roughness;
   material.metalness = material.metalness !== undefined ? metalness : material.metalness;
+  material.polygonOffset = material.polygonOffset !== undefined ? polygonOffset : material.polygonOffset;
+  material.polygonOffsetFactor = material.polygonOffsetFactor !== undefined ? polygonOffsetFactor : material.polygonOffsetFactor;
 
   if (smartAlpha) {
     material.onBeforeCompile = (shader) => {

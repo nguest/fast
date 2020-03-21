@@ -7,9 +7,10 @@ import { treesCrossSection } from '../custom/geometries/trees';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 import { getTerrainCurve } from '../custom/geometries/terrain';
 import { terrainCrossSection } from '../custom/geometries/terrainSmall'
+import { racingLineCrossSection, racingLineCurve } from '../custom/geometries/racingLine';
 
 import { trackParams } from '../custom/geometries/trackParams';
- 
+
 import { createVehicle } from '../custom/geometries/vehicle';
 
 export const objectsIndex = [
@@ -315,6 +316,30 @@ export const objectsIndex = [
     material: 'skyline',
     shadows: {
       receive: false,
+      cast: false,
+    },
+    add: true,
+  },
+  {
+    name: 'racingLine',
+    type: 'ExtrudeGeometry',
+    params: [
+      racingLineCrossSection,
+      {
+        steps: trackParams.steps,
+        depth: 0,
+        // UVGenerator: trackUVGenerator,
+        extrudePath: racingLineCurve(),
+        widthFactor: trackParams.widthFactor,
+        autoCloseShape: true,
+      },
+    ],
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'mappedFlat',
+    shadows: {
+      receive: true,
       cast: false,
     },
     add: true,

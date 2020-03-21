@@ -107,26 +107,41 @@ export const createApexes = (scene) => {
 
       return [
         ...agg,
-        { i, p: points[i], dir },
+        { i, p: points[i], dir, binormal: binormals[i] },
       ];
     }
     return agg;
   }, []);
 
+  return apexes;
+
+  // const map = new THREE.TextureLoader().load('./assets/textures/location_map.png');
+  // const material = new THREE.SpriteMaterial({map});
+  // apexes.forEach((apex, i) => {
+  //   const sprite = new THREE.Sprite(material);
+  //   const apexMarkerPosn = apex.p.sub(binormals[i].clone().multiplyScalar(trackParams.trackHalfWidth * apex.dir));
+  //   sprite.position.set(apexMarkerPosn.x, apexMarkerPosn.y + 1, apexMarkerPosn.z);
+
+  //   scene.add(sprite);
+  //});
+};
+
+export const createApexMarkers = (scene) => {
+  console.log({ trackParams });
+  
+  const apexes = trackParams.apexes;
   const map = new THREE.TextureLoader().load('./assets/textures/location_map.png');
-  const material = new THREE.SpriteMaterial({map});
+  const material = new THREE.SpriteMaterial({ map });
+  console.log({ apexes });
+  
   apexes.forEach((apex, i) => {
     const sprite = new THREE.Sprite(material);
-    const apexMarkerPosn = apex.p.sub(binormals[apex.i].clone().multiplyScalar(trackParams.trackHalfWidth * apex.dir));
+    const apexMarkerPosn = apex.p.sub(apex.binormal.clone().multiplyScalar(trackParams.trackHalfWidth * apex.dir));
     sprite.position.set(apexMarkerPosn.x, apexMarkerPosn.y + 1, apexMarkerPosn.z);
 
     scene.add(sprite);
   });
-};
-
-const signedTriangleArea = (a, b, c) => (
-  a.x * b.z - a.z * b.x + a.z * c.x - a.x * c.z + b.x * c.z - c.x * b.z
-);
+}
 
 // create custom material with vertex clipping and proper alpha
 const TrackMarksMaterial = new THREE.MeshLambertMaterial({

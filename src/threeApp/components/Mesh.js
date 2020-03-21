@@ -18,6 +18,7 @@ export class Mesh {
     params,
     physics = {},
     position = [0, 0, 0],
+    renderOrder,
     rotation = [0, 0, 0],
     scale = [1, 1, 1],
     scene = this.scene,
@@ -35,6 +36,7 @@ export class Mesh {
     this.physics = physics;
     this.physicsWorld = physics.physicsWorld;
     this.position = position;
+    this.renderOrder = renderOrder;
     this.rotation = rotation;
     this.scale = scale;
     this.scene = scene;
@@ -185,6 +187,7 @@ export class Mesh {
     this.mesh.geometry.scale(...this.scale);
     this.mesh.castShadow = this.shadows.cast;
     this.mesh.receiveShadow = this.shadows.receive;
+    this.mesh.renderOrder = this.renderOrder;
     this.mesh.name = this.name;
     if (this.addObjectToScene) {
       this.setInitialState();

@@ -1,5 +1,6 @@
 import { CatmullRomCurve3, CubicBezierCurve, Vector2 } from 'three';
 import { converLatLngToVector } from '../../helpers/latlngConverter';
+import { createApexes } from '../../helpers/apexHelpers';
 import coordinates from '../../sceneConfig/tracks';
 
 const startPoint = 30;
@@ -30,7 +31,10 @@ const widthCurve = new CubicBezierCurve(
 );
 const widthFactor = widthCurve.getPoints(steps);
 
+const apexes = createApexes({ centerLine, length });
+
 export const trackParams = {
+  apexes,
   adjustedTrackPoints,
   centerLine,
   length,

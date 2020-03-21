@@ -20,6 +20,8 @@ export const materialsIndex = [
     wireframe: false,
     emissive: 0x000022,
     shininess: 100,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
   },
   {
     name: 'wireFrame',

@@ -12,7 +12,7 @@ export const Config = {
   isMouseOver: false,
   maxAnisotropy: 1,
   gammaFactor: 1.1,
-  dpr: 1.5,
+  dpr: 1.5,//.5,
   easing: TWEEN.Easing.Quadratic.InOut,
   duration: 500,
   clipDistance: 200,
@@ -20,7 +20,7 @@ export const Config = {
     antialias: false, // 'true' has serious framerate implications!
     alpha: false,
     //logarithmicDepthBuffer: true,
-    toneMapping: THREE.CineonToneMapping,//ACESFilmicToneMapping,
+    //toneMapping: THREE.CineonToneMapping,//ACESFilmicToneMapping,
 
     //precision: 'lowP'
   },
@@ -48,7 +48,7 @@ export const Config = {
   },
   camera: {
     fov: 45,
-    near: 1,
+    near: 0,
     far: 40000,
     aspect: 1,
     position: [-30, 20, 20],
@@ -56,7 +56,7 @@ export const Config = {
   },
   followCam: {
     fov: 60,
-    near: 2,
+    near: 0.1,
     far: 10000,
     aspect: 1,
     position: [0, 1.45, -4.5],
@@ -79,7 +79,7 @@ export const Config = {
     enableDamping: true,
     dampingFactor: 0.5,
     enableZoom: true,
-    target: [0,0,0],
+    target: [0, 0, 0],
   },
   skyBox: {
     position: [0, 0, 0],

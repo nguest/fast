@@ -1,7 +1,7 @@
 // Global imports
 import * as THREE from 'three';
 import React, { PureComponent } from 'react';
-import { func, object } from 'prop-types';
+import { func, object, string } from 'prop-types';
 
 // import TWEEN from '@tweenjs/tween.js';
 import Ammo from 'ammonext';
@@ -20,7 +20,7 @@ import { createTrees } from './custom/geometries/trees';
 import { createGates, detectGateCollisions } from './components/Gates';
 import { decorateTrack, createApexMarkers } from './custom/geometries/track';
 import { decorateGrass } from './custom/geometries/grass';
-// import { trackParams } from './custom/geometries/trackParams';
+import { computeTrackParams } from './custom/geometries/trackParams';
 import { createTerrain } from './custom/geometries/terrain';
 import { decorateTerrainSmall } from './custom/geometries/terrainSmall';
 
@@ -55,10 +55,26 @@ const zeroVector = new Ammo.btVector3(0, 0, 0);
 
 export class Main extends PureComponent {
   componentDidMount() {
+    this.selectedTrack = this.props.selectedTrack;
     this.initialize();
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.selectedTrack !== prevProps.selectedTrack) {
+      this.renderer = null;
+      this.container.innerHTML = null;
+      this.selectedTrack = this.props.selectedTrack;
+
+      this.props.setIsLoading(true);
+      //this.container = null;
+      this.initialize();
+    }
+    
+  }
+
   initialize() {
+    console.log({ tP: this.props });
+    
     this.createPhysicsWorld();
     this.auxTrans = new Ammo.btTransform();
     this.temp = new THREE.Vector3();
@@ -79,7 +95,9 @@ export class Main extends PureComponent {
     };
     this.vehicleState = { vehicleSteering: 0 };
     // this.sky = new Sky(this.scene);
-    this.gates = createGates(this.scene);
+    this.trackParams = computeTrackParams(this.selectedTrack);
+    this.props.setTrackParams(this.trackParams);
+    this.gates = createGates(this.scene, this.trackParams);
 
     // this.skyBox = new SkyBox(this.scene);
 
@@ -137,7 +155,6 @@ export class Main extends PureComponent {
           ...agg,
           [materialParams.name]: createMaterial(materialParams, assets),
         }), {});
-        console.log({ materials });
         return this.createWorld(materials, assets);
       });
   }
@@ -161,7 +178,7 @@ export class Main extends PureComponent {
   }
 
   createObjects = (materials) => {
-    this.objects = objectsIndex.map((obj) => {
+    this.objects = objectsIndex(this.trackParams).map((obj) => {
       const params = {
         ...obj,
         type: obj.type,
@@ -187,11 +204,11 @@ export class Main extends PureComponent {
       }
       return new Mesh(params).getMesh();
     });
-    createTrees({ scene: this.scene });
-    decorateTrack(getObjByName(this.scene, 'track'), this.scene, materials.mappedFlat);
-    decorateGrass(getObjByName(this.scene, 'grassL'), this.scene);
-    decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
-    createApexMarkers(this.scene);
+    createTrees(this.scene, this.trackParams);
+    decorateTrack(getObjByName(this.scene, 'track'), this.scene, this.trackParams, materials.roadRacingLine);
+    decorateGrass(getObjByName(this.scene, 'grassL'), this.scene, this.trackParams);
+    //decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
+    createApexMarkers(this.scene, this.trackParams);
    // createRacingLine(apexes);
     //createTerrain(this.scene)
 
@@ -242,7 +259,8 @@ export class Main extends PureComponent {
       this.worldGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 0.1), materials.mappedFlat);
       this.scene.add(this.worldGoal);
       this.lights[1].target = this.worldGoal;
-
+      console.log({ t: this });
+      
       this.animate();
     };
   }
@@ -308,23 +326,26 @@ export class Main extends PureComponent {
 
   updatePhysics(deltaTime) {
     // Step world
+    if (this.physicsWorld.bodies[4]) {
+
     this.physicsWorld.stepSimulation(0.033, 0); // jerky if set to deltaTime??
     // Update rigid bodies (just vehicle)
-    this.vehicleState = updateVehicle(
-      deltaTime,
-      this.physicsWorld.bodies[4],
-      this.interaction,
-      this.brakeLights,
-      this.showStatus,
-      this.frameCount,
-    );
+      this.vehicleState = updateVehicle(
+        deltaTime,
+        this.physicsWorld.bodies[4],
+        this.interaction,
+        this.brakeLights,
+        this.showStatus,
+        this.frameCount,
+      );
+    }
   }
 
   resetObjects(gate) {
     console.log('resetObjects: ', gate);
     this.showGamePosition(gate);
     if (!this.physicsWorld) return;
-    const { position, quat } = getPosQuatFromGamePosition(gate);
+    const { position, quat } = getPosQuatFromGamePosition(gate, this.trackParams);
     this.controls.target.copy(position);
     const objThree = this.physicsWorld.bodies.find((o) => o.name === 'chassisMesh');
     const objPhys = objThree.userData.physicsBody;
@@ -364,6 +385,8 @@ export class Main extends PureComponent {
   }
 
   render() {
+    console.log({ t: this });
+    
     return <section ref={(ref) => { this.container = ref; }} style={{ width: '100%' }} />;
   }
 }
@@ -373,4 +396,5 @@ Main.propTypes = {
   setStatus: func,
   gamePosition: object,
   setGamePosition: func,
+  selectedTrack: string,
 };

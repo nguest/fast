@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { trackParams } from './trackParams';
 import { getSpacedPoints, computeFrenetFrames } from '../../helpers/curveHelpers';
 import { signedTriangleArea } from '../../helpers/apexHelpers';
 //import createApexes from './track';
@@ -7,13 +6,13 @@ import { signedTriangleArea } from '../../helpers/apexHelpers';
 // import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
 // import { MeshSurfaceSampler } from '../../helpers/MeshSurfaceSampler';
 
-export const racingLineCrossSection = new THREE.Shape([
+export const racingLineCrossSection = () => (new THREE.Shape([
   new THREE.Vector2(-0, 1),
   new THREE.Vector2(-0, -1),
-]);
+]));
 
 
-export const racingLineCurve = () => {
+export const racingLineCurve = (trackParams) => {
   const centerLine = trackParams.centerLine;
   const steps = trackParams.steps;
   const { binormals, tangents } = computeFrenetFrames(centerLine, steps);
@@ -30,31 +29,30 @@ export const racingLineCurve = () => {
 
 
   console.log('MX', Math.max(...angles), Math.min(...angles));
-  console.log({ binormals, points });
+  //console.log({ binormals, points });
   
   // const signedArea = signedTriangleArea(points[i - 1], points[i], points[i + 1]);
   // const dir = Math.sign(signedArea);
   const shiftedPoints = points.reduce((a, p, i) => {
     //console.log((trackParams.trackHalfWidth) * angles[i] * 100);
-    if (i % 2 === 1) {
-      let averageAngle = 0;
-      if (angles[i+1]) {
-        averageAngle = (angles[i-1] + angles[i] + angles[i+1])/3;
-      }
-     
-      const shiftK = Math.min(
-        trackParams.trackHalfWidth * Math.tan(averageAngle) * 20,
-        trackParams.trackHalfWidth,
-      );
-
-      const point = p.sub(
-        binormals[i]
-          .clone()
-          .multiplyScalar(shiftK),
-      );
-      return [...a, point];
+    let averageAngle = 0;
+    if (angles[i+1]) {
+      //averageAngle = (angles[i-1] + angles[i] + angles[i+1])/3;
+      averageAngle = getAverageAngle(i, angles)
+      //console.log({averageAngle})
     }
-    return a;
+    
+    const shiftK = Math.min(
+      trackParams.trackHalfWidth * Math.tan(averageAngle) * 40,
+      trackParams.trackHalfWidth,
+    );
+
+    const point = p.sub(
+      binormals[i]
+        .clone()
+        .multiplyScalar(shiftK),
+    );
+    return [...a, point];
   }, []);
 
   const curve = new THREE.CatmullRomCurve3(shiftedPoints);
@@ -64,7 +62,7 @@ export const racingLineCurve = () => {
   return curve;
 }
 
-export const racingLineCurve2 = () => {
+export const racingLineCurve2 = (trackParams) => {
   const apexes = trackParams.apexes;
   const centerLine = trackParams.centerLine;
   const steps = trackParams.steps;
@@ -93,4 +91,16 @@ export const racingLineCurve2 = () => {
   const curve = new THREE.CatmullRomCurve3(spacedPoints);
   curve.closed = true;
   return curve;
+}
+
+
+const getAverageAngle = (i, angles, spread = 20) => {
+  angles[i] + angles[i+1]
+
+  return new Array(spread).fill(0).reduce((a, c, idx) => {
+    let arrI = i + idx - spread;
+    if (arrI < 0) arrI += angles.length;
+    if (arrI > angles.length) arrI -= angles.length;
+    return a + angles[arrI]/spread;
+  }, 0);
 }

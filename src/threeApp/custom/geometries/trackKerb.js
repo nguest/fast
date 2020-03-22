@@ -1,17 +1,22 @@
 import * as THREE from 'three';
-import { trackParams } from './trackParams';
 
-const trackKerbCrossSection1 = new THREE.Shape();
-trackKerbCrossSection1.moveTo(-0.01, -trackParams.trackHalfWidth + 0.1);
-trackKerbCrossSection1.lineTo(-0.05, -trackParams.trackHalfWidth + 0.2);
-trackKerbCrossSection1.lineTo(-0.2, -trackParams.trackHalfWidth - 0.8);
+const trackKerbCrossSection1 = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.01, -trackParams.trackHalfWidth + 0.1);
+  shape.lineTo(-0.05, -trackParams.trackHalfWidth + 0.2);
+  shape.lineTo(-0.2, -trackParams.trackHalfWidth - 0.8);
+  return shape;
+};
 
-const trackKerbCrossSection2 = new THREE.Shape();
-trackKerbCrossSection2.moveTo(-0.2, trackParams.trackHalfWidth + 0.8);
-trackKerbCrossSection2.lineTo(-0.05, trackParams.trackHalfWidth - 0.2);
-trackKerbCrossSection2.lineTo(-0.01, trackParams.trackHalfWidth - 0.1);
+const trackKerbCrossSection2 = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.2, trackParams.trackHalfWidth + 0.8);
+  shape.lineTo(-0.05, trackParams.trackHalfWidth - 0.2);
+  shape.lineTo(-0.01, trackParams.trackHalfWidth - 0.1);
+  return shape;
+};
 
-export const trackKerbCrossSection = [trackKerbCrossSection1, trackKerbCrossSection2];
+export const trackKerbCrossSection = (trackParams) => ([trackKerbCrossSection1(trackParams), trackKerbCrossSection2(trackParams)]);
 //export const trackEdgeCrossSection = [test, test2];
 
 /*
@@ -20,7 +25,7 @@ The next 9 element specify the vertices of the 2nd face. – WestLangley Feb 11 
 */
 
 
-export const getIncludeSegments = () => {
+export const getIncludeSegments = (trackParams) => {
   const curve = trackParams.centerLine;
   const steps = 1000;
   const { tangents } = curve.computeFrenetFrames(steps);

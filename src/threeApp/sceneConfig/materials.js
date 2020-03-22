@@ -60,6 +60,30 @@ export const materialsIndex = [
     clipping: true,
   },
   {
+    name: 'roadRacingLine',
+    type: 'MeshPhongMaterial',
+    color: 0x000000,
+    map: {
+      name: 'RoadRacingLine_Map',
+      wrapping: 'MirroredRepeatWrapping',
+      repeat: [2, 1],
+    },
+  
+    // normalMap: {
+    //   name: 'Road_Normal',
+    //   wrapping: 'MirroredRepeatWrapping',
+    //   normalScale: [0.5, 0.5],
+    // },
+    shininess: 1,
+    transparent: true,
+    opacity: 0.5,
+    specular: 0x444444,
+    side: 'FrontSide',
+    wireframe: false,
+    clipping: true,
+    //blending: 'MultiplyBlending',
+  },
+  {
     name: 'GrassMaterial',
     type: 'MeshLambertMaterial',
     color: 0xdddddd,

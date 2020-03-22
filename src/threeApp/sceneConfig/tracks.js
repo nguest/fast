@@ -1,4 +1,16 @@
 // import { coordinates } from './nordschleife';
-import { coordinates } from '../custom/geometries/SpaFrancorchamps';
+import * as coordsSpa from '../custom/geometries/SpaFrancorchamps';
+import * as coordsNoordschleife from '../custom/geometries/nordschleife';
 
-export default coordinates;
+export const trackOptions = [
+  {
+    name: 'Nordschleife',
+    coords: coordsNoordschleife,
+  },
+  {
+    name: 'SpaFrancorchamps',
+    coords: coordsSpa,
+  },
+];
+
+export default coordsSpa.default;

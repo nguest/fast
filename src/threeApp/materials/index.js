@@ -3,6 +3,7 @@ import { patchShader } from './extend';
 import { Config } from '../sceneConfig/general';
 
 export const createMaterial = ({
+  blending = 'NormalBlending',
   bumpMap,
   clipping,
   color,
@@ -87,6 +88,8 @@ export const createMaterial = ({
     opacity,
     dithering: true,
   });
+
+  material.blending = THREE[blending],
 
   material.shininess = material.shininess !== undefined ? shininess : material.shininess;
   material.emissive = material.emissive !== undefined ? new THREE.Color(emissive) : new THREE.Color(material.emissive);

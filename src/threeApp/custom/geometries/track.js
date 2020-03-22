@@ -1,13 +1,15 @@
 import * as THREE from 'three';
-import { trackParams } from './trackParams';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
 import { createSampledInstanceMesh } from '../../helpers/InstancedBufferGeometry';
 import { patchShader } from '../../materials/extend';
 import { rand } from '../../helpers/helpers';
 
-export const trackCrossSection = new THREE.Shape();
-trackCrossSection.moveTo(0, trackParams.trackHalfWidth);
-trackCrossSection.lineTo(0, -trackParams.trackHalfWidth);
+export const trackCrossSection = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, trackParams.trackHalfWidth);
+  shape.lineTo(0, -trackParams.trackHalfWidth);
+  return shape;
+}
 
 export const trackUVGenerator = {
   generateTopUV(geometry, vertices, indexA, indexB, indexC) {
@@ -60,13 +62,13 @@ export const trackUVGenerator = {
   },
 };
 
-export const decorateTrack = (trackMesh, scene) => {
+export const decorateTrack = (trackMesh, scene, trackParams, material) => {
 
   const helper = new THREE.VertexNormalsHelper(trackMesh, 2, 0x00ff00, 1);
   //scene.add(helper);
 
   const plane = new THREE.PlaneBufferGeometry(0.2, 10);
-
+console.log({material})
   const instancedMesh = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh: trackMesh,
@@ -81,7 +83,7 @@ export const decorateTrack = (trackMesh, scene) => {
 };
 
 
-export const createApexes = (scene) => {
+export const createApexes = (scene, trackParams) => {
   const threshold = 0.02; // 0.12;
   const pointsCount = Math.floor(trackParams.length * 0.05);
   const { binormals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
@@ -126,7 +128,7 @@ export const createApexes = (scene) => {
   //});
 };
 
-export const createApexMarkers = (scene) => {
+export const createApexMarkers = (scene, trackParams) => {
   console.log({ trackParams });
   
   const apexes = trackParams.apexes;
@@ -146,15 +148,18 @@ export const createApexMarkers = (scene) => {
 // create custom material with vertex clipping and proper alpha
 const TrackMarksMaterial = new THREE.MeshLambertMaterial({
   color: 0x000000,
-  //map: new THREE.TextureLoader().load('./assets/textures/grassClump64_map.png'),
+  map: new THREE.TextureLoader().load('./assets/textures/racingLine_map.png'),
   side: THREE.FrontSide,
   polygonOffset: true,
   polygonOffsetFactor: -1,
   transparent: true,
   opacity: 0.2,
   //renderOrder: 1,
-
 });
+
+TrackMarksMaterial.map.wrapS = THREE.MirroredRepeatWrapping
+TrackMarksMaterial.map.wrapT = THREE.MirroredRepeatWrapping
+TrackMarksMaterial.map.repeat.set(2,1)
 
 TrackMarksMaterial.onBeforeCompile = (shader) => {
   patchShader(shader, {

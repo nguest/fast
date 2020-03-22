@@ -9,11 +9,11 @@ import { getTerrainCurve } from '../custom/geometries/terrain';
 import { terrainCrossSection } from '../custom/geometries/terrainSmall'
 import { racingLineCrossSection, racingLineCurve } from '../custom/geometries/racingLine';
 
-import { trackParams } from '../custom/geometries/trackParams';
+//import { trackParams } from '../custom/geometries/trackParams';
 
 import { createVehicle } from '../custom/geometries/vehicle';
 
-export const objectsIndex = [
+export const objectsIndex = (trackParams) => ([
   {
     name: 'groundPlane',
     type: 'PlaneBufferGeometry',
@@ -31,7 +31,7 @@ export const objectsIndex = [
     name: 'track',
     type: 'ExtrudeGeometry',
     params: [
-      trackCrossSection,
+      trackCrossSection(trackParams),
       {
         steps: trackParams.steps,
         depth: 0,
@@ -60,12 +60,12 @@ export const objectsIndex = [
     name: 'terrain',
     type: 'ExtrudeGeometry',
     params: [
-      terrainCrossSection,
+      terrainCrossSection(trackParams),
       {
         steps: 50,//trackParams.steps,
         depth: 0,
         UVGenerator: trackUVGenerator,
-        extrudePath: getTerrainCurve(),
+        extrudePath: getTerrainCurve(trackParams),
         widthFactor: trackParams.widthFactor,
       },
     ],
@@ -84,7 +84,7 @@ export const objectsIndex = [
     name: 'terrainSmall',
     type: 'ExtrudeGeometry',
     params: [
-      terrainCrossSection,
+      terrainCrossSection(trackParams),
       {
         steps: trackParams.steps,
         depth: 0,
@@ -101,14 +101,14 @@ export const objectsIndex = [
       receive: true,
       cast: false,
     },
-    add: true,
+    add: false,
     uv2Params: [1, 0.1],
   },
   {
     name: 'trackKerb',
     type: 'ExtrudeGeometry',
     params: [
-      trackKerbCrossSection,
+      trackKerbCrossSection(trackParams),
       {
         steps: trackParams.steps,
         depth: 0,
@@ -116,7 +116,7 @@ export const objectsIndex = [
         extrudePath: trackParams.centerLine,
         renderEndCaps: false,
         autoCloseShape: false,
-        includeSegments: getIncludeSegments(),
+        includeSegments: getIncludeSegments(trackParams),
       },
     ],
     position: [0, 0, 0],
@@ -138,7 +138,7 @@ export const objectsIndex = [
     name: 'grassL',
     type: 'ExtrudeGeometry',
     params: [
-      grassCrossSectionL,
+      grassCrossSectionL(trackParams),
       {
         steps: trackParams.steps,
         depth: 0,
@@ -167,7 +167,7 @@ export const objectsIndex = [
     name: 'grassR',
     type: 'ExtrudeGeometry',
     params: [
-      grassCrossSectionR,
+      grassCrossSectionR(trackParams),
       {
         steps: trackParams.steps,
         depth: 0,
@@ -196,7 +196,7 @@ export const objectsIndex = [
     name: 'barriers',
     type: 'ExtrudeGeometry',
     params: [
-      barriersCrossSection,
+      barriersCrossSection(trackParams),
       {
         steps: trackParams.steps,
         depth: 0,
@@ -324,24 +324,24 @@ export const objectsIndex = [
     name: 'racingLine',
     type: 'ExtrudeGeometry',
     params: [
-      racingLineCrossSection,
+      racingLineCrossSection(trackParams),
       {
         steps: trackParams.steps,
         depth: 0,
-        // UVGenerator: trackUVGenerator,
-        extrudePath: racingLineCurve(),
+        UVGenerator: trackUVGenerator,
+        extrudePath: racingLineCurve(trackParams),
         widthFactor: trackParams.widthFactor,
         autoCloseShape: true,
       },
     ],
-    position: [0, 0, 0],
+    position: [0, 0.1, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'mappedFlat',
+    material: 'roadRacingLine',
     shadows: {
       receive: true,
       cast: false,
     },
-    add: true,
+    add: false,
   },
-];
+]);

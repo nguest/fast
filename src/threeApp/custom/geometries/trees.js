@@ -1,20 +1,25 @@
 import * as THREE from 'three';
 import { getTreeline } from './treeline';
-import { trackParams } from './trackParams';
 import { createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
 import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
 
-const treesCrossSection1 = new THREE.Shape();
-treesCrossSection1.moveTo(0.1, -trackParams.trackHalfWidth - 10);
-treesCrossSection1.lineTo(-8, -trackParams.trackHalfWidth - 10);
+const treesCrossSection1 = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(0.1, -trackParams.trackHalfWidth - 10);
+  shape.lineTo(-8, -trackParams.trackHalfWidth - 10);
+  return shape;
+};
 
-const treesCrossSection2 = new THREE.Shape();
-treesCrossSection2.moveTo(-0.1, trackParams.trackHalfWidth + 10);
-treesCrossSection2.lineTo(-8, trackParams.trackHalfWidth + 10);
+const treesCrossSection2 = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.1, trackParams.trackHalfWidth + 10);
+  shape.lineTo(-8, trackParams.trackHalfWidth + 10);
+  return shape;
+};
 
 export const treesCrossSection = [treesCrossSection1, treesCrossSection2];
 
-export const createTrees = ({ scene }) => {
+export const createTrees = (scene, trackParams) => {
   const treeHeight = 12;
   const treePlane = new THREE.PlaneBufferGeometry(7, treeHeight, 1, 1);
   treePlane.translate(0, treeHeight * 0.5, 0);
@@ -45,7 +50,7 @@ export const createTrees = ({ scene }) => {
     },
   });
 
-  const { treeCurveLeft, treeCurveRight } = getTreeline();
+  const { treeCurveLeft, treeCurveRight } = getTreeline(trackParams);
 
   [treeCurveLeft, treeCurveRight].forEach((curve, i) => {
     const instancedMesh = createInstancedMesh({

@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 
-import { trackParams } from '../custom/geometries/trackParams';
 import { computeFrenetFrames } from '../helpers/curveHelpers';
 
-export const createGates = (scene) => {
+export const createGates = (scene, trackParams) => {
   const gatesCount = trackParams.gateCount;
   const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, gatesCount);
   const gatePositions = trackParams.centerLine.getSpacedPoints(gatesCount);

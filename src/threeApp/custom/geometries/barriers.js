@@ -1,14 +1,20 @@
 import * as THREE from 'three';
-import { trackParams } from './trackParams';
 
-const barrierCrossSection1 = new THREE.Shape();
-barrierCrossSection1.moveTo(-0.5, -(trackParams.trackHalfWidth + trackParams.vergeWidth));
-barrierCrossSection1.lineTo(-1.75, -(trackParams.trackHalfWidth + trackParams.vergeWidth));
-const barrierCrossSection2 = new THREE.Shape();
-barrierCrossSection2.moveTo(-0.5, (trackParams.trackHalfWidth + trackParams.vergeWidth));
-barrierCrossSection2.lineTo(-1.75, (trackParams.trackHalfWidth + trackParams.vergeWidth));
+const barrierCrossSection1 = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.5, -(trackParams.trackHalfWidth + trackParams.vergeWidth));
+  shape.lineTo(-1.75, -(trackParams.trackHalfWidth + trackParams.vergeWidth));
+  return shape;
+};
 
-export const barriersCrossSection = [barrierCrossSection1, barrierCrossSection2];
+const barrierCrossSection2 = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.5, (trackParams.trackHalfWidth + trackParams.vergeWidth));
+  shape.lineTo(-1.75, (trackParams.trackHalfWidth + trackParams.vergeWidth));
+  return shape;
+};
+
+export const barriersCrossSection = (trackParams) => [barrierCrossSection1(trackParams), barrierCrossSection2(trackParams)];
 
 export const barriersUVGenerator = {
   generateTopUV(geometry, vertices, indexA, indexB, indexC) {

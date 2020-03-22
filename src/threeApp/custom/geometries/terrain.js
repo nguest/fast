@@ -1,16 +1,18 @@
 import * as THREE from 'three';
-import { trackParams } from './trackParams';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
 import * as ClipperLib from '../../helpers/clipper';
 import { LineGeometry } from '../../helpers/LineGeometry';
 import { ShapeUtils } from '../../helpers/ShapeUtils';
 
-export const terrainCrossSection = new THREE.Shape();
-terrainCrossSection.moveTo(-100, 100);
+export const terrainCrossSection = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(-100, 100);
 //trackCrossSection.lineTo(0, 0);
-terrainCrossSection.lineTo(20, 0);
+  shape.lineTo(20, 0);
+  return shape;
+};
 
-export const getTerrainCurve = () => {
+export const getTerrainCurve = (trackParams) => {
   const pointsCount = 100;
   const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);

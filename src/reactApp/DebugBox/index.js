@@ -2,13 +2,12 @@
 import React, { useRef, useState } from 'react';
 import { func, number, object, string } from 'prop-types';
 import { jsx } from '@emotion/core';
-import { Main } from '../../threeApp';
-import { Loader } from '../Loader';
+import { trackOptions } from '../../threeApp/sceneConfig/tracks';
 
 import { styles } from './styles';
 
 
-export const DebugBox = ({ status, threeRootElement, gamePosition }) => {
+export const DebugBox = ({ status, threeRootElement, gamePosition, selectedTrack, setSelectedTrack }) => {  
   return (
     <section css={styles.debugBox}>
       <button
@@ -49,6 +48,23 @@ export const DebugBox = ({ status, threeRootElement, gamePosition }) => {
           { `${gamePosition.gate} / 500` }
         </div>
       </section>
+      <select
+        onChange={(e) => setSelectedTrack(e.target.value)}
+        value={selectedTrack}
+      >
+        {
+          trackOptions.map((option) => {
+            return (
+              <option
+                key={option.name}
+                value={option.name}
+              >
+                { option.name }
+              </option>
+            );
+          })
+        }
+      </select>
     </section>
   );
 };

@@ -1,7 +1,4 @@
 import * as THREE from 'three';
-import { VertexTangentsHelper } from '../../helpers/VertexTangentsHelper';
-import { BufferGeometryUtils } from '../../helpers/BufferGeometryUtils';
-import { trackParams } from './trackParams';
 import { patchShader } from '../../materials/extend';
 import { createSampledInstanceMesh, createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
 import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
@@ -9,13 +6,19 @@ import { getQuatFromNormal, rand } from '../../helpers/helpers';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
 
 
-export const grassCrossSectionR = new THREE.Shape();
-grassCrossSectionR.moveTo(0.1, -trackParams.trackHalfWidth + 0.3);
-grassCrossSectionR.lineTo(-0.7, -16);
+export const grassCrossSectionR = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(0.1, -trackParams.trackHalfWidth + 0.3);
+  shape.lineTo(-0.7, -16);
+  return shape;
+};
 
-export const grassCrossSectionL = new THREE.Shape();
-grassCrossSectionL.moveTo(-0.7, 16);
-grassCrossSectionL.lineTo(0.1, trackParams.trackHalfWidth - 0.3);
+export const grassCrossSectionL = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.7, 16);
+  shape.lineTo(0.1, trackParams.trackHalfWidth - 0.3);
+  return shape;
+};
 
 //export const grassCrossSection = [grassCrossSection1, grassCrossSection2];
 
@@ -32,12 +35,12 @@ const createGrassClumps = (mesh, scene) => {
     name: 'grassClumps',
     lookAtNormal: true,
     scaleFunc: () => rand(2),
-    rotateFunc: () => rand(0.2),
+    rotateFunc: () => rand(0.5),
   });
   scene.add(instancedMesh);
 };
 
-const createDirt = (mesh, scene) => {
+const createDirt = (mesh, scene, trackParams) => {
   const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.steps);
   console.log({ tangents });
   const centerLinePoints = trackParams.centerLine.getSpacedPoints(trackParams.steps);
@@ -158,9 +161,9 @@ const createDirt = (mesh, scene) => {
 
 }
 
-export const decorateGrass = (mesh, scene) => {
+export const decorateGrass = (mesh, scene, trackParams) => {
   createGrassClumps(mesh, scene);
-  createDirt(mesh, scene);
+  createDirt(mesh, scene, trackParams);
 };
 
 // create custom material with vertex clipping and proper alpha

@@ -9,10 +9,18 @@ import { DebugBox } from '../DebugBox';
 import { styles } from '../styles';
 
 
-export const ThreeContainer = ({ gamePosition, setStatus, status, setGamePosition }) => {
+export const ThreeContainer = ({
+  gamePosition,
+  setStatus,
+  status,
+  setGamePosition,
+  selectedTrack,
+  setSelectedTrack,
+  setTrackParams,
+}) => {
   const threeRootElement = useRef();
   const [isLoading, setIsLoading] = useState(true);
-
+  
   return (
     <>
       <Main
@@ -21,12 +29,16 @@ export const ThreeContainer = ({ gamePosition, setStatus, status, setGamePositio
         setIsLoading={setIsLoading}
         gamePosition={gamePosition}
         setGamePosition={setGamePosition}
+        selectedTrack={selectedTrack}
+        setTrackParams={setTrackParams}
       />
       <DebugBox
         threeRootElement={threeRootElement}
         gamePosition={gamePosition}
         setGamePosition={setGamePosition}
         status={status}
+        selectedTrack={selectedTrack}
+        setSelectedTrack={setSelectedTrack}
       />
       {
         isLoading

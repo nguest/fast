@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { trackParams } from '../custom/geometries/trackParams';
+//import { trackParams } from '../custom/geometries/trackParams';
 import { computeFrenetFrames } from './curveHelpers';
 
 
@@ -46,7 +46,7 @@ export const throttle = (func, limit) => {
   };
 };
 
-export const getPosQuatFromGamePosition = (gate) => {
+export const getPosQuatFromGamePosition = (gate, trackParams) => {
   const gatePositions = trackParams.centerLine.getSpacedPoints(trackParams.gateCount);
   const { tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.gateCount);
 

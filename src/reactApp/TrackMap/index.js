@@ -22,26 +22,25 @@ export const TrackMap = ({ gamePosition, trackParams }) => {
         maxX: Math.max(...xArray),
         maxZ: Math.max(...zArray),
       };
+      extents.k = (-extents.minX + extents.maxX) / 2000;
       setE(extents);
       setPoints(ps);
     }
   }, [trackParams]);
 
   if (!e) return null;
-  console.log('KKK',-e.minX + e.maxX );
-  const k = (-e.minX + e.maxX) / 2000;
-  
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       css={styles.map}
-      viewBox={` ${e.minX} ${e.minZ} ${-e.minX + e.maxX} ${-e.minZ + e.maxZ}`}
+      viewBox={`${e.minX - e.k * 70} ${e.minZ - e.k * 70} ${-e.minX + e.maxX + e.k * 140} ${-e.minZ + e.maxZ + e.k * 140}`}
     >
-      <polyline points={points} fill="none" stroke="white" strokeWidth={70 * k} />
+      <polyline points={points} fill="none" stroke="white" strokeWidth={70 * e.k} />
 
-      <polyline points={points} fill="none" stroke="black" strokeWidth={50 * k} />
-      <circle cx="0" cy="0" r={60 * k} fill="white" />
-      <circle cx={gamePosition.vehiclePosition.x} cy={gamePosition.vehiclePosition.z} r={50 * k} fill="red" />
+      <polyline points={points} fill="none" stroke="black" strokeWidth={50 * e.k} />
+      <circle cx="0" cy="0" r={60 * e.k} fill="white" />
+      <circle cx={gamePosition.vehiclePosition.x} cy={gamePosition.vehiclePosition.z} r={50 * e.k} fill="red" />
     </svg>
   );
 };

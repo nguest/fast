@@ -34,13 +34,16 @@ export const computeTrackParams = (selectedTrack) => {
   const widthFactor = widthCurve.getPoints(steps);
 
   const apexes = createApexes({ centerLine, length });
+  
+  console.log({ length });
+  const gateCount = Math.floor(length / 16);
 
   return {
     apexes,
     adjustedTrackPoints,
     centerLine,
     length,
-    gateCount: 500,
+    gateCount,
     steps,
     widthFactor,
     trackHalfWidth: 5,

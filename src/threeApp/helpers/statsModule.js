@@ -88,7 +88,7 @@ export const Stats = () => {
   };
 };
 
-Stats.Panel = function (name, fg, bg) {
+Stats.Panel = (name, fg, bg) => {
   let min = Infinity; let max = 0; const
     { round } = Math;
   const PR = round(window.devicePixelRatio || 1);

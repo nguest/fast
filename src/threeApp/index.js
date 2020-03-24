@@ -23,7 +23,7 @@ import { decorateGrass } from './custom/geometries/grass';
 import { computeTrackParams } from './custom/geometries/trackParams';
 import { createTerrain } from './custom/geometries/terrain';
 import { decorateTerrainSmall } from './custom/geometries/terrainSmall';
-
+import { decorateFences } from './custom/geometries/fences';
 
 // Helpers
 import { promisifyLoader, getPosQuatFromGamePosition, getObjByName, scaleBackground } from './helpers/helpers';
@@ -62,19 +62,16 @@ export class Main extends PureComponent {
   componentDidUpdate(prevProps) {
     if (this.props.selectedTrack !== prevProps.selectedTrack) {
       this.renderer = null;
+      this.physicsWorld = null;
       this.container.innerHTML = null;
       this.selectedTrack = this.props.selectedTrack;
-
       this.props.setIsLoading(true);
-      //this.container = null;
+
       this.initialize();
     }
-    
   }
 
   initialize() {
-    console.log({ tP: this.props });
-    
     this.createPhysicsWorld();
     this.auxTrans = new Ammo.btTransform();
     this.temp = new THREE.Vector3();
@@ -165,10 +162,6 @@ export class Main extends PureComponent {
     const overlappingPairCache = new Ammo.btDbvtBroadphase();
     const solver = new Ammo.btSequentialImpulseConstraintSolver();
 
-    // var worldMin=new Ammo.btVector3(-1000,-1000,-1000);
-    // var worldMax=new Ammo.btVector3(1000,1000,1000);
-    // var overlappingPairCache= new Ammo.btAxisSweep3(worldMin,worldMax);
-
     const physicsWorld = new Ammo.btDiscreteDynamicsWorld(
       dispatcher, overlappingPairCache, solver, collisionConfiguration,
     );
@@ -208,6 +201,7 @@ export class Main extends PureComponent {
     decorateTrack(getObjByName(this.scene, 'track'), this.scene, this.trackParams, materials.roadRacingLine);
     decorateGrass(getObjByName(this.scene, 'grassL'), this.scene, this.trackParams);
     //decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
+    decorateFences(getObjByName(this.scene, 'fences'), this.scene, this.trackParams);
     createApexMarkers(this.scene, this.trackParams);
    // createRacingLine(apexes);
     //createTerrain(this.scene)
@@ -259,8 +253,7 @@ export class Main extends PureComponent {
       this.worldGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 0.1), materials.mappedFlat);
       this.scene.add(this.worldGoal);
       this.lights[1].target = this.worldGoal;
-      console.log({ t: this });
-      
+
       this.animate();
     };
   }
@@ -385,16 +378,15 @@ export class Main extends PureComponent {
   }
 
   render() {
-    console.log({ t: this });
-    
     return <section ref={(ref) => { this.container = ref; }} style={{ width: '100%' }} />;
   }
 }
 
 Main.propTypes = {
+  gamePosition: object,
+  selectedTrack: string,
+  setGamePosition: func,
   setIsLoading: func,
   setStatus: func,
-  gamePosition: object,
-  setGamePosition: func,
-  selectedTrack: string,
+  setTrackParams: func,
 };

@@ -17,6 +17,7 @@ export const ThreeContainer = ({
   selectedTrack,
   setSelectedTrack,
   setTrackParams,
+  trackParams,
 }) => {
   const threeRootElement = useRef();
   const [isLoading, setIsLoading] = useState(true);
@@ -39,6 +40,7 @@ export const ThreeContainer = ({
         status={status}
         selectedTrack={selectedTrack}
         setSelectedTrack={setSelectedTrack}
+        trackParams={trackParams}
       />
       {
         isLoading

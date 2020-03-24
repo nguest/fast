@@ -48,7 +48,7 @@ export const Config = {
   },
   camera: {
     fov: 45,
-    near: 0,
+    near: 0.1,
     far: 40000,
     aspect: 1,
     position: [-30, 20, 20],

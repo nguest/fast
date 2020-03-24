@@ -12,6 +12,7 @@ export const assetsIndex = {
     Grass_Map: { name: 'Grass_Map', path: './assets/textures/grass_map_sq_512.jpg' },
     Grass_Normal: { name: 'Grass_Normal', path: './assets/textures/grass_normal.jpg' },
     GuardRails_Map: { name: 'GuardRails_Map', path: './assets/textures/guardrails_map.jpg' },
+    Chainlink_Map: { name: 'Chainlink_Map', path: './assets/textures/chainlink_map.png' },
     GuardRails_Normal: { name: 'GuardRails_Normal', path: './assets/textures/guardrails_normal.jpg' },
     LightMap_Map: { name: 'LightMap_Map', path: './assets/textures/lightmap.jpg' },
     LocationIcon_Map: { name: 'LocationIcon_Map', path: './assets/textures/location_map.png' },

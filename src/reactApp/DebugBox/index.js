@@ -1,13 +1,20 @@
 /** @jsx jsx */
-import React, { useRef, useState } from 'react';
-import { func, number, object, string } from 'prop-types';
+import React from 'react';
+import { func, object, string } from 'prop-types';
 import { jsx } from '@emotion/core';
 import { trackOptions } from '../../threeApp/sceneConfig/tracks';
 
 import { styles } from './styles';
 
 
-export const DebugBox = ({ status, threeRootElement, gamePosition, selectedTrack, setSelectedTrack }) => {  
+export const DebugBox = ({
+  status,
+  threeRootElement,
+  gamePosition,
+  trackParams,
+  selectedTrack,
+  setSelectedTrack,
+}) => {
   return (
     <section css={styles.debugBox}>
       <button
@@ -45,7 +52,7 @@ export const DebugBox = ({ status, threeRootElement, gamePosition, selectedTrack
           { status }
         </div>
         <div css={styles.gamePosition}>
-          { `${gamePosition.gate} / 500` }
+          { `${gamePosition.gate} / ${trackParams.gateCount}` }
         </div>
       </section>
       <select
@@ -71,8 +78,9 @@ export const DebugBox = ({ status, threeRootElement, gamePosition, selectedTrack
 
 DebugBox.propTypes = {
   status: string,
-  setStatus: func,
   gamePosition: object,
-  setGamePosition: func,
   threeRootElement: object,
+  trackParams: object,
+  selectedTrack: string,
+  setSelectedTrack: func,
 };

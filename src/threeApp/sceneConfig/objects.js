@@ -5,6 +5,7 @@ import { trackKerbCrossSection, getIncludeSegments } from '../custom/geometries/
 import { grassCrossSectionL, grassCrossSectionR } from '../custom/geometries/grass';
 import { treesCrossSection } from '../custom/geometries/trees';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
+import { fencesCrossSection } from '../custom/geometries/fences';
 import { getTerrainCurve } from '../custom/geometries/terrain';
 import { terrainCrossSection } from '../custom/geometries/terrainSmall'
 import { racingLineCrossSection, racingLineCurve } from '../custom/geometries/racingLine';
@@ -215,6 +216,30 @@ export const objectsIndex = (trackParams) => ([
       friction: 0,
       restitution: 0.5,
     },
+    shadows: {
+      receive: true,
+      cast: true,
+    },
+    add: true,
+  },
+  {
+    name: 'fences',
+    type: 'ExtrudeGeometry',
+    params: [
+      fencesCrossSection(trackParams),
+      {
+        steps: trackParams.steps,
+        depth: 0,
+        UVGenerator: barriersUVGenerator,
+        extrudePath: trackParams.centerLine,
+        widthFactor: trackParams.widthFactor,
+        //includeSegments: [[0, 0.05], [0.1, 0.2]]
+      },
+    ],
+    position: [0, -0.3, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'chainlink',
     shadows: {
       receive: true,
       cast: true,

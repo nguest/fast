@@ -62,36 +62,36 @@ export const racingLineCurve = (trackParams) => {
   return curve;
 }
 
-export const racingLineCurve2 = (trackParams) => {
-  const apexes = trackParams.apexes;
-  const centerLine = trackParams.centerLine;
-  const steps = trackParams.steps;
+// export const racingLineCurve2 = (trackParams) => {
+//   const apexes = trackParams.apexes;
+//   const centerLine = trackParams.centerLine;
+//   const steps = trackParams.steps;
 
-  const apexPoints = apexes.map((apex, i) => {
-    const apexMarkerPosn = apex.p
-      // .sub(
-      //   apex.binormal
-      //     .clone()
-      //     .multiplyScalar((trackParams.trackHalfWidth - 1) * apex.dir),
-      // );
-    const position = new THREE.Vector3(apexMarkerPosn.x, apexMarkerPosn.y + 0.1, apexMarkerPosn.z);
-    return position;
-  });
+//   const apexPoints = apexes.map((apex, i) => {
+//     const apexMarkerPosn = apex.p
+//       // .sub(
+//       //   apex.binormal
+//       //     .clone()
+//       //     .multiplyScalar((trackParams.trackHalfWidth - 1) * apex.dir),
+//       // );
+//     const position = new THREE.Vector3(apexMarkerPosn.x, apexMarkerPosn.y + 0.1, apexMarkerPosn.z);
+//     return position;
+//   });
 
-  const rawCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(0,0,0), ...apexPoints]);
-  rawCurve.closed = true;
-  rawCurve.arcLengthDivisions = steps;
-  //const rawCurve.getSpaced
-  const apexSpacedPoints = getSpacedPoints(rawCurve, steps);
-  const centerLineSpacedPoints = getSpacedPoints(centerLine, steps);
-  const spacedPoints = apexSpacedPoints.map((p, i) => new THREE.Vector3(p.x, centerLineSpacedPoints[i].y + 0.2, p.z));
-  console.log({ centerLineSpacedPoints, spacedPoints });
+//   const rawCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(0,0,0), ...apexPoints]);
+//   rawCurve.closed = true;
+//   rawCurve.arcLengthDivisions = steps;
+//   //const rawCurve.getSpaced
+//   const apexSpacedPoints = getSpacedPoints(rawCurve, steps);
+//   const centerLineSpacedPoints = getSpacedPoints(centerLine, steps);
+//   const spacedPoints = apexSpacedPoints.map((p, i) => new THREE.Vector3(p.x, centerLineSpacedPoints[i].y + 0.2, p.z));
+//   console.log({ centerLineSpacedPoints, spacedPoints });
   
-  // TODO: need same steps as centerline and adjust height to be above track
-  const curve = new THREE.CatmullRomCurve3(spacedPoints);
-  curve.closed = true;
-  return curve;
-}
+//   // TODO: need same steps as centerline and adjust height to be above track
+//   const curve = new THREE.CatmullRomCurve3(spacedPoints);
+//   curve.closed = true;
+//   return curve;
+// }
 
 
 const getAverageAngle = (i, angles, spread = 20) => {

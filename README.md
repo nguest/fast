@@ -2,12 +2,14 @@
 
 ## Fast
 
-Fast is a WebGL car racing game-in-progress, built using three.js and custom shaders.
+Fast is a WebGL car racing game-in-progress, built using three.js and custom shaders. Tracks are created procedurally, from an array of curve points. The interface will be React.js- currently only the game engine is operational. The aim is to ultimately create a Gran Turismo or Forza-like experience - but in the browser!
+
 
 The story so far:
 
-![screenshot](https://github.com/nguest/fast/blob/master/public/assets/screenshots/followcam2.png)
 update! better trees, instanced track decals etc
+![screenshot](https://github.com/nguest/fast/blob/master/public/assets/screenshots/followcam4.jpg)
+Initial commits:
 ![screenshot](https://github.com/nguest/fast/blob/master/public/assets/screenshots/followcam3.png)
 
 
@@ -17,3 +19,4 @@ In the project directory, you run:
 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+AWSD controls the car.

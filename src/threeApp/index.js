@@ -200,11 +200,11 @@ export class Main extends PureComponent {
     createTrees(this.scene, this.trackParams);
     decorateTrack(getObjByName(this.scene, 'track'), this.scene, this.trackParams, materials.roadRacingLine);
     decorateGrass(getObjByName(this.scene, 'grassL'), this.scene, this.trackParams);
-    //decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
+    // decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
     decorateFences(getObjByName(this.scene, 'fences'), this.scene, this.trackParams);
     createApexMarkers(this.scene, this.trackParams);
-   // createRacingLine(apexes);
-    //createTerrain(this.scene)
+    // createRacingLine(apexes);
+    // createTerrain(this.scene)
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
     console.info({ 'this.scene': this.scene.children.filter((o) => o.userData.type !== 'gate') });

@@ -35,8 +35,9 @@ export const computeTrackParams = (selectedTrack) => {
 
   const apexes = createApexes({ centerLine, length });
   
-  console.log({ length });
   const gateCount = Math.floor(length / 16);
+  console.log({ 1: centerLine });
+  
 
   return {
     apexes,

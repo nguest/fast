@@ -204,7 +204,7 @@ export const objectsIndex = (trackParams) => ([
         UVGenerator: barriersUVGenerator,
         extrudePath: trackParams.centerLine,
         widthFactor: trackParams.widthFactor,
-        //includeSegments: [[0, 0.05], [0.1, 0.2]]
+        // includeSegments: [[0, 0.05], [0.1, 0.2]]
       },
     ],
     position: [0, -0.3, 0],
@@ -233,7 +233,7 @@ export const objectsIndex = (trackParams) => ([
         UVGenerator: barriersUVGenerator,
         extrudePath: trackParams.centerLine,
         widthFactor: trackParams.widthFactor,
-        //includeSegments: [[0, 0.05], [0.1, 0.2]]
+        // includeSegments: [[0, 0.05], [0.1, 0.2]]
       },
     ],
     position: [0, -0.3, 0],
@@ -244,7 +244,7 @@ export const objectsIndex = (trackParams) => ([
       receive: true,
       cast: true,
     },
-    add: true,
+    add: false,
   },
   {
     name: 'car',
@@ -271,19 +271,13 @@ export const objectsIndex = (trackParams) => ([
   {
     name: 'porsche_911gt2',
     type: 'GLTF',
-    //link: 'https://sketchfab.com/3d-models/ruf-rt-12s-f215e8aa71da449095f4e7dceb373893',
     url: {
-      path: 'assets/objects/', //porsche_911gt2/',
-      file: 'porsche_911gt2.gltf',//'wheel.gltf',
+      path: 'assets/objects/',
+      file: 'porsche_911gt2.gltf',
     },
-    position: [4, 0, 0], // [-4, 2, 0],
+    position: [4, 0, 0],
     rotation: [-Math.PI * 0.5, Math.PI, 0],
     scale: [0.01, 0.01, 0.01],
-    // physics: {
-    //   mass: 0,
-    //   friction: 0.8,
-    //   restitution: 0.5,
-    // },
     shadows: {
       receive: true,
       cast: true,
@@ -293,19 +287,14 @@ export const objectsIndex = (trackParams) => ([
   {
     name: 'wheel',
     type: 'GLTF',
-    //link: 'https://sketchfab.com/3d-models/ruf-rt-12s-f215e8aa71da449095f4e7dceb373893',
+    // link: 'https://sketchfab.com/3d-models/ruf-rt-12s-f215e8aa71da449095f4e7dceb373893',
     url: {
-      path: 'assets/objects/', //porsche_911gt2/',
-      file: 'wheel.gltf',//'wheel.gltf',
+      path: 'assets/objects/',
+      file: 'wheel.gltf',
     },
-    position: [0.16, 0, 0], // [-4, 2, 0],
+    position: [0.16, 0, 0],
     rotation: [0, 0, 0],
     scale: [0.01, 0.01, 0.01],
-    // physics: {
-    //   mass: 0,
-    //   friction: 0.8,
-    //   restitution: 0.5,
-    // },
     shadows: {
       receive: true,
       cast: true,
@@ -319,7 +308,7 @@ export const objectsIndex = (trackParams) => ([
     customFunction: createVehicle,
     position: [10, 5, 0],
     scale: [1, 1, 1],
-    material: 'wireFrame',//wireFrame',//,//'asphalt',
+    material: 'wireFrame',
     physics: {
       mass: 0,
       friction: 0.1,
@@ -367,6 +356,6 @@ export const objectsIndex = (trackParams) => ([
       receive: true,
       cast: false,
     },
-    add: false,
+    add: true,
   },
 ]);

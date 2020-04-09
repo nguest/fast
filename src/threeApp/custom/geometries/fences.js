@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
-import { InstancesStandardMaterial } from '../materials/InstancesStandardMaterials';
+import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
 
 const fences1 = (trackParams) => {
@@ -24,74 +24,124 @@ const fences2 = (trackParams) => {
 export const fencesCrossSection = (trackParams) => [fences1(trackParams), fences2(trackParams)];
 
 export const decorateFences = (fences, scene, trackParams) => {
-  const geometry = new THREE.BoxBufferGeometry(0.1, 3, 0.1);
-  //const geometry = new THREE.PlaneBufferGeometry(2,2);
-  const pointsCount = trackParams.steps;
+  const geometry = fencePostGeometry();
 
-  const material = new InstancesStandardMaterial({ color: 0xff0000, userData: { faceToCamera: true } })
+  const pointsCount = Math.floor(trackParams.steps);
+
+  const material = new InstancesStandardMaterial({
+    color: 0xaaaaaa,
+    side: THREE.DoubleSide,
+    userData: {
+      faceToQuat: true,
+    },
+    shininess: 100,
+    specular: 0xffffff,
+  });
+
+  const depthMaterial = new InstancesDepthMaterial({
+    depthPacking: THREE.RGBADepthPacking,
+    alphaTest: 0.5,
+    userData: {
+      faceToQuat: true,
+    },
+  });
 
   const points = trackParams.centerLine.getSpacedPoints(pointsCount);
-  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
+  const { binormals } = computeFrenetFrames(trackParams.centerLine, pointsCount);
 
-  const adjustedPoints = points.map((p, i) => {
-    return p.clone().sub(binormals[i].clone().multiplyScalar(5))
-  })
+  const adjustedPoints = points.reduce((a, p, i) => {
+    return [
+      ...a,
+      p.clone().sub(binormals[i].clone().multiplyScalar(7)),
+      p.clone().sub(binormals[i].clone().multiplyScalar(-7)),
+    ];
+  }, []);
 
-
-  console.log({ fences });
   const positions = [];
-  for (let i = 0; i < 50; i+=1) {
+  const quaternions = [];
+  const dummyQuat = new THREE.Quaternion();
+  const x = new THREE.Vector3(1, 0, 0);
+  const up = new THREE.Vector3(0, 1, 0);
+
+  for (let i = 0; i < 1000; i += 1) {
     positions.push(
       adjustedPoints[i].x,
       adjustedPoints[i].y,
-      adjustedPoints[i].z
-      // fences.geometry.attributes.position.array[i],
-      // fences.geometry.attributes.position.array[i+1],
-      // fences.geometry.attributes.position.array[i+2],
+      adjustedPoints[i].z,
+    );
+    const angleX = binormals[i].angleTo(x);
+    dummyQuat.setFromAxisAngle(up, angleX);
+
+    quaternions.push(
+      dummyQuat.x,
+      dummyQuat.y,
+      dummyQuat.z,
+      dummyQuat.w,
     );
   }
-  console.log({ positions });
-  
+
   const instancedMesh = createInstancedMesh({
     geometry,
-    //curve,
-    count: 50,//trackParams.steps * 6,
+    count: 1000,
     offset: new THREE.Vector3(0, 0, 0), // treeHeight * 0.5,
     name: `fencePostInstance-${0}`,
     material,
-    positions,//: fences.geometry.attributes.position.array,
-    //depthMaterial,
-    scaleFunc: () => 1,// Math.random() * 0.75 + 0.75,
+    depthMaterial,
+    positions,
+    quaternions,
+    scaleFunc: () => 1,
     shadow: {
       cast: true,
+      receive: true,
     },
   });
-  console.log({ instancedMesh });
-  
-  scene.add(instancedMesh);
-}
-// export const barriersUVGenerator = {
-//   generateTopUV(geometry, vertices, indexA, indexB, indexC) {
-//     const aX = vertices[indexA * 3];
-//     const aY = vertices[indexA * 3 + 1];
-//     const bX = vertices[indexB * 3];
-//     const bY = vertices[indexB * 3 + 1];
-//     const cX = vertices[indexC * 3];
-//     const cY = vertices[indexC * 3 + 1];
 
-//     return [
-//       new THREE.Vector2(aX, aY),
-//       new THREE.Vector2(bX, bY),
-//       new THREE.Vector2(cX, cY),
-//     ];
-//   },
+  // const test = geometry.clone();
+  // test.rotateY(Math.PI * 0.5);
+  // scene.add(
+  //   new THREE.Mesh(
+  //     test,
+  //     new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide, specular: 0xffffff, shininess: 100 }),
+  //   ),
+  // );
+  // scene.add(instancedMesh);
+};
 
-//   generateSideWallUV() {
-//     return [
-//       new THREE.Vector2(1, -1),
-//       new THREE.Vector2(1, 0),
-//       new THREE.Vector2(0, 0),
-//       new THREE.Vector2(0, -1),
-//     ];
-//   },
-// };
+
+const fencePostGeometry = () => {
+  const vertices = [
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(0.2, 0, 0),
+    new THREE.Vector3(0, 3, 0),
+    new THREE.Vector3(0.2, 3, 0),
+    new THREE.Vector3(0.5, 3.5, 0),
+    new THREE.Vector3(0.7, 3.5, 0),
+
+    new THREE.Vector3(0, 0, 0.2),
+    new THREE.Vector3(0, 3, 0.2),
+    new THREE.Vector3(0.5, 3.5, 0.2),
+  ];
+
+  const faces = [
+    new THREE.Face3(0, 1, 2),
+    new THREE.Face3(1, 2, 3),
+    new THREE.Face3(2, 3, 4),
+    new THREE.Face3(3, 5, 4),
+
+    // new THREE.Face3(6, 0, 3),
+    // new THREE.Face3(6, 3, 7),
+
+    // new THREE.Face3(7, 3, 5),
+    // new THREE.Face3(5, 8, 7),
+  ];
+
+  const geometry = new THREE.Geometry();
+  geometry.vertices = vertices;
+  geometry.faces = faces;
+  geometry.computeFaceNormals();
+  geometry.computeFlatVertexNormals();
+
+  const bufferGeometry = new THREE.BufferGeometry().fromGeometry(geometry);
+
+  return bufferGeometry;
+};

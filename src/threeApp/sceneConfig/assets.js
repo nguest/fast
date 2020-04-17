@@ -1,7 +1,7 @@
 export const assetsIndex = {
   images: {
     //Skybox: { name: 'Skybox', path: './assets/textures/skybox4.png' },
-    Skybox: { name: 'Skybox', path: './assets/textures/skybox5-512.jpg', type: '4x3' },
+    //Skybox: { name: 'Skybox', path: './assets/textures/skybox5-512.png', type: '4x3' },
   },
   textures: {
     Asphalt: { name: 'Asphalt', path: './assets/textures/asphalt.jpg' },

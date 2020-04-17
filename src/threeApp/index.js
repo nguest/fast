@@ -56,6 +56,8 @@ const zeroVector = new Ammo.btVector3(0, 0, 0);
 export class Main extends PureComponent {
   componentDidMount() {
     this.selectedTrack = this.props.selectedTrack;
+    console.log('process.NODE_ENV', process.env.NODE_ENV);
+
     this.initialize();
   }
 
@@ -116,14 +118,16 @@ export class Main extends PureComponent {
     const imageLoader = new THREE.ImageBitmapLoader(this.manager);
     imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
     const ImagePromiseLoader = promisifyLoader(imageLoader);
-    const imagePromises = Object.values(assetsIndex.images).map((file) => (
-      ImagePromiseLoader.load(file.path)
-    ));
+    const imagePromises = Object.values(assetsIndex.images).map((file) => {
+      console.log('loading image: ', file.path);
+      return ImagePromiseLoader.load(file.path);
+    });
 
     const TexturePromiseLoader = promisifyLoader(new THREE.TextureLoader(this.manager));
-    const texturesPromises = Object.values(assetsIndex.textures).map((texture) => (
-      TexturePromiseLoader.load(texture.path)
-    ));
+    const texturesPromises = Object.values(assetsIndex.textures).map((texture) => {
+      console.log('loading texture: ', texture.path);
+      return TexturePromiseLoader.load(texture.path);
+    });
     this.texturesAndFiles = { imagePromises, texturesPromises };
 
     return this.texturesAndFiles;
@@ -153,6 +157,8 @@ export class Main extends PureComponent {
           [materialParams.name]: createMaterial(materialParams, assets),
         }), {});
         return this.createWorld(materials, assets);
+      }).catch((err) => {
+        console.log('ERROR loading image', err);
       });
   }
 
@@ -217,13 +223,13 @@ export class Main extends PureComponent {
     this.createObjects(materials);
 
     // calculate global envmap and skybox
-    createSkyBoxFrom4x3({
-      scene: this.scene,
-      boxDimension: 8000,
-      image: assets.Skybox,
-      tileSize: 512,
-      manager: this.manager,
-    });
+    // createSkyBoxFrom4x3({
+    //   scene: this.scene,
+    //   boxDimension: 8000,
+    //   image: assets.Skybox,
+    //   tileSize: 512,
+    //   manager: this.manager,
+    // });
 
     this.manager.onLoad = () => { // all managed objects loaded
       this.props.setIsLoading(false);
@@ -320,9 +326,11 @@ export class Main extends PureComponent {
   updatePhysics(deltaTime) {
     // Step world
     if (this.physicsWorld.bodies[4]) {
-
-    this.physicsWorld.stepSimulation(0.033, 0); // jerky if set to deltaTime??
-    // Update rigid bodies (just vehicle)
+      this.physicsWorld.stepSimulation(
+        process.env.NODE_ENV === 'development' ? 0.033 : deltaTime,
+        10,
+      ); // jerky if set to deltaTime??
+      // Update rigid bodies (just vehicle)
       this.vehicleState = updateVehicle(
         deltaTime,
         this.physicsWorld.bodies[4],

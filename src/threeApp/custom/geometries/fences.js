@@ -49,13 +49,13 @@ export const decorateFences = (fences, scene, trackParams) => {
   const points = trackParams.centerLine.getSpacedPoints(pointsCount);
   const { binormals } = computeFrenetFrames(trackParams.centerLine, pointsCount);
 
-  const adjustedPoints = points.reduce((a, p, i) => {
-    return [
+  const adjustedPoints = points.reduce((a, p, i) => (
+    [
       ...a,
-      p.clone().sub(binormals[i].clone().multiplyScalar(7)),
-      p.clone().sub(binormals[i].clone().multiplyScalar(-7)),
-    ];
-  }, []);
+      p.clone().sub(binormals[i].clone().multiplyScalar(trackParams.trackHalfWidth + trackParams.vergeWidth + 0.4)),
+      p.clone().sub(binormals[i].clone().multiplyScalar(-(trackParams.trackHalfWidth + trackParams.vergeWidth + 0.4))),
+    ]
+  ), []);
 
   const positions = [];
   const quaternions = [];
@@ -80,6 +80,13 @@ export const decorateFences = (fences, scene, trackParams) => {
     );
   }
 
+  const scaleFunc = (i) => {
+    if (i % 2 === 0) {
+      return { x: 1, y: 1, z: 1 };
+    }
+    return { x: -1, y: 1, z: 1 };
+  };
+
   const instancedMesh = createInstancedMesh({
     geometry,
     count: 1000,
@@ -89,37 +96,39 @@ export const decorateFences = (fences, scene, trackParams) => {
     depthMaterial,
     positions,
     quaternions,
-    scaleFunc: () => 1,
+    scaleFunc,
     shadow: {
       cast: true,
       receive: true,
     },
   });
 
-  // const test = geometry.clone();
-  // test.rotateY(Math.PI * 0.5);
-  // scene.add(
-  //   new THREE.Mesh(
-  //     test,
-  //     new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide, specular: 0xffffff, shininess: 100 }),
-  //   ),
-  // );
-  // scene.add(instancedMesh);
+  const test = geometry.clone();
+  test.rotateY(Math.PI * 0.5);
+  scene.add(
+    new THREE.Mesh(
+      test,
+      new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide, specular: 0xffffff, shininess: 100 }),
+    ),
+  );
+  scene.add(instancedMesh);
 };
 
 
 const fencePostGeometry = () => {
+  const h = 3;
+  const d = 0.2;
   const vertices = [
     new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0.2, 0, 0),
-    new THREE.Vector3(0, 3, 0),
-    new THREE.Vector3(0.2, 3, 0),
-    new THREE.Vector3(0.5, 3.5, 0),
-    new THREE.Vector3(0.7, 3.5, 0),
+    new THREE.Vector3(d, 0, 0),
+    new THREE.Vector3(0, h, 0),
+    new THREE.Vector3(d, h, 0),
+    new THREE.Vector3(0.5, h + 0.5, 0),
+    new THREE.Vector3(0.7, h + 0.5, 0),
 
-    new THREE.Vector3(0, 0, 0.2),
-    new THREE.Vector3(0, 3, 0.2),
-    new THREE.Vector3(0.5, 3.5, 0.2),
+    new THREE.Vector3(0, 0, d),
+    new THREE.Vector3(0, h, d),
+    new THREE.Vector3(0.5, h + 0.5, d),
   ];
 
   const faces = [
@@ -128,11 +137,11 @@ const fencePostGeometry = () => {
     new THREE.Face3(2, 3, 4),
     new THREE.Face3(3, 5, 4),
 
-    // new THREE.Face3(6, 0, 3),
-    // new THREE.Face3(6, 3, 7),
+    new THREE.Face3(0, 2, 6),
+    new THREE.Face3(6, 2, 7),
 
-    // new THREE.Face3(7, 3, 5),
-    // new THREE.Face3(5, 8, 7),
+    new THREE.Face3(7, 2, 8),
+    new THREE.Face3(2, 8, 4),
   ];
 
   const geometry = new THREE.Geometry();

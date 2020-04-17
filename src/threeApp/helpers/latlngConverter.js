@@ -5,18 +5,17 @@ export const converLatLngToVector = (coordinates) => {
   const zeroY = Math.min(...coordinates.map((c) => c[2]));
   const zeroZ = Math.max(...coordinates.map((c) => c[1]));
 
-  //const  zeroPoint = coordinates[300];
   const zeroPoint = [zeroX, zeroZ, zeroY];
-  return coordinates.map(p => {
+  return coordinates.map((p) => {
     const x = distanceBetweenTwoPoints([p[0], 0], [zeroPoint[0], 0]);
     const y = p[2] - zeroPoint[2];
     const z = distanceBetweenTwoPoints([0, p[1]], [0, zeroPoint[1]]);
 
     return new Vector3(x, y, z);
   });
-}
+};
 
-//Haversine formula: http://www.movable-type.co.uk/scripts/latlong.html
+// Haversine formula: http://www.movable-type.co.uk/scripts/latlong.html
 
 const distanceBetweenTwoPoints = (point1, point2) => {
   const lon1 = point1[0];

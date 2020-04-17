@@ -244,7 +244,7 @@ export const objectsIndex = (trackParams) => ([
       receive: true,
       cast: true,
     },
-    add: false,
+    add: true,
   },
   {
     name: 'car',

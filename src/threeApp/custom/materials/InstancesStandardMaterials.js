@@ -184,6 +184,7 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
         .replace(
           'void main() {',
           `
+          #define DEPTH_PACKING 3201
           attribute vec3 instanceOffset;
           attribute vec4 instanceQuaternion;
           attribute vec3 instanceScale;
@@ -214,6 +215,7 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
           void main() {
         `,
         );
+      shader.fragmentShader = `#define DEPTH_PACKING 3201 \n ${shader.fragmentShader}`;
     }
   };
 

@@ -12,7 +12,7 @@ export const createInstancedMesh = ({
   offset,
   positions,
   quaternions,
-  scaleFunc,
+  scaleFunc = null,
   shadow,
 }) => {
   const instancedGeo = new THREE.InstancedBufferGeometry().copy(geometry);
@@ -29,12 +29,13 @@ export const createInstancedMesh = ({
   }
 
   for (let i = 0; i < count; i++) {
-    const scale = scaleFunc ? scaleFunc() : 1;
+    
+    const scale = scaleFunc ? scaleFunc(i) : { x: 1, y: 1, z: 1 };
 
     if (curve) {
       instanceOffset.push(
         positions[i].x + rand(1),
-        positions[i].y + scale * offset.y - 1,
+        positions[i].y + scale.y * offset.y - 1,
         positions[i].z + rand(1),
       );
     } else {
@@ -42,16 +43,18 @@ export const createInstancedMesh = ({
     }
 
     instanceScale.push(
-      scale,
-      scale,
-      scale,
+      scale.x,
+      scale.y,
+      scale.z,
     );
+    
     // randomize which quadrant of the texture to use
     instanceMapUV.push(
       Math.random() > 0.5 ? 0.5 : 0.0,
       Math.random() > 0.5 ? 0.5 : 0.0,
     );
   }
+console.log({ name, instanceScale });
 
   instancedGeo.setAttribute('instanceOffset',
     new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset), 3, false));

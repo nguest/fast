@@ -155,6 +155,8 @@ export class Main extends PureComponent {
           [materialParams.name]: createMaterial(materialParams, assets),
         }), {});
         return this.createWorld(materials, assets);
+      }).catch((err) => {
+        console.log('ERROR loading image', err);
       });
   }
 

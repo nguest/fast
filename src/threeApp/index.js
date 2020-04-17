@@ -116,14 +116,16 @@ export class Main extends PureComponent {
     const imageLoader = new THREE.ImageBitmapLoader(this.manager);
     imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
     const ImagePromiseLoader = promisifyLoader(imageLoader);
-    const imagePromises = Object.values(assetsIndex.images).map((file) => (
-      ImagePromiseLoader.load(file.path)
-    ));
+    const imagePromises = Object.values(assetsIndex.images).map((file) => {
+      console.log('loading image: ', file.path)
+      return ImagePromiseLoader.load(file.path);
+    });
 
     const TexturePromiseLoader = promisifyLoader(new THREE.TextureLoader(this.manager));
-    const texturesPromises = Object.values(assetsIndex.textures).map((texture) => (
-      TexturePromiseLoader.load(texture.path)
-    ));
+    const texturesPromises = Object.values(assetsIndex.textures).map((texture) => {
+      console.log('loading texture: ', texture.path);
+      return TexturePromiseLoader.load(texture.path);
+    });
     this.texturesAndFiles = { imagePromises, texturesPromises };
 
     return this.texturesAndFiles;

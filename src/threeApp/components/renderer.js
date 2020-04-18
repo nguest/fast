@@ -23,7 +23,7 @@ export class Renderer {
     this.threeRenderer.setPixelRatio(Config.dpr);//  window.devicePixelRatio);
 
     if (Config.gammaFactor) {
-      this.threeRenderer.gammaOutput = true;
+      this.threeRenderer.outputEncoding = THREE.GammaEncoding;
       this.threeRenderer.gammaFactor = Config.gammaFactor;
     }
 

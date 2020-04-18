@@ -64,7 +64,7 @@ export const trackUVGenerator = {
 
 export const decorateTrack = (trackMesh, scene, trackParams, material) => {
 
-  const helper = new THREE.VertexNormalsHelper(trackMesh, 2, 0x00ff00, 1);
+  //const helper = new THREE.VertexNormalsHelper(trackMesh, 2, 0x00ff00, 1);
   //scene.add(helper);
 
   const plane = new THREE.PlaneBufferGeometry(0.2, 10);

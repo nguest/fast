@@ -144,7 +144,7 @@ const createDirt = (mesh, scene, trackParams) => {
   //   quaternions,//: mesh.geometry.attributes.normal.array,
   // });
   // scene.add(instancedMesh);
-  const helper = new THREE.VertexNormalsHelper(mesh, 2, 0x00ffff, 1);
+  // const helper = new THREE.VertexNormalsHelper(mesh, 2, 0x00ffff, 1);
   //scene.add(helper);
 
   const instancedMesh = createSampledInstanceMesh({

@@ -56,6 +56,8 @@ const zeroVector = new Ammo.btVector3(0, 0, 0);
 export class Main extends PureComponent {
   componentDidMount() {
     this.selectedTrack = this.props.selectedTrack;
+    console.log('process.NODE_ENV', process.env.NODE_ENV);
+
     this.initialize();
   }
 
@@ -324,9 +326,11 @@ export class Main extends PureComponent {
   updatePhysics(deltaTime) {
     // Step world
     if (this.physicsWorld.bodies[4]) {
-
-    this.physicsWorld.stepSimulation(0.033, 0); // jerky if set to deltaTime??
-    // Update rigid bodies (just vehicle)
+      this.physicsWorld.stepSimulation(
+        process.env.NODE_ENV === 'development' ? 0.033 : deltaTime,
+        10,
+      ); // jerky if set to deltaTime??
+      // Update rigid bodies (just vehicle)
       this.vehicleState = updateVehicle(
         deltaTime,
         this.physicsWorld.bodies[4],

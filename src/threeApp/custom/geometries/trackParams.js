@@ -34,10 +34,8 @@ export const computeTrackParams = (selectedTrack) => {
   const widthFactor = widthCurve.getPoints(steps);
 
   const apexes = createApexes({ centerLine, length });
-  
+
   const gateCount = Math.floor(length / 16);
-  console.log({ 1: centerLine });
-  
 
   return {
     apexes,

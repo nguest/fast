@@ -7,7 +7,7 @@ export const promisifyLoader = (loader, onProgress) => {
   const promiseLoader = (url) => (
     new Promise((resolve, reject) => {
       loader.load(url, resolve, onProgress, reject);
-    })
+    }).catch((error) => console.log(error, url))
   );
   return {
     originalLoader: loader,

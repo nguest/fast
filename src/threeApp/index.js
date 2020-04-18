@@ -117,7 +117,7 @@ export class Main extends PureComponent {
     imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
     const ImagePromiseLoader = promisifyLoader(imageLoader);
     const imagePromises = Object.values(assetsIndex.images).map((file) => {
-      console.log('loading image: ', file.path)
+      console.log('loading image: ', file.path);
       return ImagePromiseLoader.load(file.path);
     });
 

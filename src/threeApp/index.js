@@ -115,7 +115,8 @@ export class Main extends PureComponent {
   }
 
   loadAssets() {
-    const imageLoader = new THREE.ImageBitmapLoader(this.manager);
+    const imageLoader = new THREE.ImageLoader(this.manager);
+    //const imageLoader = new THREE.FileLoader(this.manager);
     imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
     const ImagePromiseLoader = promisifyLoader(imageLoader);
     const imagePromises = Object.values(assetsIndex.images).map((file) => {

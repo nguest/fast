@@ -29,7 +29,6 @@ export const createInstancedMesh = ({
   }
 
   for (let i = 0; i < count; i++) {
-    
     const scale = scaleFunc ? scaleFunc(i) : { x: 1, y: 1, z: 1 };
 
     if (curve) {
@@ -47,14 +46,13 @@ export const createInstancedMesh = ({
       scale.y,
       scale.z,
     );
-    
+
     // randomize which quadrant of the texture to use
     instanceMapUV.push(
       Math.random() > 0.5 ? 0.5 : 0.0,
       Math.random() > 0.5 ? 0.5 : 0.0,
     );
   }
-console.log({ name, instanceScale });
 
   instancedGeo.setAttribute('instanceOffset',
     new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset), 3, false));

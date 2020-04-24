@@ -1,7 +1,9 @@
 export const assetsIndex = {
   images: {
     //Skybox: { name: 'Skybox', path: './assets/textures/skybox4.png' },
-    //Skybox: { name: 'Skybox', path: './assets/textures/skybox5-512.png', type: '4x3' },
+    Skybox: { name: 'Skybox', path: './assets/textures/skybox5-512.jpg', type: '4x3' },
+    Perlin: { name: 'Perlin', path: './assets/textures/perlin_map.png' },
+
   },
   textures: {
     Asphalt: { name: 'Asphalt', path: './assets/textures/asphalt.jpg' },
@@ -22,7 +24,7 @@ export const assetsIndex = {
     Perlin: { name: 'Perlin', path: './assets/textures/perlin_map.png' },
     Road_Map: { name: 'Road_Map', path: './assets/textures/roadhalf_map.png' },
     Road_Normal: { name: 'Road_Normal', path: './assets/textures/road_normal2.png' },
-    RoadRacingLine_Map: { name: 'RoadRacingLine_Map', path: './assets/textures/racingLine_map.png'},
+    RoadRacingLine_Map: { name: 'RoadRacingLine_Map', path: './assets/textures/racingLine_map.png' },
     Skyline_Map: { name: 'Skyline_Map', path: './assets/textures/skyline_map.png' },
     TestQuadrants_Map: { name: 'TestQuadrants_Map', path: './assets/textures/testQuadrants_map.jpg' },
     Tree_Map: { name: 'Tree_Map', path: './assets/textures/tree_map.png' },

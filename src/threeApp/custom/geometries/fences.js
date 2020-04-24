@@ -26,6 +26,7 @@ export const fencesCrossSection = (trackParams) => [fences1(trackParams), fences
 export const decorateFences = (fences, scene, trackParams) => {
   const geometry = fencePostGeometry();
 
+  // every other step gets a fencepost
   const pointsCount = Math.floor(trackParams.steps * 0.5);
 
   const material = new InstancesStandardMaterial({
@@ -48,7 +49,7 @@ export const decorateFences = (fences, scene, trackParams) => {
 
   const points = trackParams.centerLine.getSpacedPoints(pointsCount);
   const { binormals } = computeFrenetFrames(trackParams.centerLine, pointsCount);
-  
+
   const adjustedPoints = points.reduce((a, p, i) => (
     [
       ...a,
@@ -56,9 +57,6 @@ export const decorateFences = (fences, scene, trackParams) => {
       p.clone().sub(binormals[i].clone().multiplyScalar(-(trackParams.trackHalfWidth + trackParams.vergeWidth + 0.4))),
     ]
   ), []);
-
-  console.log({ points, pointsCount, binormals, adjustedPoints });
-
 
   const positions = [];
   const quaternions = [];
@@ -105,7 +103,6 @@ export const decorateFences = (fences, scene, trackParams) => {
       receive: true,
     },
   });
-  console.log({ positions, pointsCount });
   
   // const test = geometry.clone();
   // test.rotateY(Math.PI * 0.5);

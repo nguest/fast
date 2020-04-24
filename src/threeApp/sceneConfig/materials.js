@@ -192,7 +192,7 @@ export const materialsIndex = [
     specular: 0xffffff,
     side: 'DoubleSide',
     wireframe: false,
-    emissive: 0xffffff,
+    emissive: 0xaaaaaa,
     transparent: true,
     smartAlpha: true,
     clipping: true,

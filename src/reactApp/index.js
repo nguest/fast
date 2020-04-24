@@ -15,7 +15,7 @@ export const App = () => {
   return (
     <div css={styles.app}>
       <header css={styles.appHeader}>
-        <p>App Header</p>
+        <p>Fast Game</p>
       </header>
       <ThreeContainer
         status={status}

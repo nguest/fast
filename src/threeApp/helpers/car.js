@@ -53,9 +53,7 @@ export const decorateCar = (car, brakelights, scene) => {
       // SECOND CAR
       let carbonMat;
       if (child.material.name === 'CarbonMat') {
-        carbonMat = child.material;
-        console.log({ carbonMat });
-        
+        carbonMat = child.material;        
       }
       if (child.material.name === 'GlassMat') {
         child.material = new THREE.MeshPhongMaterial({ color: 0x444444, envMap: scene.environment, reflectivity: 1.0 });
@@ -78,8 +76,8 @@ export const decorateCar = (car, brakelights, scene) => {
       if (child.material.name === 'CarbonWithMapMat') {
         //child.material = new THREE.MeshPhongMaterial({ color: 0xff0000, envMap: scene.environment, reflectivity: 0.7 });
         //child.material.color = new THREE.Color(0xff4444);
-        console.log({ CCCCCCCCC: child.material });
-        console.log({ child });
+        ///console.log({ CCCCCCCCC: child.material });
+        //console.log({ child });
         child.material.envMap = scene.environment;
         child.material.reflectivity = 0.7;
         //child.material.alphaTest = 0.5

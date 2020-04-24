@@ -236,7 +236,7 @@ export const objectsIndex = (trackParams) => ([
         // includeSegments: [[0, 0.05], [0.1, 0.2]]
       },
     ],
-    position: [0, -0.3, 0],
+    position: [0, 0, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
     material: 'chainlink',

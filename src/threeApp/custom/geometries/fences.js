@@ -26,7 +26,7 @@ export const fencesCrossSection = (trackParams) => [fences1(trackParams), fences
 export const decorateFences = (fences, scene, trackParams) => {
   const geometry = fencePostGeometry();
 
-  const pointsCount = Math.floor(trackParams.steps);
+  const pointsCount = Math.floor(trackParams.steps * 0.5);
 
   const material = new InstancesStandardMaterial({
     color: 0xaaaaaa,
@@ -35,7 +35,7 @@ export const decorateFences = (fences, scene, trackParams) => {
       faceToQuat: true,
     },
     shininess: 100,
-    specular: 0xffffff,
+    specular: 0xaaaaaa,
   });
 
   const depthMaterial = new InstancesDepthMaterial({
@@ -48,7 +48,7 @@ export const decorateFences = (fences, scene, trackParams) => {
 
   const points = trackParams.centerLine.getSpacedPoints(pointsCount);
   const { binormals } = computeFrenetFrames(trackParams.centerLine, pointsCount);
-
+  
   const adjustedPoints = points.reduce((a, p, i) => (
     [
       ...a,
@@ -57,19 +57,22 @@ export const decorateFences = (fences, scene, trackParams) => {
     ]
   ), []);
 
+  console.log({ points, pointsCount, binormals, adjustedPoints });
+
+
   const positions = [];
   const quaternions = [];
   const dummyQuat = new THREE.Quaternion();
   const x = new THREE.Vector3(1, 0, 0);
   const up = new THREE.Vector3(0, 1, 0);
 
-  for (let i = 0; i < 1000; i += 1) {
+  for (let i = 0; i < adjustedPoints.length; i += 1) {
     positions.push(
       adjustedPoints[i].x,
       adjustedPoints[i].y,
       adjustedPoints[i].z,
     );
-    const angleX = binormals[i].angleTo(x);
+    const angleX = binormals[Math.floor(i * 0.5)].angleTo(x);
     dummyQuat.setFromAxisAngle(up, angleX);
 
     quaternions.push(
@@ -89,8 +92,8 @@ export const decorateFences = (fences, scene, trackParams) => {
 
   const instancedMesh = createInstancedMesh({
     geometry,
-    count: 1000,
-    offset: new THREE.Vector3(0, 0, 0), // treeHeight * 0.5,
+    count: adjustedPoints.length,
+    offset: new THREE.Vector3(0, 0, 0),
     name: `fencePostInstance-${0}`,
     material,
     depthMaterial,
@@ -102,29 +105,30 @@ export const decorateFences = (fences, scene, trackParams) => {
       receive: true,
     },
   });
-
-  const test = geometry.clone();
-  test.rotateY(Math.PI * 0.5);
-  scene.add(
-    new THREE.Mesh(
-      test,
-      new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide, specular: 0xffffff, shininess: 100 }),
-    ),
-  );
+  console.log({ positions, pointsCount });
+  
+  // const test = geometry.clone();
+  // test.rotateY(Math.PI * 0.5);
+  // scene.add(
+  //   new THREE.Mesh(
+  //     test,
+  //     new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide, specular: 0xffffff, shininess: 100 }),
+  //   ),
+  // );
   scene.add(instancedMesh);
 };
 
 
 const fencePostGeometry = () => {
   const h = 3;
-  const d = 0.2;
+  const d = 0.1;
   const vertices = [
     new THREE.Vector3(0, 0, 0),
     new THREE.Vector3(d, 0, 0),
     new THREE.Vector3(0, h, 0),
     new THREE.Vector3(d, h, 0),
     new THREE.Vector3(0.5, h + 0.5, 0),
-    new THREE.Vector3(0.7, h + 0.5, 0),
+    new THREE.Vector3(0.5 + d, h + 0.5, 0),
 
     new THREE.Vector3(0, 0, d),
     new THREE.Vector3(0, h, d),

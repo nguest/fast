@@ -26,10 +26,6 @@ export const racingLineCurve = (trackParams) => {
     }
     return 0;
   });
-
-
-  console.log('MX', Math.max(...angles), Math.min(...angles));
-  //console.log({ binormals, points });
   
   // const signedArea = signedTriangleArea(points[i - 1], points[i], points[i + 1]);
   // const dir = Math.sign(signedArea);

@@ -50,6 +50,11 @@ export const createTrees = (scene, trackParams) => {
     },
   });
 
+  const scaleFunc = () => {
+    const r = Math.random() * 0.75 + 0.75;
+    return { x: r, y: r, z: r };
+  };
+
   const { treeCurveLeft, treeCurveRight } = getTreeline(trackParams);
 
   [treeCurveLeft, treeCurveRight].forEach((curve, i) => {
@@ -61,7 +66,7 @@ export const createTrees = (scene, trackParams) => {
       name: `treesInstance-${i}`,
       material,
       depthMaterial,
-      scaleFunc: () => Math.random() * 0.75 + 0.75,
+      scaleFunc,
       shadow: {
         cast: true,
       },

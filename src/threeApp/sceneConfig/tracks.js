@@ -2,8 +2,14 @@
 import * as coordsTest from '../custom/geometries/Test';
 import * as coordsSpa from '../custom/geometries/SpaFrancorchamps';
 import * as coordsNoordschleife from '../custom/geometries/Nordschleife';
+import * as coordsCastleCombe from '../custom/geometries/CastleCombe';
+
 
 export const trackOptions = [
+  {
+    name: 'CastleCombe',
+    coords: coordsCastleCombe,
+  },
   {
     name: 'Test',
     coords: coordsTest,

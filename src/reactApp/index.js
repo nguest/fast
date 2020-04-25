@@ -9,7 +9,7 @@ import { styles } from './styles';
 export const App = () => {
   const [status, setStatus] = useState(null);
   const [gamePosition, setGamePosition] = useState({ gate: 0, vehiclePosition: { x: 0, z: 0 } });
-  const [track, setTrack] = useState('Test');
+  const [track, setTrack] = useState('CastleCombe');
   const [trackParams, setTrackParams] = useState({});
 
   return (

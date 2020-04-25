@@ -10,10 +10,10 @@ export const getTreeline = (trackParams) => {
   const rightPositions = [];
   for (let i = 0; i < pointsCount; i++) {
     leftPositions.push(
-      positions[i].clone().sub(binormals[i].clone().multiplyScalar(trackParams.treeDistance * trackParams.widthFactor[i].x))
+      positions[i].clone().sub(binormals[i].clone().multiplyScalar(trackParams.treeDistance)) // * trackParams.widthFactor[i].x))
     );
     rightPositions.push(
-      positions[i].clone().add(binormals[i].clone().multiplyScalar(trackParams.treeDistance * trackParams.widthFactor[i].x))
+      positions[i].clone().add(binormals[i].clone().multiplyScalar(trackParams.treeDistance))// * trackParams.widthFactor[i].x))
     );
   }
 

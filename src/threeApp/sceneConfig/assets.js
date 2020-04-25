@@ -1,7 +1,7 @@
 export const assetsIndex = {
   images: {
     Perlin: { name: 'Perlin', path: './assets/textures/perlin_map.png' },
-    Skybox: { name: 'Skybox', path: './assets/textures/skybox5-512.png', type: '4x3' },
+    Skybox: { name: 'Skybox', path: './assets/textures/skybox5-256.png', type: '4x3' },
 
   },
   textures: {

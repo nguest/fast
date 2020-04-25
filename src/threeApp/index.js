@@ -224,13 +224,13 @@ export class Main extends PureComponent {
     this.createObjects(materials);
 
     // calculate global envmap and skybox
-    // createSkyBoxFrom4x3({
-    //   scene: this.scene,
-    //   boxDimension: 8000,
-    //   image: assets.Skybox,
-    //   tileSize: 512,
-    //   manager: this.manager,
-    // });
+    createSkyBoxFrom4x3({
+      scene: this.scene,
+      boxDimension: 8000,
+      image: assets.Skybox,
+      tileSize: 256,
+      manager: this.manager,
+    });
 
     this.manager.onLoad = () => { // all managed objects loaded
       this.props.setIsLoading(false);
@@ -328,7 +328,8 @@ export class Main extends PureComponent {
     // Step world
     if (this.physicsWorld.bodies[4]) {
       this.physicsWorld.stepSimulation(
-        process.env.NODE_ENV === 'development' ? 0.033 : deltaTime,
+        //process.env.NODE_ENV === 'development' ? 0.033 : deltaTime,
+        0.033,
         10,
       ); // jerky if set to deltaTime??
       // Update rigid bodies (just vehicle)

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { getSpacedPoints, computeFrenetFrames } from '../../helpers/curveHelpers';
 import { signedTriangleArea } from '../../helpers/apexHelpers';
+import { Vector3 } from 'three';
 //import createApexes from './track';
 // import { createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
 // import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
@@ -100,3 +101,101 @@ const getAverageAngle = (i, angles, spread = 20) => {
     return a + angles[arrI]/spread;
   }, 0);
 }
+
+export const racingLine = (trackParams) => {
+  const centerLine = trackParams.centerLine;
+  const steps = 10;//trackParams.steps;
+  ///const { binormals, tangents } = computeFrenetFrames(centerLine, steps);
+  //const cpPoints = centerLine.getSpacedPoints(steps);
+  const wpCount = 7;
+
+  const b = [
+    new THREE.Vector3(0,0,10),
+    // new THREE.Vector3(0,0,0),
+    new THREE.Vector3(10,0,-10),
+    // new THREE.Vector3(0,0,-20),
+    // new THREE.Vector3(0,0,-30),
+    new THREE.Vector3(0,0,-40),
+  ];
+  const cx = new THREE.CatmullRomCurve3(b);
+  const cpPoints = cx.getSpacedPoints(wpCount);
+  const { binormals, tangents } = computeFrenetFrames(cx, wpCount);
+  console.log({ binormals, cpPoints });
+  
+
+  const matrix = cpPoints.map((cp) => {
+    return new Array(wpCount).fill(null).map((wp, i) => {
+      const s = (trackParams.trackHalfWidth * 2) / (wpCount - 1);
+      return cp.clone().sub(binormals[i].clone().multiplyScalar(s * (i - (Math.floor(wpCount / 2)))));
+    });
+  });
+
+  console.log({ matrix });
+
+  const segmentValue = (pMinus1, p, pPlus1) => {
+    const alpha = 0.01;
+    const beta = 0.5;
+    //Beta * Cos( P ) – Alpha * ( A + B );
+    const v1 = p.clone().sub(pMinus1.clone());
+    const v2 = pPlus1.clone().sub(p.clone());
+    const theta = v1.angleTo(v2);
+    //debugger;
+    //console.log(beta * Math.cos(theta));
+    //console.log('1::', pMinus1, p, pPlus1)
+    return beta * Math.cos(theta);
+    
+    
+    return beta * Math.cos(theta);// - alpha * (v1.length() + v2.length());
+  }
+
+
+  const nodes = [];
+
+  for (let i = cpPoints.length - 2; i >= 1; i -= 1) {
+    // each node on i - 1;
+    let brv = 0;
+    let bnn = 0;
+    //nodes[i] = [];
+
+    for (let j = 0; j < wpCount; j++) {
+      // for each node on i
+      for (let k = 0; k < wpCount; k++) {
+        let trv;
+        if (nodes[i+1] && nodes[i+1].routeValue) {
+          trv = segmentValue(matrix[i-1][j], matrix[i][j], matrix[i+1][j]) + nodes[i+1].routeValue;
+        } else {
+          trv = segmentValue(matrix[i-1][j], matrix[i][j], matrix[i+1][j])
+        }
+        
+        if (trv > brv) {
+          brv = trv;
+          bnn = j;
+          nodes[i] = { routeValue: brv, nextNode: bnn };
+          //console.log(i, '  ', nodes[i]);
+          
+        }
+      }
+
+    }
+  }
+  console.log({ nodes });
+  
+};
+
+/*
+For each node Prev on Line 5
+{
+    For each node Next on Line 7
+    {
+        This Route Value = SegmentValue( Prev to Cur to Nex) + Next’s RVM[1].m_routeValue;
+ 
+        If (This Route Value &gt; Best Route Value So Far)
+        {
+            Best Route Value So Far = This Route Value;
+            Best Next Node So Far = Next ;
+        }
+    }
+    Cur’s RVM [ Prev ].m_routeValue = Best Route Value So Far;
+    Cur’s RVM [ Prev ].m_routeNextNode = Best Next Node So Far;
+}
+*/

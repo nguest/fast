@@ -42,7 +42,6 @@ const createGrassClumps = (mesh, scene) => {
 
 const createDirt = (mesh, scene, trackParams) => {
   const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.steps);
-  console.log({ tangents });
   const centerLinePoints = trackParams.centerLine.getSpacedPoints(trackParams.steps);
 
 
@@ -54,8 +53,8 @@ const createDirt = (mesh, scene, trackParams) => {
   // plane.rotateZ(-Math.PI / 2);
 
   const loader = new THREE.TextureLoader()
-  const map = loader.load('./assets/textures/sand_map.png');
-  map.repeat.set(10, 1.5);
+  const map = loader.load('./assets/textures/sand2_map.png');
+  map.repeat.set(1,1);
   map.wrapS = THREE.MirroredRepeatWrapping;
   map.wrapT = THREE.MirroredRepeatWrapping;
 
@@ -154,12 +153,11 @@ const createDirt = (mesh, scene, trackParams) => {
     count: 5000,
     name: 'dirt',
     lookAtNormal: true,
-    uv: { u: 0.0, v: 0.95, },
+    uv: { u: 0.0, v: 0.95 },
     //rotateFunc: () => Math.PI / 2,
   });
   scene.add(instancedMesh);
-
-}
+};
 
 export const decorateGrass = (mesh, scene, trackParams) => {
   createGrassClumps(mesh, scene);

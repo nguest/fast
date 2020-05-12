@@ -103,16 +103,76 @@ export const decorateFences = (fences, scene, trackParams) => {
       receive: true,
     },
   });
-  
-  // const test = geometry.clone();
-  // test.rotateY(Math.PI * 0.5);
-  // scene.add(
-  //   new THREE.Mesh(
-  //     test,
-  //     new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide, specular: 0xffffff, shininess: 100 }),
-  //   ),
-  // );
   scene.add(instancedMesh);
+
+  // signs
+
+  const loader = new THREE.TextureLoader();
+  const map = loader.load('./assets/textures/billboards_map.jpg');
+  map.repeat.set(2, 1);
+  map.offset.set(0, -0.25);
+  // map.wrapS = THREE.MirroredRepeatWrapping;
+  // map.wrapT = THREE.MirroredRepeatWrapping;
+
+  const signMaterial = new InstancesStandardMaterial({
+    color: 0xffffff,
+    side: THREE.DoubleSide,
+    userData: {
+      faceToQuat: true,
+    },
+    shininess: 100,
+    specular: 0xaaaaaa,
+    map,
+  });
+
+  const signDepthMaterial = new InstancesDepthMaterial({
+    depthPacking: THREE.RGBADepthPacking,
+    alphaTest: 0.5,
+    userData: {
+      faceToQuat: true,
+    },
+  });
+
+  const signGeo = new THREE.PlaneBufferGeometry(3, 1);
+  signGeo.rotateY(Math.PI * 0.5);
+  signGeo.translate(0.25, 2, 0);
+  const signPositions = [];
+  const signQuaternions = [];
+  
+  for (let i = 0; i < 100; i++) {
+    if (Math.random() > 0.3) {
+      signPositions.push(
+        positions[i * 3],
+        positions[i * 3 + 1],
+        positions[i * 3 + 2],
+      );
+      signQuaternions.push(
+        quaternions[i * 4],
+        quaternions[i * 4 + 1],
+        quaternions[i * 4 + 2],
+        quaternions[i * 4 + 3],
+      );
+    }
+  }
+
+  const instancedSigns = createInstancedMesh({
+    geometry: signGeo,
+    count: 100,//adjustedPoints.length,
+    //offset: new THREE.Vector3(0, 0, 1),
+    name: `fenceSignInstance-${0}`,
+    material: signMaterial,
+    depthMaterial: signDepthMaterial,
+    positions: signPositions,
+    quaternions: signQuaternions,
+    scaleFunc,
+    shadow: {
+      cast: true,
+      receive: true,
+    },
+  });
+  scene.add(instancedSigns);
+
+
 };
 
 

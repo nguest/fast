@@ -63,7 +63,7 @@ export const objectsIndex = (trackParams) => ([
     params: [
       terrainCrossSection(trackParams),
       {
-        steps: 50,//trackParams.steps,
+        steps: 50, // trackParams.steps,
         depth: 0,
         UVGenerator: trackUVGenerator,
         extrudePath: getTerrainCurve(trackParams),
@@ -102,7 +102,7 @@ export const objectsIndex = (trackParams) => ([
       receive: true,
       cast: false,
     },
-    add: false,
+    add: true,
     uv2Params: [1, 0.1],
   },
   {
@@ -356,6 +356,6 @@ export const objectsIndex = (trackParams) => ([
       receive: true,
       cast: false,
     },
-    add: true,
+    add: false,
   },
 ]);

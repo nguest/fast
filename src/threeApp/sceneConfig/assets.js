@@ -6,6 +6,7 @@ export const assetsIndex = {
   },
   textures: {
     Asphalt: { name: 'Asphalt', path: './assets/textures/asphalt.jpg' },
+    Billboards: { name: 'Billboards', path: './assets/textures/billboards_map.jpg' },
     Concrete_Map: { name: 'Concrete_Map', path: './assets/textures/concrete_map.png' },
     Concrete_Normal: { name: 'Concrete_Normal', path: './assets/textures/concrete_normal.png' },
     Darkstone_Map: { name: 'Darkstone_Map', path: './assets/textures/darkstone_map.jpg' },
@@ -24,9 +25,10 @@ export const assetsIndex = {
     Road_Map: { name: 'Road_Map', path: './assets/textures/roadhalf_map.png' },
     Road_Normal: { name: 'Road_Normal', path: './assets/textures/road_normal2.png' },
     RoadRacingLine_Map: { name: 'RoadRacingLine_Map', path: './assets/textures/racingLine_map.png' },
-    Skyline_Map: { name: 'Skyline_Map', path: './assets/textures/skyline_map.png' },
+    Skyline_Map: { name: 'Skyline_Map', path: './assets/textures/skyline2_map.png' },
     TestQuadrants_Map: { name: 'TestQuadrants_Map', path: './assets/textures/testQuadrants_map.jpg' },
     Tree_Map: { name: 'Tree_Map', path: './assets/textures/tree_map.png' },
     UVGrid: { name: 'UVGrid', path: './assets/textures/UV_Grid_Sm.png' },
+
   },
 };

@@ -89,7 +89,7 @@ export const createMaterial = ({
     dithering: true,
   });
 
-  material.blending = THREE[blending],
+  material.blending = THREE[blending];
 
   material.shininess = material.shininess !== undefined ? shininess : material.shininess;
   material.emissive = material.emissive !== undefined ? new THREE.Color(emissive) : new THREE.Color(material.emissive);
@@ -101,11 +101,13 @@ export const createMaterial = ({
   material.polygonOffsetFactor = material.polygonOffsetFactor !== undefined ? polygonOffsetFactor : material.polygonOffsetFactor;
 
   if (smartAlpha) {
+    console.log({ SMART: name });
+
     material.onBeforeCompile = (shader) => {
       patchShader(shader, {
         fragment: {
           'gl_FragColor = vec4( outgoingLight, diffuseColor.a );':
-          `if ( diffuseColor.a < 0.95 ) discard; // remove low alpha values
+          `if ( diffuseColor.a < 0.9 ) discard; // remove low alpha values
           gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`,
         },
       });

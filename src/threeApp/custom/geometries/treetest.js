@@ -162,9 +162,6 @@ const material = new THREE.ShaderMaterial({
   fragmentShader: meshPhongFrag,
 });
 
-console.log({ material })
-
-
 const customMeshDepthMaterial = new THREE.MeshDepthMaterial({
   map: loader.load('./assets/textures/tree_map_2.png'),
   depthPacking: THREE.RGBADepthPacking,

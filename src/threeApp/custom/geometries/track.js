@@ -134,7 +134,7 @@ export const createApexMarkers = (scene, trackParams) => {
   const apexes = trackParams.apexes;
   const map = new THREE.TextureLoader().load('./assets/textures/location_map.png');
   const material = new THREE.SpriteMaterial({ map });
-  console.log({ apexes });
+  //console.log({ apexes });
   
   apexes.forEach((apex, i) => {
     const sprite = new THREE.Sprite(material);

@@ -24,6 +24,7 @@ import { computeTrackParams } from './custom/geometries/trackParams';
 import { createTerrain } from './custom/geometries/terrain';
 import { decorateTerrainSmall } from './custom/geometries/terrainSmall';
 import { decorateFences } from './custom/geometries/fences';
+import { racingLine } from './custom/geometries/racingLine';
 
 // Helpers
 import { promisifyLoader, getPosQuatFromGamePosition, getObjByName, scaleBackground } from './helpers/helpers';
@@ -210,6 +211,7 @@ export class Main extends PureComponent {
     // decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
     decorateFences(getObjByName(this.scene, 'fences'), this.scene, this.trackParams);
     createApexMarkers(this.scene, this.trackParams);
+    racingLine(this.trackParams);
     // createRacingLine(apexes);
     // createTerrain(this.scene)
 
@@ -223,7 +225,7 @@ export class Main extends PureComponent {
   createWorld(materials, assets) {
     this.createObjects(materials);
 
-    // calculate global envmap and skybox
+    // gstcalculate global envmap and skybox
     createSkyBoxFrom4x3({
       scene: this.scene,
       boxDimension: 8000,
@@ -308,7 +310,7 @@ export class Main extends PureComponent {
     );
     const cameraOffset = relativeCameraOffset.applyMatrix4(this.chassisMesh.matrixWorld);
     this.followCam.threeCamera.position.copy(
-      new THREE.Vector3(cameraOffset.x, cameraOffset.y, cameraOffset.z),
+      new THREE.Vector3(cameraOffset.x, 2, cameraOffset.z), // set y fixed so car bounces
     );
 
     const { x, y, z } = this.chassisMesh.position;

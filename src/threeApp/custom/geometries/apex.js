@@ -87,34 +87,34 @@ export const createApexMarkers = (scene, trackParams) => {
 
   const { apexCurveCount, length, steps, centerLine, trackHalfWidth } = trackParams;
   const segLen = length / steps;
+  const idxScaleFactor = steps / apexCurveCount;
   const cpPoints = getSpacedPoints(centerLine, steps);
   const { binormals } = computeFrenetFrames(centerLine, steps);
+  const STRAIGHT_LENGTH_MIN = 300;
 
   apexes.forEach((apex, i) => {
-    if (apexes[i - 1]) {
-      const idxScaleFactor = steps / apexCurveCount;
-      //console.log('metres:', (apex.idx - apexes[i - 1].idx) * idxScaleFactor * segLen);
-      //if ((apex.idx - apexes[i - 1].idx) * idxScaleFactor * segLen > 300) {
-        // valid to make markers
-        textures.forEach((texture) => {
-          const markeridx = Math.round(apex.idx * idxScaleFactor - (parseInt(texture.markerVal, 10) / segLen));
-          const markerPosn = cpPoints[markeridx].clone().sub(binormals[markeridx].clone().multiplyScalar(-(trackHalfWidth + 0.75) * apex.dir));
-          const markerGeo = new THREE.PlaneBufferGeometry(1, 1);
-          const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x999999 });
-          
-          material.map = texture.map;
-          const marker = new THREE.Mesh(markerGeo, material);
-          marker.position.set(markerPosn.x, markerPosn.y + 0.5, markerPosn.z);
-          const angleX = binormals[markeridx].angleTo(x);
-          marker.quaternion.setFromAxisAngle(up, angleX - Math.PI);
-          marker.castShadow = true;
-          scene.add(marker);
-        })
-
-      //}
+    if (
+      apexes[i - 1]
+      && (apex.idx - apexes[i - 1].idx) * idxScaleFactor * segLen > STRAIGHT_LENGTH_MIN
+    ) {
+      // valid to make markers
+      textures.forEach((texture) => {
+        const markeridx = Math.round(apex.idx * idxScaleFactor - (parseInt(texture.markerVal, 10) / segLen));
+        const markerPosn = cpPoints[markeridx]
+          .clone()
+          .sub(binormals[markeridx].clone().multiplyScalar(-(trackHalfWidth + 0.75) * apex.dir));
+        const markerGeo = new THREE.PlaneBufferGeometry(1, 1);
+        const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x999999 });
+        material.map = texture.map;
+        const marker = new THREE.Mesh(markerGeo, material);
+        marker.position.set(markerPosn.x, markerPosn.y + 0.5, markerPosn.z);
+        const angleX = binormals[markeridx].angleTo(x);
+        marker.quaternion.setFromAxisAngle(up, angleX - Math.PI);
+        marker.castShadow = true;
+        scene.add(marker);
+      });
     }
-  })
-
+  });
 };
 
 export const signedTriangleArea = (a, b, c) => (

@@ -16,6 +16,7 @@ export const styles = {
       fontFamily: `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
         sans-serif;`,
+      background: '#eeeeee',
     },
     canvas: {
       display: 'block',

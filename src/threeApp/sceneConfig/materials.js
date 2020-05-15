@@ -62,18 +62,12 @@ export const materialsIndex = [
   {
     name: 'roadRacingLine',
     type: 'MeshPhongMaterial',
-    color: 0x000000,
+    color: 0x222222,
     map: {
       name: 'RoadRacingLine_Map',
       wrapping: 'MirroredRepeatWrapping',
-      repeat: [2, 1],
+      repeat: [2, 0.1],
     },
-  
-    // normalMap: {
-    //   name: 'Road_Normal',
-    //   wrapping: 'MirroredRepeatWrapping',
-    //   normalScale: [0.5, 0.5],
-    // },
     shininess: 1,
     transparent: true,
     opacity: 0.5,
@@ -81,7 +75,10 @@ export const materialsIndex = [
     side: 'FrontSide',
     wireframe: false,
     clipping: true,
-    //blending: 'MultiplyBlending',
+    smartAlpha: true,
+    polygonOffset: 2,
+    polygonOffsetFactor: 1,
+   // blending: 'A\Blending',
   },
   {
     name: 'GrassMaterial',
@@ -194,7 +191,6 @@ export const materialsIndex = [
     wireframe: false,
     emissive: 0xaaaaaa,
     transparent: true,
-   // smartAlpha: true,
     clipping: true,
   },
   {
@@ -204,7 +200,7 @@ export const materialsIndex = [
     map: {
       name: 'Skyline_Map',
       wrapping: 'RepeatWrapping',
-      repeat: [10, 1],
+      repeat: [5, 1],
     },
     shininess: 0,
     smartAlpha: true,

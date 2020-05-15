@@ -45,6 +45,7 @@ module.exports = {
         varsIgnorePattern: "React"
       }
     ],
+    "no-console": ["error", { allow: ["warn", "info"] }],
     "no-param-reassign": "off",
     "max-classes-per-file": "off",
   }

@@ -1,8 +1,8 @@
 // import { coordinates } from './nordschleife';
-import * as coordsTest from '../custom/geometries/Test';
-import * as coordsSpa from '../custom/geometries/SpaFrancorchamps';
-import * as coordsNoordschleife from '../custom/geometries/Nordschleife';
-import * as coordsCastleCombe from '../custom/geometries/CastleCombe';
+import * as coordsTest from '../custom/trackCoordinates/Test';
+import * as coordsSpa from '../custom/trackCoordinates/SpaFrancorchamps';
+import * as coordsNoordschleife from '../custom/trackCoordinates/Nordschleife';
+import * as coordsCastleCombe from '../custom/trackCoordinates/CastleCombe';
 
 
 export const trackOptions = [

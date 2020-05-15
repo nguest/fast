@@ -7,10 +7,10 @@ import { treesCrossSection } from '../custom/geometries/trees';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 import { fencesCrossSection } from '../custom/geometries/fences';
 import { getTerrainCurve } from '../custom/geometries/terrain';
-import { terrainCrossSection } from '../custom/geometries/terrainSmall'
-import { racingLineCrossSection, racingLineCurve } from '../custom/geometries/racingLine';
+import { terrainCrossSection } from '../custom/geometries/terrainSmall';
+import { racingLineCrossSection } from '../custom/geometries/racingLine';
 
-//import { trackParams } from '../custom/geometries/trackParams';
+import { trackParams } from '../custom/geometries/trackParams';
 
 import { createVehicle } from '../custom/geometries/vehicle';
 
@@ -58,6 +58,30 @@ export const objectsIndex = (trackParams) => ([
     uv2Params: [1, 0.1],
   },
   {
+    name: 'racingLine',
+    type: 'ExtrudeGeometry',
+    params: [
+      racingLineCrossSection(trackParams),
+      {
+        steps: trackParams.steps,
+        depth: 0,
+        UVGenerator: trackUVGenerator,
+        extrudePath: new THREE.CatmullRomCurve3(trackParams.racingLine),
+        widthFactor: trackParams.widthFactor,
+        autoCloseShape: true,
+      },
+    ],
+    position: [0, 0.1, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'roadRacingLine',
+    shadows: {
+      receive: true,
+      cast: false,
+    },
+    add: true,
+  },
+  {
     name: 'terrain',
     type: 'ExtrudeGeometry',
     params: [
@@ -94,7 +118,7 @@ export const objectsIndex = (trackParams) => ([
         widthFactor: trackParams.widthFactor,
       },
     ],
-    position: [0, 0.0, 0],
+    position: [0, 0, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
     material: 'LongGrassMaterial',
@@ -102,7 +126,7 @@ export const objectsIndex = (trackParams) => ([
       receive: true,
       cast: false,
     },
-    add: true,
+    add: false,
     uv2Params: [1, 0.1],
   },
   {
@@ -333,29 +357,5 @@ export const objectsIndex = (trackParams) => ([
       cast: false,
     },
     add: true,
-  },
-  {
-    name: 'racingLine',
-    type: 'ExtrudeGeometry',
-    params: [
-      racingLineCrossSection(trackParams),
-      {
-        steps: trackParams.steps,
-        depth: 0,
-        UVGenerator: trackUVGenerator,
-        extrudePath: racingLineCurve(trackParams),
-        widthFactor: trackParams.widthFactor,
-        autoCloseShape: true,
-      },
-    ],
-    position: [0, 0.1, 0],
-    rotation: [0, 0, 0],
-    scale: [1, 1, 1],
-    material: 'roadRacingLine',
-    shadows: {
-      receive: true,
-      cast: false,
-    },
-    add: false,
   },
 ]);

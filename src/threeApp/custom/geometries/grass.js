@@ -9,13 +9,13 @@ import { computeFrenetFrames } from '../../helpers/curveHelpers';
 export const grassCrossSectionR = (trackParams) => {
   const shape = new THREE.Shape();
   shape.moveTo(0.1, -trackParams.trackHalfWidth + 0.3);
-  shape.lineTo(-0.7, -16);
+  shape.lineTo(-0.7, -trackParams.vergeWidth - 2);
   return shape;
 };
 
 export const grassCrossSectionL = (trackParams) => {
   const shape = new THREE.Shape();
-  shape.moveTo(-0.7, 16);
+  shape.moveTo(-0.7, trackParams.vergeWidth + 2);
   shape.lineTo(0.1, trackParams.trackHalfWidth - 0.3);
   return shape;
 };

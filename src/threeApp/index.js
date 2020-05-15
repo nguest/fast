@@ -18,13 +18,13 @@ import { Mesh } from './components/Mesh';
 import { createTrees } from './custom/geometries/trees';
 // import { Sky } from './components/Sky';
 import { createGates, detectGateCollisions } from './components/Gates';
-import { decorateTrack, createApexMarkers } from './custom/geometries/track';
+import { decorateTrack } from './custom/geometries/track';
+import { createApexMarkers } from './custom/geometries/apex';
 import { decorateGrass } from './custom/geometries/grass';
 import { computeTrackParams } from './custom/geometries/trackParams';
 import { createTerrain } from './custom/geometries/terrain';
 import { decorateTerrainSmall } from './custom/geometries/terrainSmall';
 import { decorateFences } from './custom/geometries/fences';
-import { racingLine } from './custom/geometries/racingLine';
 
 // Helpers
 import { promisifyLoader, getPosQuatFromGamePosition, getObjByName, scaleBackground } from './helpers/helpers';
@@ -57,8 +57,6 @@ const zeroVector = new Ammo.btVector3(0, 0, 0);
 export class Main extends PureComponent {
   componentDidMount() {
     this.selectedTrack = this.props.selectedTrack;
-    console.log('process.NODE_ENV', process.env.NODE_ENV);
-
     this.initialize();
   }
 
@@ -117,7 +115,6 @@ export class Main extends PureComponent {
 
   loadAssets() {
     const imageLoader = new THREE.ImageLoader(this.manager);
-    //const imageLoader = new THREE.FileLoader(this.manager);
     imageLoader.options = { preMultiplyAlpha: 'preMultiplyAlpha' };
     const ImagePromiseLoader = promisifyLoader(imageLoader);
     const imagePromises = Object.values(assetsIndex.images).map((file) => {
@@ -209,10 +206,8 @@ export class Main extends PureComponent {
     decorateTrack(getObjByName(this.scene, 'track'), this.scene, this.trackParams, materials.roadRacingLine);
     decorateGrass(getObjByName(this.scene, 'grassL'), this.scene, this.trackParams);
     // decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
-    decorateFences(getObjByName(this.scene, 'fences'), this.scene, this.trackParams);
+    decorateFences(getObjByName(this.scene, 'fences'), this.scene, this.trackParams, materials.billboards);
     createApexMarkers(this.scene, this.trackParams);
-    racingLine(this.trackParams);
-    // createRacingLine(apexes);
     // createTerrain(this.scene)
 
     this.instancedMeshes = this.scene.children.filter((o) => o.userData.type === 'instancedMesh');
@@ -269,6 +264,8 @@ export class Main extends PureComponent {
 
   animate() {
     const deltaTime = this.clock.getDelta();
+    //console.log(deltaTime);
+    
     if (this.frameCount >= 10) this.frameCount = 0;
     this.frameCount++;
 
@@ -310,7 +307,7 @@ export class Main extends PureComponent {
     );
     const cameraOffset = relativeCameraOffset.applyMatrix4(this.chassisMesh.matrixWorld);
     this.followCam.threeCamera.position.copy(
-      new THREE.Vector3(cameraOffset.x, 2, cameraOffset.z), // set y fixed so car bounces
+      new THREE.Vector3(cameraOffset.x, cameraOffset.y + 0.6, cameraOffset.z), // set y fixed so car bounces
     );
 
     const { x, y, z } = this.chassisMesh.position;

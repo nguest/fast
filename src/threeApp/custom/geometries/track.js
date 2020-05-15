@@ -68,7 +68,6 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
   //scene.add(helper);
 
   const plane = new THREE.PlaneBufferGeometry(0.2, 10);
-console.log({material})
   const instancedMesh = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh: trackMesh,
@@ -79,71 +78,9 @@ console.log({material})
     scaleFunc: () => rand(2),
     //rotateFunc: () => Math.PI * 0.5
   });
+  instancedMesh.position.y = 0.1;
   scene.add(instancedMesh);
 };
-
-
-export const createApexes = (scene, trackParams) => {
-  const threshold = 0.02; // 0.12;
-  const pointsCount = Math.floor(trackParams.length * 0.05);
-  const { binormals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
-  const points = trackParams.centerLine.getSpacedPoints(pointsCount);
-
-  const angles = tangents.map((t, i, arr) => {
-    if (arr[i - 1] && arr[i + 1]) {
-      return 0.5 * arr[i - 1].angleTo(arr[i + 1]);
-    }
-    return 0;
-  });
-
-  const apexes = angles.reduce((agg, theta, i) => {
-    if (
-      angles[i - 1]
-      && angles[i + 1]
-      && (theta > threshold)
-      && angles[i - 1] < theta
-      && angles[i + 1] < theta
-    ) {
-      const signedArea = signedTriangleArea(points[i - 1], points[i], points[i + 1]);
-      const dir = Math.sign(signedArea);
-
-      return [
-        ...agg,
-        { i, p: points[i], dir, binormal: binormals[i] },
-      ];
-    }
-    return agg;
-  }, []);
-
-  return apexes;
-
-  // const map = new THREE.TextureLoader().load('./assets/textures/location_map.png');
-  // const material = new THREE.SpriteMaterial({map});
-  // apexes.forEach((apex, i) => {
-  //   const sprite = new THREE.Sprite(material);
-  //   const apexMarkerPosn = apex.p.sub(binormals[i].clone().multiplyScalar(trackParams.trackHalfWidth * apex.dir));
-  //   sprite.position.set(apexMarkerPosn.x, apexMarkerPosn.y + 1, apexMarkerPosn.z);
-
-  //   scene.add(sprite);
-  //});
-};
-
-export const createApexMarkers = (scene, trackParams) => {
-  console.log({ trackParams });
-  
-  const apexes = trackParams.apexes;
-  const map = new THREE.TextureLoader().load('./assets/textures/location_map.png');
-  const material = new THREE.SpriteMaterial({ map });
-  //console.log({ apexes });
-  
-  apexes.forEach((apex, i) => {
-    const sprite = new THREE.Sprite(material);
-    const apexMarkerPosn = apex.p.sub(apex.binormal.clone().multiplyScalar(trackParams.trackHalfWidth * apex.dir));
-    sprite.position.set(apexMarkerPosn.x, apexMarkerPosn.y + 1, apexMarkerPosn.z);
-
-    scene.add(sprite);
-  });
-}
 
 // create custom material with vertex clipping and proper alpha
 const TrackMarksMaterial = new THREE.MeshLambertMaterial({
@@ -154,12 +91,13 @@ const TrackMarksMaterial = new THREE.MeshLambertMaterial({
   polygonOffsetFactor: -1,
   transparent: true,
   opacity: 0.2,
-  //renderOrder: 1,
+  renderOrder: 1,
+  polygonOffsetUnits: -1.0,
 });
 
-TrackMarksMaterial.map.wrapS = THREE.MirroredRepeatWrapping
-TrackMarksMaterial.map.wrapT = THREE.MirroredRepeatWrapping
-TrackMarksMaterial.map.repeat.set(2,1)
+TrackMarksMaterial.map.wrapS = THREE.MirroredRepeatWrapping;
+TrackMarksMaterial.map.wrapT = THREE.MirroredRepeatWrapping;
+TrackMarksMaterial.map.repeat.set(2, 1);
 
 TrackMarksMaterial.onBeforeCompile = (shader) => {
   patchShader(shader, {
@@ -190,27 +128,28 @@ const CustomDistanceMaterial = new THREE.MeshDistanceMaterial({
   alphaTest: 0.5
 });
 
-CustomDistanceMaterial.onBeforeCompile = shader => {
+CustomDistanceMaterial.onBeforeCompile = (shader) => {
   // app specific instancing shader code
-  shader.vertexShader =
-    `#define DEPTH_PACKING 3201
+  shader.vertexShader = `
+    #define DEPTH_PACKING 3201
         attribute vec3 offset;
         attribute vec4 orientation;
 
         vec3 applyQuaternionToVector( vec4 q, vec3 v ){
            return v + 2.0 * cross( q.xyz, cross( q.xyz, v ) + q.w * v );
         }
-  ` + shader.vertexShader;
+      ${shader.vertexShader}`;
   shader.vertexShader = shader.vertexShader.replace(
-    "#include <project_vertex>",
+    '#include <project_vertex>',
     `                     
         vec3 vPosition = offset + applyQuaternionToVector( orientation, transformed );
  
         vec4 mvPosition = modelMatrix * vec4( vPosition, 1.0 );
         transformed = vPosition;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( transformed, 1.0 );`
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( transformed, 1.0 );`,
   );
 
-  shader.fragmentShader =
-    "#define DEPTH_PACKING 3201" + "\n" + shader.fragmentShader;
+  shader.fragmentShader = `
+    #define DEPTH_PACKING 3201
+    ${shader.fragmentShader}`;
 };

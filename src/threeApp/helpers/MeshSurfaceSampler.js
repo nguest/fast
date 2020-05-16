@@ -144,7 +144,7 @@ export const MeshSurfaceSampler = (function () {
         .addScaledVector(face.c, 1 - (u + v));
 
       face.getNormal(targetNormal);
-
+      
       return this;
     },
 

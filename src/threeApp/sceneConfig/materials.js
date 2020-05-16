@@ -4,7 +4,7 @@ export const materialsIndex = [
   {
     name: 'green',
     type: 'MeshLambertMaterial',
-    color: 0x3f451c,
+    color: 0x2f350c,
     side: 'FrontSide',
     wireframe: false,
   },
@@ -70,7 +70,7 @@ export const materialsIndex = [
     },
     shininess: 1,
     transparent: true,
-    opacity: 0.5,
+    opacity: 0.2,
     specular: 0x444444,
     side: 'FrontSide',
     wireframe: false,

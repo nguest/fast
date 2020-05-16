@@ -203,7 +203,7 @@ export class Main extends PureComponent {
       return new Mesh(params).getMesh();
     });
     createTrees(this.scene, this.trackParams);
-    decorateTrack(getObjByName(this.scene, 'track'), this.scene, this.trackParams, materials.roadRacingLine);
+    decorateTrack(getObjByName(this.scene, 'racingLine'), this.scene, this.trackParams, materials.roadRacingLine);
     decorateGrass(getObjByName(this.scene, 'grassL'), this.scene, this.trackParams);
     // decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
     decorateFences(getObjByName(this.scene, 'fences'), this.scene, this.trackParams, materials.billboards);

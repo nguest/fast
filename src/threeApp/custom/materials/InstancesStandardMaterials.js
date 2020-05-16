@@ -17,6 +17,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
     super(params);
     if (params.userData.faceToCamera) this.faceToCamera = true;
     if (params.userData.faceToQuat) this.faceToQuat = true;
+    this.opacityDiscardLimit = params.userData.opacityDiscardLimit ? params.userData.opacityDiscardLimit : 0.9;
   }
 
   name = 'InstancesStandardMaterial';
@@ -76,8 +77,6 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
       );
     }
     if (this.faceToQuat) {
-      console.log('XXXXXXX');
-      
       shader.vertexShader = shader.vertexShader
         .replace(
           'void main() {',
@@ -117,8 +116,9 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
     shader.fragmentShader = shader.fragmentShader
       .replace(
         'gl_FragColor = vec4( outgoingLight, diffuseColor.a );',
-        `if ( diffuseColor.a < 0.9 ) discard; // remove low alpha values
-        gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`,
+        `if ( diffuseColor.a < ${this.opacityDiscardLimit}) discard; // remove low alpha values
+        gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,
+        // gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`, // premultiply?
       );
   }
 

@@ -115,12 +115,14 @@ export const createSampledInstanceMesh = ({
 
   for (let i = 0; i < count; i++) {
     sampler.sample(position, normal);
+    //let norm = new THREE.Vector3(0, normal.y, 0);
     normal.add(position);
-
     dummy.position.copy(position);
+
     if (lookAtNormal) {
       dummy.lookAt(normal);
       if (rotateFunc) dummy.rotateOnWorldAxis(up, rotateFunc());
+      //dummy.rotation.set(Math.PI / 2, 0, 0)
     }
     if (scaleFunc) dummy.scale.setY(scaleFunc());
     dummy.updateMatrix();

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
-import { createSampledInstanceMesh } from '../../helpers/InstancedBufferGeometry';
+import { createSampledInstanceMesh, createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
+import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
 import { patchShader } from '../../materials/extend';
 import { rand } from '../../helpers/helpers';
 
@@ -76,10 +77,109 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
     name: 'trackMarks',
     lookAtNormal: true,
     scaleFunc: () => rand(2),
-    //rotateFunc: () => Math.PI * 0.5
+    //rotateFunc: () => new Vector3(Math.PI * 0.5
   });
   instancedMesh.position.y = 0.1;
-  scene.add(instancedMesh);
+
+  //scene.add(instancedMesh);
+
+
+  /// TRY NO 2
+  // 
+  const pointsCount = Math.floor(trackParams.steps * 1);
+  const curve = new THREE.CatmullRomCurve3(trackParams.racingLine);
+
+  const points = curve.getSpacedPoints(pointsCount);
+  const { binormals } = computeFrenetFrames(curve, pointsCount);
+
+  const adjustedPoints = points.reduce((a, p, i) => (
+    [
+      ...a,
+      p.clone().sub(binormals[i].clone().multiplyScalar(1 * rand(1))),
+      p.clone().sub(binormals[i].clone().multiplyScalar(-(1 * rand(1)))),
+    ]
+  ), []);
+
+  const positions = [];
+  const quaternions = [];
+  const dummyQuat = new THREE.Quaternion();
+  const x = new THREE.Vector3(1, 0, 0);
+  const up = new THREE.Vector3(0, 1, 0);
+
+  for (let i = 0; i < adjustedPoints.length; i += 1) {
+    positions.push(
+      adjustedPoints[i].x,
+      adjustedPoints[i].y,
+      adjustedPoints[i].z,
+    );
+    const angleX = binormals[Math.floor(i * 0.5)].angleTo(x);
+    dummyQuat.setFromAxisAngle(up, angleX);
+
+    quaternions.push(
+      dummyQuat.x,
+      dummyQuat.y,
+      dummyQuat.z,
+      dummyQuat.w,
+    );
+  }
+
+  const scaleFunc = (i) => {
+    // if (i % 2 === 0) {
+    //   return { x: 1, y: 1, z: 1 };
+    // }
+    return { x: 1, y: rand(2), z: rand(2) };
+  };
+
+  const mat = new InstancesStandardMaterial({
+    color: 0x111111,
+    map: new THREE.TextureLoader().load('./assets/textures/racingLine_map.png'),
+    side: THREE.DoubleSide,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    //transparent: true,
+    opacity: 0.1,
+    renderOrder: 1,
+    polygonOffsetUnits: -1.0,
+    userData: {
+      faceToQuat: true,
+      opacityDiscardLimit: 0.01,
+    },
+    shininess: 1,
+    specular: 0xaaaaaa,
+  });
+
+  const depthMaterial = new InstancesDepthMaterial({
+    depthPacking: THREE.RGBADepthPacking,
+    alphaTest: 0.5,
+    userData: {
+      faceToQuat: true,
+    },
+  });
+
+  const geometry = new THREE.PlaneBufferGeometry(0.2, 10);
+  geometry.rotateX(Math.PI * 0.5);
+  geometry.translate(0, 0.1, 0);
+
+  const instancedMesh2 = createInstancedMesh({
+    geometry,
+    count: adjustedPoints.length * 2,
+    offset: new THREE.Vector3(0, 0, 0),
+    name: 'trackMarkInstance',
+    material: mat,
+    depthMaterial,
+    positions,
+    quaternions,
+    scaleFunc,
+    shadow: {
+      cast: false,
+      receive: true,
+    },
+  });
+  console.log({instancedMesh2  });
+  //instancedMesh2.position.y += 0.1;
+
+  
+  scene.add(instancedMesh2);
 };
 
 // create custom material with vertex clipping and proper alpha

@@ -10,7 +10,7 @@ export const trackCrossSection = (trackParams) => {
   shape.moveTo(0, trackParams.trackHalfWidth);
   shape.lineTo(0, -trackParams.trackHalfWidth);
   return shape;
-}
+};
 
 export const trackUVGenerator = {
   generateTopUV(geometry, vertices, indexA, indexB, indexC) {
@@ -175,11 +175,11 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
       receive: true,
     },
   });
-  console.log({instancedMesh2  });
+  console.log({instancedMesh2 });
   //instancedMesh2.position.y += 0.1;
 
   
-  scene.add(instancedMesh2);
+  //scene.add(instancedMesh2);
 };
 
 // create custom material with vertex clipping and proper alpha

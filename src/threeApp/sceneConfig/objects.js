@@ -2,15 +2,13 @@ import * as THREE from 'three';
 
 import { trackCrossSection, trackUVGenerator } from '../custom/geometries/track';
 import { trackKerbCrossSection, getIncludeSegments } from '../custom/geometries/trackKerb';
-import { grassCrossSectionL, grassCrossSectionR } from '../custom/geometries/grass';
+import { grassCrossSectionL, grassCrossSectionR, grassEdgeL, grassUVGenerator } from '../custom/geometries/grass';
 import { treesCrossSection } from '../custom/geometries/trees';
 import { barriersCrossSection, barriersUVGenerator } from '../custom/geometries/barriers';
 import { fencesCrossSection } from '../custom/geometries/fences';
 import { getTerrainCurve } from '../custom/geometries/terrain';
 import { terrainCrossSection } from '../custom/geometries/terrainSmall';
 import { racingLineCrossSection } from '../custom/geometries/racingLine';
-
-import { trackParams } from '../custom/geometries/trackParams';
 
 import { createVehicle } from '../custom/geometries/vehicle';
 
@@ -74,7 +72,7 @@ export const objectsIndex = (trackParams) => ([
     position: [0, 0.1, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'roadRacingLine',
+    material: 'mappedFlat',//roadRacingLine',
     shadows: {
       receive: true,
       cast: false,
@@ -167,7 +165,7 @@ export const objectsIndex = (trackParams) => ([
       {
         steps: trackParams.steps,
         depth: 0,
-        // UVGenerator: trackUVGenerator,
+        //UVGenerator: grassUVGenerator,
         extrudePath: trackParams.centerLine,
         widthFactor: trackParams.widthFactor,
         autoCloseShape: true,
@@ -211,6 +209,30 @@ export const objectsIndex = (trackParams) => ([
       friction: 100,
       restitution: 0.5,
     },
+    shadows: {
+      receive: true,
+      cast: false,
+    },
+    add: true,
+  },
+  {
+    name: 'grassEdgeL',
+    type: 'ExtrudeGeometry',
+    params: [
+      grassEdgeL(trackParams),
+      {
+        steps: trackParams.steps,
+        depth: 0,
+        UVGenerator: barriersUVGenerator,
+        extrudePath: trackParams.centerLine,
+        widthFactor: trackParams.widthFactor,
+        autoCloseShape: true,
+      },
+    ],
+    position: [0, 0, 0],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    material: 'GrassEdgeMaterial',
     shadows: {
       receive: true,
       cast: false,

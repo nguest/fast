@@ -1,7 +1,13 @@
 import * as THREE from 'three';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
-import { createSampledInstanceMesh, createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
-import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
+import {
+  createSampledInstanceMesh,
+  createInstancedMesh,
+} from '../../helpers/InstancedBufferGeometry';
+import {
+  InstancesStandardMaterial,
+  InstancesDepthMaterial,
+} from '../materials/InstancesStandardMaterials';
 import { patchShader } from '../../materials/extend';
 import { rand } from '../../helpers/helpers';
 
@@ -28,7 +34,7 @@ export const trackUVGenerator = {
     ];
   },
 
-  generateSideWallUV(geometry, vertices, indexA, indexB, indexC, indexD ) {
+  generateSideWallUV(geometry, vertices, indexA, indexB, indexC, indexD) {
     // const kx = 1;//0.1
     // const ky = 1;//10
     // const kz = 1;//0.1
@@ -64,7 +70,6 @@ export const trackUVGenerator = {
 };
 
 export const decorateTrack = (trackMesh, scene, trackParams, material) => {
-
   //const helper = new THREE.VertexNormalsHelper(trackMesh, 2, 0x00ff00, 1);
   //scene.add(helper);
 
@@ -77,28 +82,28 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
     name: 'trackMarks',
     lookAtNormal: true,
     scaleFunc: () => rand(2),
-    //rotateFunc: () => new Vector3(Math.PI * 0.5
+    // rotateFunc: () => new Vector3(Math.PI * 0.5
   });
   instancedMesh.position.y = 0.1;
 
-  //scene.add(instancedMesh);
+  // scene.add(instancedMesh);
 
-
-  /// TRY NO 2
-  // 
+  // TRY NO 2
+  //
   const pointsCount = Math.floor(trackParams.steps * 1);
   const curve = new THREE.CatmullRomCurve3(trackParams.racingLine);
 
   const points = curve.getSpacedPoints(pointsCount);
   const { binormals } = computeFrenetFrames(curve, pointsCount);
 
-  const adjustedPoints = points.reduce((a, p, i) => (
-    [
+  const adjustedPoints = points.reduce(
+    (a, p, i) => [
       ...a,
       p.clone().sub(binormals[i].clone().multiplyScalar(1 * rand(1))),
       p.clone().sub(binormals[i].clone().multiplyScalar(-(1 * rand(1)))),
-    ]
-  ), []);
+    ],
+    [],
+  );
 
   const positions = [];
   const quaternions = [];
@@ -115,12 +120,7 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
     const angleX = binormals[Math.floor(i * 0.5)].angleTo(x);
     dummyQuat.setFromAxisAngle(up, angleX);
 
-    quaternions.push(
-      dummyQuat.x,
-      dummyQuat.y,
-      dummyQuat.z,
-      dummyQuat.w,
-    );
+    quaternions.push(dummyQuat.x, dummyQuat.y, dummyQuat.z, dummyQuat.w);
   }
 
   const scaleFunc = (i) => {
@@ -136,7 +136,7 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
     side: THREE.DoubleSide,
     polygonOffset: true,
     polygonOffsetFactor: -1,
-    //transparent: true,
+    // transparent: true,
     opacity: 0.1,
     renderOrder: 1,
     polygonOffsetUnits: -1.0,
@@ -175,11 +175,9 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
       receive: true,
     },
   });
-  console.log({instancedMesh2 });
-  //instancedMesh2.position.y += 0.1;
+  // instancedMesh2.position.y += 0.1;
 
-  
-  //scene.add(instancedMesh2);
+  // scene.add(instancedMesh2);
 };
 
 // create custom material with vertex clipping and proper alpha
@@ -212,8 +210,7 @@ TrackMarksMaterial.onBeforeCompile = (shader) => {
     // },
     vertex: {
       project_vertex: {
-        '@gl_Position = projectionMatrix * mvPosition;':
-        `
+        '@gl_Position = projectionMatrix * mvPosition;': `
         gl_Position = projectionMatrix * mvPosition;
         if (gl_Position.z > clipDistance) gl_Position.w = 0.0/0.0;
         `,
@@ -225,7 +222,7 @@ TrackMarksMaterial.customDistanceMaterial = CustomDistanceMaterial;
 
 const CustomDistanceMaterial = new THREE.MeshDistanceMaterial({
   depthPacking: THREE.RGBADepthPacking,
-  alphaTest: 0.5
+  alphaTest: 0.5,
 });
 
 CustomDistanceMaterial.onBeforeCompile = (shader) => {
@@ -246,7 +243,7 @@ CustomDistanceMaterial.onBeforeCompile = (shader) => {
  
         vec4 mvPosition = modelMatrix * vec4( vPosition, 1.0 );
         transformed = vPosition;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( transformed, 1.0 );`,
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( transformed, 1.0 );`
   );
 
   shader.fragmentShader = `

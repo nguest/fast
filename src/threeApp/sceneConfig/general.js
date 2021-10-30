@@ -58,7 +58,7 @@ export const Config = {
     near: 0.1,
     far: 10000,
     aspect: 1,
-    position: [0, 1.45, -4.5],
+    position: [0, 1.15, -4.5],
     ß: 30,
     clipDistance: 20,
   },
@@ -71,7 +71,7 @@ export const Config = {
     zoomSpeed: 0.8,
     minDistance: 2,
     maxDistance: 20000,
-    minPolarAngle: -Math.PI / 2,
+    minPolarAngle: -Math.PI / 4,
     maxPolarAngle: Math.PI / 2,
     minAzimuthAngle: -Infinity,
     maxAzimuthAngle: Infinity,
@@ -85,3 +85,7 @@ export const Config = {
   },
   gravity: [0, -10, 0],
 };
+
+const debugObjectFilter = (obj) => {
+
+}

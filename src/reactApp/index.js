@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { jsx } from '@emotion/core';
 import { ThreeContainer } from './ThreeContainer';
 import { TrackMap } from './TrackMap';
-
+import { Speedo } from './Speedo';
 import { styles } from './styles';
 
 export const App = () => {
@@ -28,6 +28,7 @@ export const App = () => {
         trackParams={trackParams}
       />
       <TrackMap gamePosition={gamePosition} trackParams={trackParams} />
+      <Speedo speed={status?.speed || 0} maxSpeed={250} />
     </div>
   );
 };

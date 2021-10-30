@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { getObjByName, getObjectsByType } from './helpers';
 
-export const decorateCar = (car, brakelights, scene) => {
+export const decorateCar = (car, scene) => {
   // add wheels to base meshes
   const wheel = getObjByName(scene, 'wheel');
   const wheelMeshes = getObjectsByType(scene, 'wheelMesh');
@@ -97,6 +97,16 @@ export const decorateCar = (car, brakelights, scene) => {
   return { car, brakeLights };
 };
 
+// set chassisMesh in position, attach car and decorate;
+export const createCar = (scene) => {
+  const chassisMesh = getObjByName(scene, 'chassisMesh');
+  const baseCar = getObjByName(scene, 'porsche_911gt2');
+  const { car, brakeLights } = decorateCar(baseCar, scene);
+  chassisMesh.add(car);
+  return { chassisMesh, brakeLights };
+};
+
+// create false shadow underneath car
 const createShadow = () => {
   const shadowPlane = new THREE.PlaneBufferGeometry(200, 470);
   shadowPlane.translate(0, 0, -5);

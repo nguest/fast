@@ -6,21 +6,10 @@ import { trackOptions } from '../../threeApp/sceneConfig/tracks';
 
 import { styles } from './styles';
 
-
-export const DebugBox = ({
-  status,
-  threeRootElement,
-  gamePosition,
-  trackParams,
-  selectedTrack,
-  setSelectedTrack,
-}) => {
+export const DebugBox = ({ status, threeRootElement, gamePosition, trackParams, selectedTrack, setSelectedTrack }) => {
   return (
     <section css={styles.debugBox}>
-      <button
-        css={styles.resetButton}
-        onClick={() => threeRootElement.current.resetObjects(0)}
-      >
+      <button css={styles.resetButton} onClick={() => threeRootElement.current.resetObjects(0)}>
         Reset
       </button>
       <button
@@ -39,45 +28,31 @@ export const DebugBox = ({
         css={styles.button}
         onClick={() => threeRootElement.current.resetObjects(gamePosition.gate > 0 ? gamePosition.gate - 10 : gamePosition.gate)}
       >
-          &lt; 10
+        &lt; 10
       </button>
       <button
         css={styles.button}
         onClick={() => threeRootElement.current.resetObjects(gamePosition.gate < 500 ? gamePosition.gate + 10 : gamePosition.gate)}
       >
-          &gt; 10
+        &gt; 10
       </button>
       <section css={styles.info}>
-        <div css={styles.statusBar}>
-          { status }
-        </div>
-        <div css={styles.gamePosition}>
-          { `${gamePosition.gate} / ${trackParams.gateCount}` }
-        </div>
+        <div css={styles.statusBar}>{status?.message}</div>
+        <div css={styles.gamePosition}>{`${gamePosition.gate} / ${trackParams.gateCount}`}</div>
       </section>
-      <select
-        onChange={(e) => setSelectedTrack(e.target.value)}
-        value={selectedTrack}
-      >
-        {
-          trackOptions.map((option) => {
-            return (
-              <option
-                key={option.name}
-                value={option.name}
-              >
-                { option.name }
-              </option>
-            );
-          })
-        }
+      <select onChange={(e) => setSelectedTrack(e.target.value)} value={selectedTrack}>
+        {trackOptions.map((option) => (
+          <option key={option.name} value={option.name}>
+            {option.name}
+          </option>
+        ))}
       </select>
     </section>
   );
 };
 
 DebugBox.propTypes = {
-  status: string,
+  status: object,
   gamePosition: object,
   threeRootElement: object,
   trackParams: object,

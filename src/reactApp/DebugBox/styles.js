@@ -3,7 +3,7 @@
 export const styles = {
   debugBox: {
     position: 'absolute',
-    bottom: 5,
+    bottom: -160,
     right: 5,
     zIndex: 10,
     width: 200,

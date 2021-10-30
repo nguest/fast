@@ -22,7 +22,7 @@ export const createRacingLine = (centerLine, cpCount, trackHalfWidth) => {
   const cpPoints = getSpacedPoints(centerLine, cpCount);
 
   const t2 = performance.now();
-  const { racingLineSpline, edgeTouches, apexIndices } = splineMethod(cpPoints, binormals, tangents, trackHalfWidth);
+  const { racingLine, edgeTouches, apexIndices } = splineMethod(cpPoints, binormals, tangents, trackHalfWidth);
   const t3 = performance.now();
   console.info(`SplineMethod took ${t3 - t2} ms with ${cpCount} nodes`);
   const apexes = apexIndices.map((apexDets) => ({
@@ -30,20 +30,20 @@ export const createRacingLine = (centerLine, cpCount, trackHalfWidth) => {
     binormal: binormals[apexDets.idx],
     ...apexDets,
   }));
-  return { apexes, racingLine: racingLineSpline };
+  return { apexes, racingLine };
 
   // add line objects
 
   // render centerline
-  const cpGeometry = new THREE.BufferGeometry().setFromPoints(cpPoints);
-  const cpLineObj = new THREE.Line(cpGeometry, mat.red);
+  // const cpGeometry = new THREE.BufferGeometry().setFromPoints(cpPoints);
+  // const cpLineObj = new THREE.Line(cpGeometry, mat.red);
 
-  cpGeometry.computeBoundingSphere();
-  const c = cpLineObj.geometry.boundingSphere;
-  camera.threeCamera.position.set(c.center.x, 1000, c.center.z);
-  camera.threeCamera.lookAt(c.center.x, 0, c.center.z);
+  // cpGeometry.computeBoundingSphere();
+  // const c = cpLineObj.geometry.boundingSphere;
+  // camera.threeCamera.position.set(c.center.x, 1000, c.center.z);
+  // camera.threeCamera.lookAt(c.center.x, 0, c.center.z);
 
-  scene.add(cpLineObj);
+  // scene.add(cpLineObj);
 
   // render track edges
   const s = trackHalfWidth;

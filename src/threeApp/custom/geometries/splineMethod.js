@@ -3,7 +3,7 @@
 
 export const splineMethod = (cpPoints, binormals, tangents, trackHalfWidth) => {
   const displacement = new Array(cpPoints.length).fill(0);
-  const racingLineSpline = cpPoints.map((p) => p.clone());
+  const racingLine = cpPoints.map((p) => p.clone());
   const nIterations = 5;
   const edgeTouches = {};
   const tolerance = 0.5;
@@ -12,11 +12,11 @@ export const splineMethod = (cpPoints, binormals, tangents, trackHalfWidth) => {
   const beta = 0.2; // curvature
 
   for (let i = 0; i < nIterations; i++) {
-    for (let j = 0; j < racingLineSpline.length; j++) {
+    for (let j = 0; j < racingLine.length; j++) {
       // Get locations of neighbour nodes
-      const pointRight = racingLineSpline[(j + 1) % racingLineSpline.length].clone();
-      const pointLeft = racingLineSpline[(j + racingLineSpline.length - 1) % racingLineSpline.length].clone();
-      const pointMiddle = racingLineSpline[j].clone();
+      const pointRight = racingLine[(j + 1) % racingLine.length].clone();
+      const pointLeft = racingLine[(j + racingLine.length - 1) % racingLine.length].clone();
+      const pointMiddle = racingLine[j].clone();
 
       // Create vectors to neighbours & normalize
       const vectorLeft = pointLeft.clone().sub(pointMiddle).normalize();
@@ -35,8 +35,8 @@ export const splineMethod = (cpPoints, binormals, tangents, trackHalfWidth) => {
       displacement[j] += (dotProduct * alpha);
 
       // Curvature
-      // displacement[(j + 1) % racingLineSpline.length] += dotProduct * -beta;
-      // displacement[(j + racingLineSpline.length) % racingLineSpline.length] += dotProduct * -beta;
+      // displacement[(j + 1) % racingLine.length] += dotProduct * -beta;
+      // displacement[(j + racingLine.length) % racingLine.length] += dotProduct * -beta;
 
       // create weights of points as they approach edge
       if (
@@ -56,18 +56,18 @@ export const splineMethod = (cpPoints, binormals, tangents, trackHalfWidth) => {
       if (displacement[j] >= trackHalfWidth) displacement[j] = trackHalfWidth;
       if (displacement[j] <= -trackHalfWidth) displacement[j] = -trackHalfWidth;
 
-      racingLineSpline[j] = cpPoints[j].clone().add(binormals[j].clone().multiplyScalar(displacement[j]));
+      racingLine[j] = cpPoints[j].clone().add(binormals[j].clone().multiplyScalar(displacement[j]));
     }
   }
 
-  // hmmm....
-  racingLineSpline[0] = cpPoints[0].clone();
-  racingLineSpline[cpPoints.length - 1] = cpPoints[cpPoints.length - 1].clone();
+  // hmmm.... need to work out what to do at end/finish
+  racingLine[0] = cpPoints[0].clone();
+  racingLine[cpPoints.length - 1] = cpPoints[cpPoints.length - 1].clone();
 
 
   const apexIndices = edgeTouchesFilter(edgeTouches);
 
-  return { racingLineSpline, edgeTouches, apexIndices };
+  return { racingLine, edgeTouches, apexIndices };
 };
 
 // create simple array of best edgeTouches

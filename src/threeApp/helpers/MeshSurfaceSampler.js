@@ -128,10 +128,10 @@ export const MeshSurfaceSampler = (function () {
       let u = (this.uv && this.uv.u) || Math.random();
       let v = (this.uv && this.uv.v) || Math.random();
 
-      // if (u + v > 1) {
-      //   u = 1 - u;
-      //   v = 1 - v;
-      // }
+      if (u + v > 1) {
+        u = 1 - u;
+        v = 1 - v;
+      }
 
       face.a.fromBufferAttribute(this.positionAttribute, faceIndex * 3);
       face.b.fromBufferAttribute(this.positionAttribute, faceIndex * 3 + 1);
@@ -144,7 +144,7 @@ export const MeshSurfaceSampler = (function () {
         .addScaledVector(face.c, 1 - (u + v));
 
       face.getNormal(targetNormal);
-      
+
       return this;
     },
 

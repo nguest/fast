@@ -4,38 +4,88 @@ import { createSampledInstanceMesh, createInstancedMesh } from '../../helpers/In
 import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
 import { getQuatFromNormal, rand } from '../../helpers/helpers';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
-
+import { Vector3 } from 'three';
 
 export const grassCrossSectionR = (trackParams) => {
   const shape = new THREE.Shape();
   shape.moveTo(0.1, -trackParams.trackHalfWidth + 0.3);
-  shape.lineTo(-0.7, -trackParams.vergeWidth - 2);
+  shape.lineTo(-0.7, -trackParams.vergeWidth - 5);
   return shape;
 };
 
 export const grassCrossSectionL = (trackParams) => {
   const shape = new THREE.Shape();
-  shape.moveTo(-0.7, trackParams.vergeWidth + 2);
+  shape.moveTo(-0.7, trackParams.vergeWidth + 5);
   shape.lineTo(0.1, trackParams.trackHalfWidth - 0.3);
   return shape;
 };
 
-//export const grassCrossSection = [grassCrossSection1, grassCrossSection2];
+export const grassEdgeL = (trackParams) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.65, trackParams.trackHalfWidth + trackParams.vergeWidth - 0.3);
+  shape.lineTo(-2.5, trackParams.trackHalfWidth + trackParams.vergeWidth - 0.3);
+  return shape;
+};
 
-const createGrassClumps = (mesh, scene) => {
-  const plane = new THREE.PlaneBufferGeometry(0.5, 0.25);
+export const grassUVGenerator = {
+  generateTopUV(geometry, vertices, indexA, indexB, indexC) {
+    const aX = vertices[indexA * 3];
+    const aY = vertices[indexA * 3 + 1];
+    const bX = vertices[indexB * 3];
+    const bY = vertices[indexB * 3 + 1];
+    const cX = vertices[indexC * 3];
+    const cY = vertices[indexC * 3 + 1];
 
-  plane.translate(0, 0.125, 0);
+    return [new THREE.Vector2(aX * 0.1, aY), new THREE.Vector2(bX * 0.1, bY), new THREE.Vector2(cX * 0.1, cY)];
+  },
+
+  // generateSideWallUV(geometry, vertices, indexA, indexB, indexC, indexD) {
+  //   // simple uv 1:1 mapping:
+  //   return [
+  //     new THREE.Vector2(0, 10),
+  //     new THREE.Vector2(1, 10),
+  //     new THREE.Vector2(1, 0),
+  //     new THREE.Vector2(0, 0),
+  //   ];
+  // },
+};
+
+// export const grassCrossSection = [grassCrossSection1, grassCrossSection2];
+
+const createGrassClumps = (mesh, scene, materials) => {
+  const plane = new THREE.PlaneBufferGeometry(1, 1);
+  const up = new Vector3(0, 1, 0);
+
+  //   var uvAttribute = plane.attributes.uv;
+  //   console.log({ uvAttribute });
+
+  // for ( var i = 0; i < uvAttribute.count; i ++ ) {
+
+  //     var u = uvAttribute.getX( i );
+  //     var v = uvAttribute.getY( i );
+
+  //     // do something with uv
+
+  //     // write values back to attribute
+
+  //     uvAttribute.setXY( i, -u, -v );
+
+  // }
 
   const instancedMesh = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh,
-    material: GrassClumpMaterial,
-    count: 100000,
+    material: materials.red, //['GrassEdgeMaterial'],//GrassClumpMaterial,
+    count: 300000,
     name: 'grassClumps',
     lookAtNormal: true,
-    scaleFunc: () => rand(2),
-    rotateFunc: () => rand(0.5),
+    // scaleFunc: () => rand(10),
+    translateFunc: (v) => v.translateOnAxis(up, -0.5),
+    rotateFunc: (v) => {
+      v.rotateX(Math.PI * 0.5);
+      v.rotateY(-Math.PI * 0.5);
+      v.rotateZ(Math.PI);
+    },
   });
   scene.add(instancedMesh);
 };
@@ -44,7 +94,6 @@ const createDirt = (mesh, scene, trackParams) => {
   const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.steps);
   const centerLinePoints = trackParams.centerLine.getSpacedPoints(trackParams.steps);
 
-
   //const plane = new THREE.PlaneBufferGeometry(4, 1);
   const plane = new THREE.PlaneBufferGeometry(10, 1.5);
 
@@ -52,9 +101,9 @@ const createDirt = (mesh, scene, trackParams) => {
   // plane.rotateY(-Math.PI / 2);
   // plane.rotateZ(-Math.PI / 2);
 
-  const loader = new THREE.TextureLoader()
+  const loader = new THREE.TextureLoader();
   const map = loader.load('./assets/textures/sand2_map.png');
-  map.repeat.set(1,1);
+  map.repeat.set(1, 1);
   map.wrapS = THREE.MirroredRepeatWrapping;
   map.wrapT = THREE.MirroredRepeatWrapping;
 
@@ -68,26 +117,8 @@ const createDirt = (mesh, scene, trackParams) => {
     opacity: 1.0,
     map,
     //renderOrder: 1,
-  
   });
-  // const material = new InstancesStandardMaterial({
-  //   side: THREE.DoubleSide,
-  //   //depthFunc: THREE.LessDepth,
-  //   color: 0xff0000,
-  //   userData: {
-  //     faceToQuat: true,
-  //   },
-  //   polygonOffset: true,
-  //   polygonOffsetFactor: -1,
-  // });
 
-  const depthMaterial = new InstancesDepthMaterial({
-    depthPacking: THREE.RGBADepthPacking,
-    alphaTest: 0.5,
-    userData: {
-      faceToQuat: true,
-    },
-  });
 
   // const dummyQuat = new THREE.Quaternion();
   // const dummyRot = new THREE.Vector3();
@@ -126,9 +157,6 @@ const createDirt = (mesh, scene, trackParams) => {
   //   quaternions.push(quat.x, quat.y, quat.z, quat.w);
   // }
 
-  
-
-
   // const instancedMesh = createInstancedMesh({
   //   geometry: plane,
   //   count,//Math.floor(trackParams.length / 4),
@@ -159,15 +187,15 @@ const createDirt = (mesh, scene, trackParams) => {
   scene.add(instancedMesh);
 };
 
-export const decorateGrass = (mesh, scene, trackParams) => {
-  createGrassClumps(mesh, scene);
+export const decorateGrass = (mesh, scene, trackParams, materials) => {
+  createGrassClumps(mesh, scene, materials);
   createDirt(mesh, scene, trackParams);
 };
 
 // create custom material with vertex clipping and proper alpha
 const GrassClumpMaterial = new THREE.MeshLambertMaterial({
   color: 0xaaaaaa,
-  map: new THREE.TextureLoader().load('./assets/textures/grassClump64_map.png'),
+  map: new THREE.TextureLoader().load('./assets/textures/grass_alpha.png'),
   side: THREE.DoubleSide,
 });
 
@@ -178,14 +206,12 @@ GrassClumpMaterial.onBeforeCompile = (shader) => {
     },
     header: 'uniform float clipDistance;',
     fragment: {
-      'gl_FragColor = vec4( outgoingLight, diffuseColor.a );':
-      `if ( diffuseColor.a < 0.95 ) discard; // remove low alpha values
+      'gl_FragColor = vec4( outgoingLight, diffuseColor.a );': `if ( diffuseColor.a < 0.95 ) discard; // remove low alpha values
       gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`,
     },
     vertex: {
       project_vertex: {
-        '@gl_Position = projectionMatrix * mvPosition;':
-        `
+        '@gl_Position = projectionMatrix * mvPosition;': `
         gl_Position = projectionMatrix * mvPosition;
         if (gl_Position.z > clipDistance) gl_Position.w = 0.0/0.0;
         `,
@@ -193,7 +219,6 @@ GrassClumpMaterial.onBeforeCompile = (shader) => {
     },
   });
 };
-
 
 const loader = new THREE.TextureLoader();
 
@@ -222,8 +247,7 @@ GrassMaterial.onBeforeCompile = (shader) => {
       // '#include <fog_vertex>': 'vEye = normalize(cameraPosition - w.xyz);',
       // Replaces a line (@ prefix) inside of the project_vertex include
       project_vertex: {
-        '@gl_Position = projectionMatrix * mvPosition;':
-        `
+        '@gl_Position = projectionMatrix * mvPosition;': `
         gl_Position = projectionMatrix * mvPosition;
         if (gl_Position.z > clipDistance) gl_Position.w = 0.0/0.0;
         `,

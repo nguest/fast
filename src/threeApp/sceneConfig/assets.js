@@ -2,17 +2,18 @@ export const assetsIndex = {
   images: {
     Perlin: { name: 'Perlin', path: './assets/textures/perlin_map.png' },
     Skybox: { name: 'Skybox', path: './assets/textures/skybox5-256.png', type: '4x3' },
-
   },
   textures: {
     Asphalt: { name: 'Asphalt', path: './assets/textures/asphalt.jpg' },
     Billboards: { name: 'Billboards', path: './assets/textures/billboards_map.jpg' },
+    Bumpy_Normal: { name: 'Bumpy_Normal', path: './assets/textures/bumpy-normal.jpg' },
     Concrete_Map: { name: 'Concrete_Map', path: './assets/textures/concrete_map.png' },
     Concrete_Normal: { name: 'Concrete_Normal', path: './assets/textures/concrete_normal.png' },
     Darkstone_Map: { name: 'Darkstone_Map', path: './assets/textures/darkstone_map.jpg' },
     Forest_Map: { name: 'Forest_Map', path: './assets/textures/forest.png' },
     Grass_Map: { name: 'Grass_Map', path: './assets/textures/grass_map_sq_512.jpg' },
     Grass_Normal: { name: 'Grass_Normal', path: './assets/textures/grass_normal.jpg' },
+    Grass_Alpha: { name: 'Grass_Alpha', path: './assets/textures/grass_alpha.png' },
     GuardRails_Map: { name: 'GuardRails_Map', path: './assets/textures/guardrails_map.jpg' },
     Chainlink_Map: { name: 'Chainlink_Map', path: './assets/textures/chainlink_map.png' },
     GuardRails_Normal: { name: 'GuardRails_Normal', path: './assets/textures/guardrails_normal.jpg' },
@@ -28,7 +29,6 @@ export const assetsIndex = {
     Skyline_Map: { name: 'Skyline_Map', path: './assets/textures/skyline2_map.png' },
     TestQuadrants_Map: { name: 'TestQuadrants_Map', path: './assets/textures/testQuadrants_map.jpg' },
     Tree_Map: { name: 'Tree_Map', path: './assets/textures/tree_map.png' },
-    UVGrid: { name: 'UVGrid', path: './assets/textures/UV_Grid_Sm.png' },
-
+    UVGrid: { name: 'UVGrid', path: './assets/textures/UV_Grid_Sm.jpg' },
   },
 };

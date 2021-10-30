@@ -11,7 +11,7 @@ const ZERO_QUATERNION = new THREE.Quaternion(0, 0, 0, 1);
 
 let engineForce = 0;
 let vehicleSteering = 0;
-let breakingForce = 0;
+let brakingForce = 0;
 
 const steeringIncrement = 0.001;
 const steeringClamp = 0.5;
@@ -180,21 +180,24 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
   const vehicle = chassisMesh.userData.physicsBody;
   const speed = vehicle.getCurrentSpeedKmHour();
 
-  if (speed >= 0.0 && frameCount === 1) showStatus(`${(speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(0)} km/h`);
+  if (speed >= 0.0 && frameCount === 1) {
+    const roundedSpeed = Math.abs(speed).toFixed(0);
+    showStatus({ message: `${(speed < 0 ? '(R) ' : '') + roundedSpeed}} km/h`, speed: roundedSpeed });
+  }
 
-  breakingForce = 10;
+  brakingForce = 10;
   engineForce = 0;
 
   if (interaction.keyboard.pressed('W')) {
-    if (speed < -1) breakingForce = maxBreakingForce;
+    if (speed < -1) brakingForce = maxBreakingForce;
     else {
       engineForce = maxEngineForce;
-      breakingForce = 0;
+      brakingForce = 0;
     }
     setBrakeLights(brakeLights, false);
   }
   if (interaction.keyboard.pressed('S')) {
-    if (speed > 1 || speed < -20) breakingForce = maxBreakingForce;
+    if (speed > 1 || speed < -20) brakingForce = maxBreakingForce;
     else engineForce = -maxEngineForce / 2;
   }
   if (interaction.keyboard.down('S')) {
@@ -219,10 +222,10 @@ export const updateVehicle = (dt, chassisMesh, interaction, brakeLights, showSta
   vehicle.applyEngineForce(engineForce, BACK_LEFT);
   vehicle.applyEngineForce(engineForce, BACK_RIGHT);
 
-  vehicle.setBrake(breakingForce / 2, FRONT_LEFT);
-  vehicle.setBrake(breakingForce / 2, FRONT_RIGHT);
-  vehicle.setBrake(breakingForce, BACK_LEFT);
-  vehicle.setBrake(breakingForce, BACK_RIGHT);
+  vehicle.setBrake(brakingForce / 2, FRONT_LEFT);
+  vehicle.setBrake(brakingForce / 2, FRONT_RIGHT);
+  vehicle.setBrake(brakingForce, BACK_LEFT);
+  vehicle.setBrake(brakingForce, BACK_RIGHT);
 
   vehicle.setSteeringValue(vehicleSteering, FRONT_LEFT);
   vehicle.setSteeringValue(vehicleSteering, FRONT_RIGHT);

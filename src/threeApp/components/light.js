@@ -49,9 +49,7 @@ export class Light {
   }
 
   addLight() {
-    if (this.params.addToScene) {
-      this.scene.add(this.light);
-    }
+    this.scene.add(this.light);
     return this.light;
   }
 

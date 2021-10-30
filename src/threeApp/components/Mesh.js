@@ -3,7 +3,6 @@ import Ammo from 'ammonext';
 import { GLTFLoader } from '../loaders/GLTFLoader';
 import { ExtrudeBufferGeometry } from '../helpers/ExtrudeGeometry';
 
-
 export class Mesh {
   constructor({
     add,
@@ -63,28 +62,7 @@ export class Mesh {
           uv = geometry.attributes.uv.array;
         }
         geometry.setAttribute('uv2', new THREE.BufferAttribute(uv, 2));
-        if (name === 'barriers') {
-          // console.log({ xxx: geometry.attributes.position.count * 3 })
-          // geometry.clearGroups(); // just in case
-
-          // for (let i = 0; i < geometry.attributes.position.count * 3; i+=50) {
-          //   geometry.addGroup( i, i+50, 0 ); // first 3 vertices use material 0
-          //   geometry.addGroup( i+50, i+50, 1 ); // next 3 vertices use materia
-          // }
-          // geometry.addGroup( 0, 100, 0 ); // first 3 vertices use material 0
-          // geometry.addGroup( 100, Infinity, 1 ); // next 3 vertices use material 1
-          // geometry.addGroup( 200, Infinity, 0 ); // remaining vertices use material 2
-          // console.log({ttt:geometry})
-
-        }
       }
-
-      // return [
-      //   new THREE.Vector2(0, 1),
-      //   new THREE.Vector2(1, 1),
-      //   new THREE.Vector2(1, 0),
-      //   new THREE.Vector2(0, 0),
-      // ];
 
       if (params === 'custom') {
         if (customFunction) {
@@ -92,9 +70,7 @@ export class Mesh {
         }
         // must be custom type
         if (!calculateVertices || !calculateFaces) {
-          throw new Error(
-            'calculateVertices and calculateFaces Functions must be defined to calculate custom geometry',
-          );
+          throw new Error('calculateVertices and calculateFaces Functions must be defined to calculate custom geometry');
         }
         const vertices = calculateVertices();
         const faces = calculateFaces();
@@ -132,7 +108,6 @@ export class Mesh {
     });
   }
 
-
   orientObject(geometry, loadedMaterial) {
     if (this.geoRotate) {
       geometry.rotateX(this.geoRotate[0]);
@@ -141,7 +116,7 @@ export class Mesh {
     }
     this.mesh = new THREE.Mesh(geometry, loadedMaterial || this.material);
 
-
+    // extract this, just for experimentation
     if (this.name === 'barriers') {
       this.mesh.material.vertexColors = THREE.VertexColors;
       const vCount = this.mesh.geometry.attributes.position.count;
@@ -164,8 +139,7 @@ export class Mesh {
         const rand = Math.random();
 
         if (
-          (i % 4 === 0
-            || i % 20 === 0)
+          (i % 4 === 0 || i % 20 === 0)
           && rand > 0.5
           // || i % 4 === 0
           // || (i - 5) % 36 === 0
@@ -179,7 +153,7 @@ export class Mesh {
           }
         }
       }
-      this.mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));// .onUpload(disposeArray);
+      this.mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3)); // .onUpload(disposeArray);
     }
 
     this.mesh.position.set(...this.position);
@@ -219,16 +193,21 @@ export class Mesh {
     let colShape;
     switch (type) {
     case 'SphereBufferGeometry':
-      colShape = new Ammo.btSphereShape(params[0]); break;
+      colShape = new Ammo.btSphereShape(params[0]);
+      break;
     case 'BoxBufferGeometry':
-      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0], params[1], params[2])); break;
+      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0], params[1], params[2]));
+      break;
     case 'PlaneBufferGeometry':
-      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0] * 0.5, params[1] * 0.5, 0.2)); break;
+      colShape = new Ammo.btBoxShape(new Ammo.btVector3(params[0] * 0.5, params[1] * 0.5, 0.2));
+      break;
     case 'convexHull':
     case 'GLTF':
-      colShape = new Ammo.btConvexHullShape(convexGeometryProcessor(mesh.geometry), true, true); break;
+      colShape = new Ammo.btConvexHullShape(convexGeometryProcessor(mesh.geometry), true, true);
+      break;
     default:
-      colShape = new Ammo.btBvhTriangleMeshShape(concaveGeometryProcessor(mesh.geometry), true, true); break;
+      colShape = new Ammo.btBvhTriangleMeshShape(concaveGeometryProcessor(mesh.geometry), true, true);
+      break;
     }
 
     // colShape.setMargin(0.1);
@@ -246,7 +225,6 @@ export class Mesh {
     this.physicsWorld.bodies.push(mesh);
   }
 
-
   createCustom(physicsWorld) {
     this.mesh = this.customFunction({
       pos: new THREE.Vector3(...this.position),
@@ -262,9 +240,7 @@ export class Mesh {
 const concaveGeometryProcessor = (geometry) => {
   if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-  const data = geometry.isBufferGeometry
-    ? geometry.attributes.position.array
-    : new Float32Array(geometry.faces.length * 9);
+  const data = geometry.isBufferGeometry ? geometry.attributes.position.array : new Float32Array(geometry.faces.length * 9);
 
   if (!geometry.isBufferGeometry) {
     const { vertices } = geometry;
@@ -310,12 +286,7 @@ const concaveGeometryProcessor = (geometry) => {
     vec3.setY(data[i * 9 + 7]);
     vec3.setZ(data[i * 9 + 8]);
 
-    triangleMesh.addTriangle(
-      vec1,
-      vec2,
-      vec3,
-      false,
-    );
+    triangleMesh.addTriangle(vec1, vec2, vec3, false);
   }
 
   return triangleMesh;
@@ -324,9 +295,7 @@ const concaveGeometryProcessor = (geometry) => {
 export const convexGeometryProcessor = (geometry) => {
   if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-  const data = geometry.isBufferGeometry
-    ? geometry.attributes.position.array
-    : new Float32Array(geometry.faces.length * 9);
+  const data = geometry.isBufferGeometry ? geometry.attributes.position.array : new Float32Array(geometry.faces.length * 9);
 
   if (!geometry.isBufferGeometry) {
     const { vertices } = geometry;

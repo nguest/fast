@@ -3,6 +3,7 @@ import { patchShader } from './extend';
 import { Config } from '../sceneConfig/general';
 
 export const createMaterial = ({
+  alphaMap,
   blending = 'NormalBlending',
   bumpMap,
   clipping,
@@ -24,7 +25,7 @@ export const createMaterial = ({
   shininess = 30,
   side,
   smartAlpha = false,
-  specular,// = 0x000000,
+  specular, // = 0x000000,
   transparent,
   type,
   useVertexColors = false,
@@ -62,19 +63,6 @@ export const createMaterial = ({
       }
     }
 
-    // ({
-    //   color,
-    //   emissive,
-    //   flatShading,
-    //   name,
-    //   shininess,
-    //   side: THREE[side],
-    //   specular,
-    //   transparent,
-    //   wireframe,
-    //   vertexShader,
-    //   fragmentShader,
-    // });
     material.needsUpdate = true;
     material.uniformsNeedUpdate = true;
     return material;
@@ -90,7 +78,6 @@ export const createMaterial = ({
   });
 
   material.blending = THREE[blending];
-
   material.shininess = material.shininess !== undefined ? shininess : material.shininess;
   material.emissive = material.emissive !== undefined ? new THREE.Color(emissive) : new THREE.Color(material.emissive);
   material.specular = material.specular !== undefined ? new THREE.Color(specular) : new THREE.Color(material.specular);
@@ -101,13 +88,13 @@ export const createMaterial = ({
   material.polygonOffsetFactor = material.polygonOffsetFactor !== undefined ? polygonOffsetFactor : material.polygonOffsetFactor;
 
   if (smartAlpha) {
-    console.log({ SMART: name });
+    console.info({ SMARTALPHA: name });
 
     material.onBeforeCompile = (shader) => {
       patchShader(shader, {
         fragment: {
           'gl_FragColor = vec4( outgoingLight, diffuseColor.a );':
-          `if ( diffuseColor.a < 0.9 ) discard; // remove low alpha values
+          `if ( diffuseColor.a < 0.2 ) discard; // remove low alpha values
           gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`,
         },
       });
@@ -118,7 +105,7 @@ export const createMaterial = ({
     material.onBeforeCompile = (shader) => {
       patchShader(shader, {
         uniforms: {
-          clipDistance: Config.clipDistance,//200.0,
+          clipDistance: Config.clipDistance, // 200.0,
         },
         header: 'uniform float clipDistance;',
         vertex: {
@@ -134,18 +121,6 @@ export const createMaterial = ({
     };
   }
 
-  /*
-  [map, normalMap, bumpMap, lightMap].forEach((texture) => {
-    if (texture) {
-        material[texture] = assets[texture.name]
-        material[texture].wrapT = THREE[texture.wrapping] || THREE.RepeatWrapping;
-        material[texture].wrapS = THREE[texture.wrapping] || THREE.RepeatWrapping;
-        if (texture.repeat) material[texture].repeat.set(...texture.repeat);
-        if (texture.offset) material[texture].offset.set(...texture.offset);
-    }
-  })
-
-  */
   if (map) {
     material.map = assets[map.name];
     material.map.wrapT = THREE[map.wrapping] || THREE.RepeatWrapping;
@@ -171,7 +146,6 @@ export const createMaterial = ({
     if (bumpMap.repeat) material.normalMap.repeat.set(...bumpMap.repeat);
     if (bumpMap.offset) material.normalMap.offset.set(...bumpMap.offset);
     if (bumpMap.bumpScale) material.bumpScale = bumpMap.bumpScale;
-    // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
   }
   if (lightMap) {
     material.lightMap = assets[lightMap.name];
@@ -180,11 +154,19 @@ export const createMaterial = ({
     if (lightMap.repeat) material.lightMap.repeat.set(...lightMap.repeat);
     if (lightMap.offset) material.lightMap.offset.set(...lightMap.offset);
     material.lightMapIntensity = lightMap.lightMapIntensity || 1;
-    // if (lightMap.bumpScale) material.bumpScale = bumpMap.bumpScale;
-    // if (normalMap.normalScale) material.normalScale.set(...bumpMap.normalScale);
+  }
+  if (alphaMap) {
+    material.alphaMap = assets[alphaMap.name];
+    material.alphaMap.wrapT = THREE[alphaMap.wrapping] || THREE.RepeatWrapping;
+    material.alphaMap.wrapS = THREE[alphaMap.wrapping] || THREE.RepeatWrapping;
+    if (alphaMap.repeat) material.alphaMap.repeat.set(...alphaMap.repeat);
+    if (alphaMap.offset) material.alphaMap.offset.set(...alphaMap.offset);
+    if (alphaMap.rotation) material.alphaMap.rotation = alphaMap.rotation;
+
   }
   if (envMap) {
     material.envMap = assets[envMap.name];
   }
+
   return material;
 };

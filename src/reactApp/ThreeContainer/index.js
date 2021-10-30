@@ -52,7 +52,7 @@ export const ThreeContainer = ({
 
 ThreeContainer.propTypes = {
   setStatus: func,
-  status: string,
+  status: object,
   gamePosition: object,
   setGamePosition: func,
 };

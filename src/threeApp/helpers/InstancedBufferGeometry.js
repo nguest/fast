@@ -95,6 +95,7 @@ export const createSampledInstanceMesh = ({
   lookAtNormal,
   rotateFunc,
   scaleFunc,
+  translateFunc,
   uv,
 }) => {
   const geometry = new THREE.InstancedBufferGeometry().copy(baseGeometry);
@@ -103,32 +104,37 @@ export const createSampledInstanceMesh = ({
   const instancedMesh = new THREE.InstancedMesh(geometry, material, count);
   instancedMesh.name = name;
   instancedMesh.userData.type = 'instancedMesh';
+  instancedMesh.material.needsUpdate = true;
+  //instancedMesh.material.needsUpdate = true;
+  //material.uniformsNeedUpdate = true;
 
   const sampler = new MeshSurfaceSampler(mesh, uv)
-    .setWeightAttribute(null)
+    .setWeightAttribute(0)
     .build();
 
   const position = new THREE.Vector3();
   const normal = new THREE.Vector3();
-  const up = new THREE.Vector3(0, 1, 0);
   const dummy = new THREE.Object3D();
 
   for (let i = 0; i < count; i++) {
     sampler.sample(position, normal);
-    //let norm = new THREE.Vector3(0, normal.y, 0);
     normal.add(position);
     dummy.position.copy(position);
 
     if (lookAtNormal) {
       dummy.lookAt(normal);
-      if (rotateFunc) dummy.rotateOnWorldAxis(up, rotateFunc());
-      //dummy.rotation.set(Math.PI / 2, 0, 0)
+
+      if (rotateFunc) rotateFunc(dummy);
+      if (translateFunc) translateFunc(dummy);
     }
     if (scaleFunc) dummy.scale.setY(scaleFunc());
     dummy.updateMatrix();
     instancedMesh.setMatrixAt(i, dummy.matrix);
     instancedMesh.instanceMatrix.needsUpdate = true;
+    instancedMesh.material.needsUpdate = true;
   }
   instancedMesh.receiveShadow = true;
+  // instancedMesh.castShadow = true;
+
   return instancedMesh;
 };

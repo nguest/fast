@@ -28,7 +28,7 @@ export const App = () => {
         trackParams={trackParams}
       />
       <TrackMap gamePosition={gamePosition} trackParams={trackParams} />
-      <Speedo speed={status?.speed || 0} maxSpeed={250} />
+      <Speedo speed={status?.speed || '0'} maxSpeed="250" />
     </div>
   );
 };

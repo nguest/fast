@@ -36,6 +36,12 @@ export const DebugBox = ({ status, threeRootElement, gamePosition, trackParams, 
       >
         &gt; 10
       </button>
+      <button
+        css={styles.button}
+        onClick={() => threeRootElement.current.resetObjects(170)}
+      >
+        170
+      </button>
       <section css={styles.info}>
         <div css={styles.statusBar}>{status?.message}</div>
         <div css={styles.gamePosition}>{`${gamePosition.gate} / ${trackParams.gateCount}`}</div>

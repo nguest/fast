@@ -17,6 +17,7 @@ import { createMaterial } from '../materials';
 const zeroVector = new Ammo.btVector3(0, 0, 0);
 
 export const createObjects = (materials, trackParams, scene, manager, physicsWorld) => {
+  const t1 = performance.now();
   const objects = objectsIndex(trackParams)
     //.filter((obj) => obj.name === 'track' || obj.name === 'racingLine' || obj.name === 'car')
     .map((obj) => {
@@ -52,6 +53,8 @@ export const createObjects = (materials, trackParams, scene, manager, physicsWor
   // createTerrain(this.scene);
 
   const instancedMeshes = scene.children.filter((o) => o.userData.type === 'instancedMesh');
+  const t2 = performance.now();
+  console.info(`createObjects took ${t2 - t1} ms`);
   console.info({
     'this.scene': scene.children.filter((o) => o.userData.type !== 'gate'),
   });
@@ -84,7 +87,7 @@ export const loadAssets = (manager) => {
 
   const TexturePromiseLoader = promisifyLoader(new THREE.TextureLoader(manager));
   const texturesPromises = Object.values(assetsIndex.textures).map((texture) => {
-    console.info('loading texture: ', texture.path);
+   // console.info('loading texture: ', texture.path);
     return TexturePromiseLoader.load(texture.path);
   });
   const texturesAndFiles = { imagePromises, texturesPromises };
@@ -93,6 +96,7 @@ export const loadAssets = (manager) => {
 };
 
 export const createMaterials = async (filesAndTextures) => {
+  const t1 = performance.now();
   const { imagePromises, texturesPromises } = filesAndTextures;
   try {
     const r = await Promise.all([...imagePromises, ...texturesPromises]);
@@ -111,6 +115,8 @@ export const createMaterials = async (filesAndTextures) => {
       }),
       {},
     );
+    const t2 = performance.now();
+    console.info(`createMaterials took ${t2 - t1} ms with ${materialsIndex.length} materials`);
     return { materials, assets };
   } catch (err) {
     console.error('ERROR loading image', err);

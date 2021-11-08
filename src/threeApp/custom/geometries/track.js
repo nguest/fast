@@ -74,7 +74,7 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
   //scene.add(helper);
 
   const plane = new THREE.PlaneBufferGeometry(0.2, 10);
-  const instancedMesh = createSampledInstanceMesh({
+  const { instancedMesh } = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh: trackMesh,
     material: TrackMarksMaterial,

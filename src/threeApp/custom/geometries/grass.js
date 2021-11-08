@@ -53,7 +53,7 @@ export const grassUVGenerator = {
 // export const grassCrossSection = [grassCrossSection1, grassCrossSection2];
 
 const createGrassClumps = (mesh, scene, materials) => {
-  const plane = new THREE.PlaneBufferGeometry(1, 1);
+  const plane = new THREE.PlaneBufferGeometry(0.8, 0.8);
   const up = new Vector3(0, 1, 0);
 
   //   var uvAttribute = plane.attributes.uv;
@@ -72,14 +72,33 @@ const createGrassClumps = (mesh, scene, materials) => {
 
   // }
 
-  const instancedMesh = createSampledInstanceMesh({
+  const loader = new THREE.TextureLoader();
+  const map = loader.load('./assets/textures/tiledTrees_map.png');
+  //const map = loader.load('../assets/textures/grass_map_sq_512.jpg');
+  
+  const normalMap = loader.load('./assets/textures/tree_block_normal2.png');
+
+  const material = new InstancesStandardMaterial({
+    map,
+    side: THREE.DoubleSide,
+    normalMap,
+    normalScale: new THREE.Vector2(0.5, 0.5),
+    depthFunc: THREE.LessDepth,
+    color: 0x888888,
+    specular: 0x000000,
+    userData: {
+      //faceToCamera: true,
+    },
+  });
+
+  const { instancedMesh, positions } = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh,
-    material: materials.red, //['GrassEdgeMaterial'],//GrassClumpMaterial,
+    material,//: materials.red, //['GrassEdgeMaterial'],//GrassClumpMaterial,
     count: 300000,
     name: 'grassClumps',
     lookAtNormal: true,
-    // scaleFunc: () => rand(10),
+    scaleFunc: () => 1.25,
     translateFunc: (v) => v.translateOnAxis(up, -0.5),
     rotateFunc: (v) => {
       v.rotateX(Math.PI * 0.5);
@@ -87,7 +106,25 @@ const createGrassClumps = (mesh, scene, materials) => {
       v.rotateZ(Math.PI);
     },
   });
-  scene.add(instancedMesh);
+  const instancedMeshTest = createInstancedMesh({
+    geometry: plane,
+    positions,
+    count: 100000,
+    offset: new THREE.Vector3(0, 0, 0), // treeHeight * 0.5,
+    name: `xxx`,
+    material,
+    //depthMaterial,
+    //scaleFunc,
+    shadow: {
+      cast: true,
+      receive: true,
+    },
+  });
+  console.log({ instancedMeshTest });
+  
+  scene.add(instancedMeshTest);
+
+  //scene.add(instancedMesh);
 };
 
 const createDirt = (mesh, scene, trackParams) => {

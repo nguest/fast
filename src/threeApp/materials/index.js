@@ -5,6 +5,8 @@ import { Config } from '../sceneConfig/general';
 export const createMaterial = ({
   alphaMap,
   blending = 'NormalBlending',
+  blendEquation,
+  blendSrc,
   bumpMap,
   clipping,
   color,
@@ -25,6 +27,7 @@ export const createMaterial = ({
   shininess = 30,
   side,
   smartAlpha = false,
+  smartAlphaThreshold,
   specular, // = 0x000000,
   transparent,
   type,
@@ -78,6 +81,10 @@ export const createMaterial = ({
   });
 
   material.blending = THREE[blending];
+  if (blending === 'CustomBlending') {
+    material.blendEquation = THREE[blendEquation];
+    material.blendSrc = THREE[blendSrc];
+  }
   material.shininess = material.shininess !== undefined ? shininess : material.shininess;
   material.emissive = material.emissive !== undefined ? new THREE.Color(emissive) : new THREE.Color(material.emissive);
   material.specular = material.specular !== undefined ? new THREE.Color(specular) : new THREE.Color(material.specular);
@@ -89,12 +96,13 @@ export const createMaterial = ({
 
   if (smartAlpha) {
     console.info({ SMARTALPHA: name });
+    const threshold = smartAlphaThreshold || 0.2;
 
     material.onBeforeCompile = (shader) => {
       patchShader(shader, {
         fragment: {
           'gl_FragColor = vec4( outgoingLight, diffuseColor.a );':
-          `if ( diffuseColor.a < 0.2 ) discard; // remove low alpha values
+          `if ( diffuseColor.a < ${threshold} ) discard; // remove low alpha values
           gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`,
         },
       });

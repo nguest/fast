@@ -33,9 +33,9 @@ export const createInstancedMesh = ({
 
     if (curve) {
       instanceOffset.push(
-        positions[i].x + rand(1),
+        positions[i].x + rand(1.2),
         positions[i].y + scale.y * offset.y - 1,
-        positions[i].z + rand(1),
+        positions[i].z + rand(1.2),
       );
     } else {
       instanceOffset = positions;
@@ -116,6 +116,8 @@ export const createSampledInstanceMesh = ({
   const normal = new THREE.Vector3();
   const dummy = new THREE.Object3D();
 
+  const positions = [];
+
   for (let i = 0; i < count; i++) {
     sampler.sample(position, normal);
     normal.add(position);
@@ -129,12 +131,13 @@ export const createSampledInstanceMesh = ({
     }
     if (scaleFunc) dummy.scale.setY(scaleFunc());
     dummy.updateMatrix();
+    positions.push(position.x, position.y, position.z);
     instancedMesh.setMatrixAt(i, dummy.matrix);
     instancedMesh.instanceMatrix.needsUpdate = true;
     instancedMesh.material.needsUpdate = true;
   }
   instancedMesh.receiveShadow = true;
-  // instancedMesh.castShadow = true;
+  //instancedMesh.castShadow = true;
 
-  return instancedMesh;
+  return { instancedMesh, positions };
 };

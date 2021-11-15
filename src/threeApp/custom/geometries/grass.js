@@ -52,49 +52,31 @@ export const grassUVGenerator = {
 
 // export const grassCrossSection = [grassCrossSection1, grassCrossSection2];
 
-const createGrassClumps = (mesh, scene, materials) => {
+const createGrassClumps = (mesh, scene, materials, assets) => {
   const plane = new THREE.PlaneBufferGeometry(0.8, 0.8);
+  plane.translate(0, 0.4, 0);
   const up = new Vector3(0, 1, 0);
 
-  //   var uvAttribute = plane.attributes.uv;
-  //   console.log({ uvAttribute });
-
-  // for ( var i = 0; i < uvAttribute.count; i ++ ) {
-
-  //     var u = uvAttribute.getX( i );
-  //     var v = uvAttribute.getY( i );
-
-  //     // do something with uv
-
-  //     // write values back to attribute
-
-  //     uvAttribute.setXY( i, -u, -v );
-
-  // }
-
-  const loader = new THREE.TextureLoader();
-  const map = loader.load('./assets/textures/tiledTrees_map.png');
-  //const map = loader.load('../assets/textures/grass_map_sq_512.jpg');
-  
-  const normalMap = loader.load('./assets/textures/tree_block_normal2.png');
-
   const material = new InstancesStandardMaterial({
-    map,
+    map: assets.Grassclump_Map_1024,
+    normalMap: assets.Grassclump_Normal_1024,
+    //opacity: 0.8,
+    // blending: THREE.AdditiveBlending,
     side: THREE.DoubleSide,
-    normalMap,
-    normalScale: new THREE.Vector2(0.5, 0.5),
+    normalScale: new THREE.Vector2(1.0, 1.0),
     depthFunc: THREE.LessDepth,
-    color: 0x888888,
+    color: 0xcccccc,
     specular: 0x000000,
     userData: {
-      //faceToCamera: true,
+      faceToCamera: true,
+      opacityDiscardLimit: 0.1,
     },
   });
 
   const { instancedMesh, positions } = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh,
-    material,//: materials.red, //['GrassEdgeMaterial'],//GrassClumpMaterial,
+    material,
     count: 300000,
     name: 'grassClumps',
     lookAtNormal: true,
@@ -106,12 +88,13 @@ const createGrassClumps = (mesh, scene, materials) => {
       v.rotateZ(Math.PI);
     },
   });
+
   const instancedMeshTest = createInstancedMesh({
     geometry: plane,
     positions,
     count: 100000,
     offset: new THREE.Vector3(0, 0, 0), // treeHeight * 0.5,
-    name: `xxx`,
+    name: 'grassclumps',
     material,
     //depthMaterial,
     //scaleFunc,
@@ -121,7 +104,7 @@ const createGrassClumps = (mesh, scene, materials) => {
     },
   });
   console.log({ instancedMeshTest });
-  
+
   scene.add(instancedMeshTest);
 
   //scene.add(instancedMesh);
@@ -155,7 +138,6 @@ const createDirt = (mesh, scene, trackParams) => {
     map,
     //renderOrder: 1,
   });
-
 
   // const dummyQuat = new THREE.Quaternion();
   // const dummyRot = new THREE.Vector3();
@@ -224,8 +206,8 @@ const createDirt = (mesh, scene, trackParams) => {
   scene.add(instancedMesh);
 };
 
-export const decorateGrass = (mesh, scene, trackParams, materials) => {
-  createGrassClumps(mesh, scene, materials);
+export const decorateGrass = (mesh, scene, trackParams, materials, assets) => {
+  createGrassClumps(mesh, scene, materials, assets);
   createDirt(mesh, scene, trackParams);
 };
 

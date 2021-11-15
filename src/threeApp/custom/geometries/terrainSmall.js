@@ -65,4 +65,4 @@ export const decorateTerrainSmall = (mesh, scene) => {
     },
   });
   scene.add(instancedMesh);
-}
+};

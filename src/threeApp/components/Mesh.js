@@ -42,9 +42,11 @@ export class Mesh {
     this.shadows = shadows;
     this.type = type;
     this.customFunction = customFunction;
+    this.createDuration = 0;
 
     if (!add) return;
 
+    const t1 = performance.now();
     if (type === 'GLTF') {
       this.initLoader(url, manager);
     } else {
@@ -91,6 +93,8 @@ export class Mesh {
 
       this.orientObject(geometry);
     }
+    const t2 = performance.now();
+    this.createDuration = t2 - t1;
   }
 
   initLoader(url, manager) {
@@ -174,6 +178,10 @@ export class Mesh {
 
   getMesh() {
     return this.mesh;
+  }
+
+  getCreateDuration() {
+    return { name: this.name, createDuration: this.createDuration };
   }
 
   setInitialState() {

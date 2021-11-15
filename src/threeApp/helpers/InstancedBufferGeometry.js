@@ -14,6 +14,7 @@ export const createInstancedMesh = ({
   quaternions,
   scaleFunc = null,
   shadow,
+  quadrants,
 }) => {
   const instancedGeo = new THREE.InstancedBufferGeometry().copy(geometry);
 
@@ -32,37 +33,29 @@ export const createInstancedMesh = ({
     const scale = scaleFunc ? scaleFunc(i) : { x: 1, y: 1, z: 1 };
 
     if (curve) {
-      instanceOffset.push(
-        positions[i].x + rand(1.2),
-        positions[i].y + scale.y * offset.y - 1,
-        positions[i].z + rand(1.2),
-      );
+      instanceOffset.push(positions[i].x + rand(1.2), positions[i].y + scale.y * offset.y - 1, positions[i].z + rand(1.2));
     } else {
       instanceOffset = positions;
     }
 
-    instanceScale.push(
-      scale.x,
-      scale.y,
-      scale.z,
-    );
+    instanceScale.push(scale.x, scale.y, scale.z);
 
     // randomize which quadrant of the texture to use
-    instanceMapUV.push(
-      Math.random() > 0.5 ? 0.5 : 0.0,
-      Math.random() > 0.5 ? 0.5 : 0.0,
-    );
+    let xCount = 2;
+    let yCount = 2;
+    if (quadrants) {
+      [xCount, yCount] = quadrants;
+    }
+
+    instanceMapUV.push(Math.random() > 0.5 ? 0.5 : 0.0, Math.random() > 0.5 ? 0.5 : 0.0);
+    //instanceMapUV.push(0.0, 0.5);
   }
 
-  instancedGeo.setAttribute('instanceOffset',
-    new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset), 3, false));
-  instancedGeo.setAttribute('instanceScale',
-    new THREE.InstancedBufferAttribute(new Float32Array(instanceScale), 3, false));
-  instancedGeo.setAttribute('instanceMapUV',
-    new THREE.InstancedBufferAttribute(new Float32Array(instanceMapUV), 2, false));
+  instancedGeo.setAttribute('instanceOffset', new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset), 3, false));
+  instancedGeo.setAttribute('instanceScale', new THREE.InstancedBufferAttribute(new Float32Array(instanceScale), 3, false));
+  instancedGeo.setAttribute('instanceMapUV', new THREE.InstancedBufferAttribute(new Float32Array(instanceMapUV), 2, false));
   if (material.userData.faceToQuat) {
-    instancedGeo.setAttribute('instanceQuaternion',
-      new THREE.InstancedBufferAttribute(new Float32Array(instanceQuaternion), 4, false));
+    instancedGeo.setAttribute('instanceQuaternion', new THREE.InstancedBufferAttribute(new Float32Array(instanceQuaternion), 4, false));
   }
 
   material.needsUpdate = true;
@@ -85,7 +78,6 @@ export const createInstancedMesh = ({
   return mesh;
 };
 
-
 export const createSampledInstanceMesh = ({
   baseGeometry,
   mesh,
@@ -105,12 +97,8 @@ export const createSampledInstanceMesh = ({
   instancedMesh.name = name;
   instancedMesh.userData.type = 'instancedMesh';
   instancedMesh.material.needsUpdate = true;
-  //instancedMesh.material.needsUpdate = true;
-  //material.uniformsNeedUpdate = true;
 
-  const sampler = new MeshSurfaceSampler(mesh, uv)
-    .setWeightAttribute(0)
-    .build();
+  const sampler = new MeshSurfaceSampler(mesh, uv).setWeightAttribute(0).build();
 
   const position = new THREE.Vector3();
   const normal = new THREE.Vector3();

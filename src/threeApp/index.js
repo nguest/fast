@@ -110,7 +110,7 @@ export class Main extends PureComponent {
   };
 
   createWorld(materials, assets) {
-    const { objects, instancedMeshes } = createObjects(materials, this.trackParams, this.scene, this.manager, this.physicsWorld);
+    const { objects, instancedMeshes } = createObjects(materials, assets, this.trackParams, this.scene, this.manager, this.physicsWorld);
     this.objects = objects;
     this.instancedMeshes = instancedMeshes;
 

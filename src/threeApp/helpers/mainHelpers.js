@@ -1,4 +1,3 @@
-import { object } from 'prop-types';
 import * as THREE from 'three';
 import Ammo from 'ammonext';
 import { Mesh } from '../components/Mesh';
@@ -13,13 +12,14 @@ import { Config } from '../sceneConfig/general';
 import { assetsIndex } from '../sceneConfig/assets';
 import { materialsIndex } from '../sceneConfig/materials';
 import { createMaterial } from '../materials';
+import { decorateTerrainSmall } from '../custom/geometries/terrainSmall';
+import { createTerrain } from '../custom/geometries/terrain';
 
 const zeroVector = new Ammo.btVector3(0, 0, 0);
 
-export const createObjects = (materials, trackParams, scene, manager, physicsWorld) => {
+export const createObjects = (materials, assets, trackParams, scene, manager, physicsWorld) => {
   const t1 = performance.now();
   const objects = objectsIndex(trackParams)
-    //.filter((obj) => obj.name === 'track' || obj.name === 'racingLine' || obj.name === 'car')
     .map((obj) => {
       const params = {
         ...obj,
@@ -46,11 +46,11 @@ export const createObjects = (materials, trackParams, scene, manager, physicsWor
     });
   createTrees(scene, trackParams);
   decorateTrack(getObjByName(scene, 'racingLine'), scene, trackParams, materials.roadRacingLine);
-  decorateGrass(getObjByName(scene, 'grassL'), scene, trackParams, materials);
-  // decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
+  decorateGrass(getObjByName(scene, 'grassL'), scene, trackParams, materials, assets);
+  //decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
   decorateFences(getObjByName(scene, 'fences'), scene, trackParams, materials.billboards);
   createApexMarkers(scene, trackParams);
-  // createTerrain(this.scene);
+  //createTerrain(this.scene);
 
   const instancedMeshes = scene.children.filter((o) => o.userData.type === 'instancedMesh');
   const t2 = performance.now();

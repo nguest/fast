@@ -109,8 +109,10 @@ export const decorateFences = (fences, scene, trackParams) => {
 
   const loader = new THREE.TextureLoader();
   const map = loader.load('./assets/textures/billboards_map.jpg');
-  map.repeat.set(-2, 1);
-  map.offset.set(0, -0.25);
+  //const map = loader.load('./assets/textures/UV_Grid_Sm.jpg');
+
+  //map.repeat.set(1, 0.5);
+  //map.offset.set(0, 0.25);
   // map.wrapS = THREE.MirroredRepeatWrapping;
   // map.wrapT = THREE.MirroredRepeatWrapping;
 

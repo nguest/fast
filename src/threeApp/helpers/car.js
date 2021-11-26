@@ -16,7 +16,7 @@ export const decorateCar = (car, scene) => {
   // decorate car(s)
   let brakeLights = new THREE.Mesh();
   car.traverse((child) => {
-    console.log({ [child.name]: child });
+    //console.log({ [child.name]: child });
     
     if (child.isMesh) {
       // FIRST CAR
@@ -52,7 +52,17 @@ export const decorateCar = (car, scene) => {
 
       // SECOND CAR
       if (child.material.name === 'CarpaintMat') {
-        // child.material = {
+        console.log({ 'CarpaintMat': child.material, THREE });
+        //child.material.color = new THREE.Color(0xff00ff)
+        child.material.reflectivity = 1;
+        child.material.envMap = scene.environment;
+        child.material.clearcoat = 1.0;
+        child.material.clearcoatRoughness = 0.2;
+        child.material.roughness = 0.5;
+        child.material.metalness = 0.7;
+        child.material.specular = 0xffffff;
+        child.castShadow = true;
+        child.receiveShadow = true;
         //   ...child.material,
         //   color:  0xffffff,
         // }

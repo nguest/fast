@@ -25,26 +25,32 @@ export const createTrees = (scene, trackParams) => {
   treePlane.translate(0, treeHeight * 0.5, 0);
   treePlane.name = 'treePlane';
   const loader = new THREE.TextureLoader();
-  const map = loader.load('./assets/textures/tiledTrees_map.png');
-  const normalMap = loader.load('./assets/textures/tree_block_normal2.png');
+  const map = loader.load('./assets/textures/treeQuadrant-2048_map.png');
+  
+  //const map = loader.load('./assets/textures/tiledTrees_map.png');
+  //const normalMap = loader.load('./assets/textures/tree_block_normal.png');
+  const normalMap = loader.load('./assets/textures/treeQuadrantBlock-2048_normal.jpg');
+
+// d    const normalMap = loader.load('./assets/textures/treeQuadrant-2048.png');
 
   const material = new InstancesStandardMaterial({
     map,
     side: THREE.DoubleSide,
     normalMap,
-    normalScale: new THREE.Vector2(0.5, 0.5),
+    //normalScale: new THREE.Vector2(1, 1),
     depthFunc: THREE.LessDepth,
     color: 0x888888,
     specular: 0x000000,
     userData: {
       faceToCamera: true,
+      opacityDiscardLimit: 0.7,
     },
   });
 
   const depthMaterial = new InstancesDepthMaterial({
     depthPacking: THREE.RGBADepthPacking,
     map,
-    alphaTest: 0.5,
+    alphaTest: 0.1,
     userData: {
       faceToCamera: true,
     },

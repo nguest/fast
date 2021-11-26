@@ -5,6 +5,7 @@ import { ThreeContainer } from './ThreeContainer';
 import { TrackMap } from './TrackMap';
 import { Speedo } from './Speedo';
 import { styles } from './styles';
+import { Sound } from './Sound';
 
 export const App = () => {
   const [status, setStatus] = useState(null);
@@ -29,6 +30,7 @@ export const App = () => {
       />
       <TrackMap gamePosition={gamePosition} trackParams={trackParams} />
       <Speedo speed={status?.speed || '0'} maxSpeed="250" />
+      <Sound speed={status?.speed || '0'} />
     </div>
   );
 };

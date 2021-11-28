@@ -52,9 +52,9 @@ export const decorateCar = (car, scene) => {
 
       // SECOND CAR
       if (child.material.name === 'CarpaintMat') {
-        console.log({ 'CarpaintMat': child.material, THREE });
+        //console.log({ 'CarpaintMat': child.material, THREE });
         //child.material.color = new THREE.Color(0xff00ff)
-        child.material.reflectivity = 1;
+        child.material.reflectivity = 0.1;
         child.material.envMap = scene.environment;
         child.material.clearcoat = 1.0;
         child.material.clearcoatRoughness = 0.2;

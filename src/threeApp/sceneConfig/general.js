@@ -22,6 +22,7 @@ export const Config = {
     //logarithmicDepthBuffer: true,
     //toneMapping: THREE.CineonToneMapping,//ACESFilmicToneMapping,
     //precision: 'lowP'
+    powerPreference: 'low-power',
   },
   container: {
     width: window.innerWidth,

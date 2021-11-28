@@ -37,7 +37,7 @@ export const Speedo = ({ speed = 0, maxSpeed }) => {
     <div css={speedoContainer}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200" css={speedoStyles(needleAngle)}>
         <circle cx="50" cy="50" r="48" stroke="black" strokeWidth="4" fill="transparent" />
-        <path id="needle" d="M 48 50 l 1 48 h 2 l 1 -48 z" stroke="red" strokeWidth="0" fill="pink" />
+        <path id="needle" d="M 48 50 l 1 48 h 2 l 1 -48 z" stroke="red" strokeWidth="1" fill="black" />
       </svg>
       <p style={speedDisplay}>{speed}</p>
     </div>

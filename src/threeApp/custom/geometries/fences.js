@@ -14,9 +14,9 @@ const fences1 = (trackParams) => {
 
 const fences2 = (trackParams) => {
   const shape = new THREE.Shape([
-    new THREE.Vector2(-0.5, (trackParams.trackHalfWidth + trackParams.vergeWidth + 0.2)),
-    new THREE.Vector2(-3, (trackParams.trackHalfWidth + trackParams.vergeWidth + 0.2)),
-    new THREE.Vector2(-3.5, (trackParams.trackHalfWidth + trackParams.vergeWidth - 0.3)),
+    new THREE.Vector2(-0.5, trackParams.trackHalfWidth + trackParams.vergeWidth + 0.2),
+    new THREE.Vector2(-3, trackParams.trackHalfWidth + trackParams.vergeWidth + 0.2),
+    new THREE.Vector2(-3.5, trackParams.trackHalfWidth + trackParams.vergeWidth - 0.3),
   ]);
   return shape;
 };
@@ -50,13 +50,14 @@ export const decorateFences = (fences, scene, trackParams) => {
   const points = trackParams.centerLine.getSpacedPoints(pointsCount);
   const { binormals } = computeFrenetFrames(trackParams.centerLine, pointsCount);
 
-  const adjustedPoints = points.reduce((a, p, i) => (
-    [
+  const adjustedPoints = points.reduce(
+    (a, p, i) => [
       ...a,
       p.clone().sub(binormals[i].clone().multiplyScalar(trackParams.trackHalfWidth + trackParams.vergeWidth + 0.4)),
       p.clone().sub(binormals[i].clone().multiplyScalar(-(trackParams.trackHalfWidth + trackParams.vergeWidth + 0.4))),
-    ]
-  ), []);
+    ],
+    [],
+  );
 
   const positions = [];
   const quaternions = [];
@@ -65,20 +66,11 @@ export const decorateFences = (fences, scene, trackParams) => {
   const up = new THREE.Vector3(0, 1, 0);
 
   for (let i = 0; i < adjustedPoints.length; i += 1) {
-    positions.push(
-      adjustedPoints[i].x,
-      adjustedPoints[i].y,
-      adjustedPoints[i].z,
-    );
+    positions.push(adjustedPoints[i].x, adjustedPoints[i].y, adjustedPoints[i].z);
     const angleX = binormals[Math.floor(i * 0.5)].angleTo(x);
     dummyQuat.setFromAxisAngle(up, angleX);
 
-    quaternions.push(
-      dummyQuat.x,
-      dummyQuat.y,
-      dummyQuat.z,
-      dummyQuat.w,
-    );
+    quaternions.push(dummyQuat.x, dummyQuat.y, dummyQuat.z, dummyQuat.w);
   }
 
   const scaleFunc = (i) => {
@@ -108,7 +100,7 @@ export const decorateFences = (fences, scene, trackParams) => {
   // signs
 
   const loader = new THREE.TextureLoader();
-  const map = loader.load('./assets/textures/billboards_map.jpg');
+  const map = loader.load('./assets/textures/billboards_map.png');
   //const map = loader.load('./assets/textures/UV_Grid_Sm.jpg');
 
   //map.repeat.set(1, 0.5);
@@ -135,31 +127,25 @@ export const decorateFences = (fences, scene, trackParams) => {
     },
   });
 
-  const signGeo = new THREE.PlaneBufferGeometry(3, 1);
-  signGeo.rotateY(Math.PI * 0.5);
-  signGeo.translate(0.25, 2, 0);
+  const signGeo = new THREE.PlaneBufferGeometry(2, 2, 1, 1);
+
+  signGeo.rotateY(-Math.PI * 0.5);
+  signGeo.translate(0, 2, 0);
+
   const signPositions = [];
   const signQuaternions = [];
-  
+
   for (let i = 0; i < 100; i++) {
     if (Math.random() > 0.3) {
-      signPositions.push(
-        positions[i * 3],
-        positions[i * 3 + 1],
-        positions[i * 3 + 2],
-      );
-      signQuaternions.push(
-        quaternions[i * 4],
-        quaternions[i * 4 + 1],
-        quaternions[i * 4 + 2],
-        quaternions[i * 4 + 3],
-      );
+      const pz = i % 2 === 0 ? positions[i * 3 + 2] - 0.4 : positions[i * 3 + 2] + 0.4;
+      signPositions.push(positions[i * 3], positions[i * 3 + 1], pz);
+      signQuaternions.push(quaternions[i * 4], quaternions[i * 4 + 1], quaternions[i * 4 + 2], quaternions[i * 4 + 3]);
     }
   }
 
   const instancedSigns = createInstancedMesh({
     geometry: signGeo,
-    count: 100,//adjustedPoints.length,
+    count: 100, //adjustedPoints.length,
     //offset: new THREE.Vector3(0, 0, 1),
     name: `fenceSignInstance-${0}`,
     material: signMaterial,
@@ -173,10 +159,7 @@ export const decorateFences = (fences, scene, trackParams) => {
     },
   });
   scene.add(instancedSigns);
-
-
 };
-
 
 const fencePostGeometry = () => {
   const h = 3;

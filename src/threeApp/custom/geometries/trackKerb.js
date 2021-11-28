@@ -4,13 +4,13 @@ const trackKerbCrossSection1 = (trackParams) => {
   const shape = new THREE.Shape();
   shape.moveTo(-0.01, -trackParams.trackHalfWidth + 0.1);
   shape.lineTo(-0.05, -trackParams.trackHalfWidth + 0.2);
-  shape.lineTo(-0.2, -trackParams.trackHalfWidth - 0.8);
+  shape.lineTo(-0.1, -trackParams.trackHalfWidth - 0.8);
   return shape;
 };
 
 const trackKerbCrossSection2 = (trackParams) => {
   const shape = new THREE.Shape();
-  shape.moveTo(-0.2, trackParams.trackHalfWidth + 0.8);
+  shape.moveTo(-0.1, trackParams.trackHalfWidth + 0.8);
   shape.lineTo(-0.05, trackParams.trackHalfWidth - 0.2);
   shape.lineTo(-0.01, trackParams.trackHalfWidth - 0.1);
   return shape;

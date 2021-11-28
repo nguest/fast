@@ -53,8 +53,8 @@ export const grassUVGenerator = {
 // export const grassCrossSection = [grassCrossSection1, grassCrossSection2];
 
 const createGrassClumps = (mesh, scene, materials, assets) => {
-  const plane = new THREE.PlaneBufferGeometry(0.8, 0.8);
-  plane.translate(0, 0.4, 0);
+  const plane = new THREE.PlaneBufferGeometry(0.6, 0.6);
+  plane.translate(0, 0.3, 0);
   const up = new Vector3(0, 1, 0);
 
   const material = new InstancesStandardMaterial({

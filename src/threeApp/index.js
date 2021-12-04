@@ -83,7 +83,7 @@ export class Main extends PureComponent {
     this.gates = createGates(this.scene, this.trackParams);
 
     if (Config.showStats) {
-      this.stats = new Stats();
+      this.stats = Stats();
       this.container.appendChild(this.stats.dom);
     }
     if (Config.isDev) {

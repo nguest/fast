@@ -94,7 +94,7 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
   const curve = new THREE.CatmullRomCurve3(trackParams.racingLine);
 
   const points = curve.getSpacedPoints(pointsCount);
-  const { binormals } = computeFrenetFrames(curve, pointsCount);
+  const { binormals } = curve.computeFrenetFrames(pointsCount);
 
   const adjustedPoints = points.reduce(
     (a, p, i) => [
@@ -218,7 +218,6 @@ TrackMarksMaterial.onBeforeCompile = (shader) => {
     },
   });
 };
-TrackMarksMaterial.customDistanceMaterial = CustomDistanceMaterial;
 
 const CustomDistanceMaterial = new THREE.MeshDistanceMaterial({
   depthPacking: THREE.RGBADepthPacking,
@@ -250,3 +249,5 @@ CustomDistanceMaterial.onBeforeCompile = (shader) => {
     #define DEPTH_PACKING 3201
     ${shader.fragmentShader}`;
 };
+
+TrackMarksMaterial.customDistanceMaterial = CustomDistanceMaterial;

@@ -71,6 +71,8 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
       faceToCamera: true,
       opacityDiscardLimit: 0.1,
     },
+    transparent: true,
+    alphaTest: 0.2,
   });
 
   const { instancedMesh, positions } = createSampledInstanceMesh({
@@ -111,7 +113,7 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
 };
 
 const createDirt = (mesh, scene, trackParams) => {
-  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.steps);
+  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(trackParams.steps);
   const centerLinePoints = trackParams.centerLine.getSpacedPoints(trackParams.steps);
 
   //const plane = new THREE.PlaneBufferGeometry(4, 1);

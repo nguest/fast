@@ -287,10 +287,11 @@ export const computeFrenetFrames = (curve, segments, closed) => {
     normals,
     binormals,
   };
-};
+}
 
-export const CubicPoly = () => {
-  let c0 = 0; let c1 = 0; let c2 = 0; let c3 = 0;
+function CubicPoly() {
+    let c0 = 0; let c1 = 0; let c2 = 0; let c3 = 0;
+
 
   /*
    * Compute coefficients for a cubic polynomial

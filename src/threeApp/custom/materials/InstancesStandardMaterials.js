@@ -119,7 +119,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
         `if ( diffuseColor.a < ${this.opacityDiscardLimit}) discard; // remove low alpha values
         gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,
         // gl_FragColor = vec4( outgoingLight * diffuseColor.a, diffuseColor.a );`, // premultiply?
-      );
+      )
   }
 
   overrideLogic = (shader) => {
@@ -136,6 +136,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
 }
 
 // ------------------------------ //
+// depthMaterial essential for shadows
 
 export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
   constructor(params) {

@@ -48,7 +48,7 @@ export const createInstancedMesh = ({
     }
 
     instanceMapUV.push(Math.random() > 0.5 ? 0.5 : 0.0, Math.random() > 0.5 ? 0.5 : 0.0);
-    //instanceMapUV.push(0.0, 0.5);
+    //instanceMapUV.push(0.0, 0.5);    
   }
 
   instancedGeo.setAttribute('instanceOffset', new THREE.InstancedBufferAttribute(new Float32Array(instanceOffset), 3, false));
@@ -57,6 +57,7 @@ export const createInstancedMesh = ({
   if (material.userData.faceToQuat) {
     instancedGeo.setAttribute('instanceQuaternion', new THREE.InstancedBufferAttribute(new Float32Array(instanceQuaternion), 4, false));
   }
+  instancedGeo.instanceCount = count;
 
   material.needsUpdate = true;
   material.uniformsNeedUpdate = true;
@@ -75,6 +76,8 @@ export const createInstancedMesh = ({
   }
   mesh.userData.type = 'instancedMesh';
   mesh.name = name;
+  console.log({ mesh });
+  
   return mesh;
 };
 

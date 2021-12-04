@@ -29,7 +29,8 @@ export const createTrees = (scene, trackParams) => {
   
   //const map = loader.load('./assets/textures/tiledTrees_map.png');
   //const normalMap = loader.load('./assets/textures/tree_block_normal.png');
-  const normalMap = loader.load('./assets/textures/treeQuadrantBlock-2048_normal.jpg');
+  const normalMap = loader.load('./assets/textures/treeQuadrantBlock-2048_normal.jpg')
+  //loader.load('./assets/textures/grass_alpha.png');
 
 // d    const normalMap = loader.load('./assets/textures/treeQuadrant-2048.png');
 
@@ -37,20 +38,26 @@ export const createTrees = (scene, trackParams) => {
     map,
     side: THREE.DoubleSide,
     normalMap,
+    //alphaMap: loader.load('./assets/textures/tree_alpha.png'),
     //normalScale: new THREE.Vector2(1, 1),
+    //premultipliedAlpha: true,
     depthFunc: THREE.LessDepth,
     color: 0x888888,
     specular: 0x000000,
+    alphaTest: 0.7,
+    format: THREE.AlphaFormat,
     userData: {
       faceToCamera: true,
       opacityDiscardLimit: 0.7,
     },
+    //transparent: true,
   });
 
+  // depthMaterial essential for shadows
   const depthMaterial = new InstancesDepthMaterial({
     depthPacking: THREE.RGBADepthPacking,
     map,
-    alphaTest: 0.1,
+    alphaTest: 0.9,
     userData: {
       faceToCamera: true,
     },
@@ -77,6 +84,8 @@ export const createTrees = (scene, trackParams) => {
         cast: true,
       },
     });
+    console.log({ instancedMesh });
+    
     scene.add(instancedMesh);
   });
 };

@@ -48,7 +48,7 @@ export const throttle = (func, limit) => {
 
 export const getPosQuatFromGamePosition = (gate, trackParams) => {
   const gatePositions = trackParams.centerLine.getSpacedPoints(trackParams.gateCount);
-  const { tangents } = computeFrenetFrames(trackParams.centerLine, trackParams.gateCount);
+  const { tangents } = trackParams.centerLine.computeFrenetFrames(trackParams.gateCount);
 
   const axis = new THREE.Vector3(0, 0, 1);
   const quat = new THREE.Quaternion().setFromUnitVectors(axis, tangents[gate].clone().normalize());

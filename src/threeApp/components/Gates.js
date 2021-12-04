@@ -4,7 +4,7 @@ import { computeFrenetFrames } from '../helpers/curveHelpers';
 
 export const createGates = (scene, trackParams) => {
   const gatesCount = trackParams.gateCount;
-  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, gatesCount);
+  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(gatesCount);
   const gatePositions = trackParams.centerLine.getSpacedPoints(gatesCount);
 
   const gateMaterial = new THREE.MeshBasicMaterial({
@@ -45,7 +45,8 @@ export const detectGateCollisions = (followObj, collidableMeshList) => {
   const originPoint = followObj.position.clone();
 
   // use front vertex as intersector
-  const vertex = chassisBox.geometry.vertices[1];
+  
+  const vertex = chassisBox.geometry.boundingSphere.center //chassisBox.geometry.vertices[1];
   const localVertex = vertex.clone();
   const globalVertex = localVertex.applyMatrix4(chassisBox.matrix);
   const directionVector = globalVertex.sub(chassisBox.position);

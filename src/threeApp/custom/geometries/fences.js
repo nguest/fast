@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { createInstancedMesh } from '../../helpers/InstancedBufferGeometry';
 import { InstancesStandardMaterial, InstancesDepthMaterial } from '../materials/InstancesStandardMaterials';
 import { computeFrenetFrames } from '../../helpers/curveHelpers';
+import { Face3, Geometry } from '../../helpers/Geometry';
+
 
 const fences1 = (trackParams) => {
   const shape = new THREE.Shape([
@@ -34,9 +36,12 @@ export const decorateFences = (fences, scene, trackParams) => {
     side: THREE.DoubleSide,
     userData: {
       faceToQuat: true,
+      opacityDiscardLimit: 0.7,
     },
     shininess: 100,
     specular: 0xaaaaaa,
+    alphaTest: 0.9,
+    transparent: true,
   });
 
   const depthMaterial = new InstancesDepthMaterial({
@@ -48,7 +53,7 @@ export const decorateFences = (fences, scene, trackParams) => {
   });
 
   const points = trackParams.centerLine.getSpacedPoints(pointsCount);
-  const { binormals } = computeFrenetFrames(trackParams.centerLine, pointsCount);
+  const { binormals } = trackParams.centerLine.computeFrenetFrames(pointsCount);
 
   const adjustedPoints = points.reduce(
     (a, p, i) => [
@@ -178,25 +183,25 @@ const fencePostGeometry = () => {
   ];
 
   const faces = [
-    new THREE.Face3(0, 1, 2),
-    new THREE.Face3(1, 2, 3),
-    new THREE.Face3(2, 3, 4),
-    new THREE.Face3(3, 5, 4),
+    new Face3(0, 1, 2),
+    new Face3(1, 2, 3),
+    new Face3(2, 3, 4),
+    new Face3(3, 5, 4),
 
-    new THREE.Face3(0, 2, 6),
-    new THREE.Face3(6, 2, 7),
+    new Face3(0, 2, 6),
+    new Face3(6, 2, 7),
 
-    new THREE.Face3(7, 2, 8),
-    new THREE.Face3(2, 8, 4),
+    new Face3(7, 2, 8),
+    new Face3(2, 8, 4),
   ];
 
-  const geometry = new THREE.Geometry();
+  const geometry = new Geometry();
   geometry.vertices = vertices;
   geometry.faces = faces;
   geometry.computeFaceNormals();
   geometry.computeFlatVertexNormals();
 
-  const bufferGeometry = new THREE.BufferGeometry().fromGeometry(geometry);
+  const bufferGeometry = geometry.toBufferGeometry();
 
   return bufferGeometry;
 };

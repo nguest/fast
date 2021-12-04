@@ -3,7 +3,7 @@ import { computeFrenetFrames } from '../../helpers/curveHelpers';
 
 export const getTreeline = (trackParams) => {
   const pointsCount = 2000;
-  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
+  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(pointsCount);
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
 
   const leftPositions = [];

@@ -18,8 +18,8 @@ const mat = {
 export const createRacingLine = (centerLine, cpCount, trackHalfWidth) => {
   const wpCount = 7; // width section pointscount
   //const cpCount = Math.floor(centerLine.getLength() / 15); // segments in track direction
-  const { binormals, tangents } = computeFrenetFrames(centerLine, cpCount);
-  const cpPoints = getSpacedPoints(centerLine, cpCount);
+  const { binormals, tangents } = centerLine.computeFrenetFrames(cpCount);
+  const cpPoints = centerLine.getSpacedPoints(cpCount);
 
   const t2 = performance.now();
   const { racingLine, edgeTouches, apexIndices } = splineMethod(cpPoints, binormals, tangents, trackHalfWidth);

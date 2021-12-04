@@ -14,7 +14,7 @@ export const terrainCrossSection = (trackParams) => {
 
 export const getTerrainCurve = (trackParams) => {
   const pointsCount = 100;
-  const { binormals, normals, tangents } = computeFrenetFrames(trackParams.centerLine, pointsCount);
+  const { binormals, normals, tangents } = trackParams.centerLine.computeFrenetFrames(pointsCount);
   const positions = trackParams.centerLine.getSpacedPoints(pointsCount);
 
   const leftPositions = [];

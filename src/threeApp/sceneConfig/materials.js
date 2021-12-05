@@ -239,7 +239,7 @@ export const materialsIndex = [
   {
     name: 'guardRails',
     type: 'MeshPhongMaterial',
-    color: 0xffffff,
+    color: 0xaaaaaa,
     map: {
       name: 'GuardRails_Map',
       wrapping: 'RepeatWrapping',
@@ -251,7 +251,7 @@ export const materialsIndex = [
       repeat: [1, 4],
     },
     shininess: 100,
-    specular: 0xaaaaaa,
+    specular: 0x888888,
     side: 'DoubleSide',
     wireframe: false,
     emissive: 0x000000,
@@ -291,7 +291,7 @@ export const materialsIndex = [
     side: 'BackSide',
     wireframe: false,
     emissive: 0x000000,
-    transparent: true,
+    //transparent: true,
   },
   {
     name: 'LocationIcon',

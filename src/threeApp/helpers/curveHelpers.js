@@ -257,7 +257,6 @@ export const computeFrenetFrames = (curve, segments, closed) => {
   }
 
   // if the curve is closed, postprocess the vectors so the first and last normal vectors are the same
- // if (curve.name === 'centerLine') console.log({ curve });
 
   if (curve.closed === true) {
     theta = Math.acos(MathUtils.clamp(normals[0].dot(normals[segments]), -1, 1));
@@ -278,19 +277,17 @@ export const computeFrenetFrames = (curve, segments, closed) => {
     binormals[segments] = binormals[0];
     tangents[segments] = tangents[0];
 
-
-
-  }
+  };
 
   return {
     tangents,
     normals,
     binormals,
   };
-}
+};
 
 function CubicPoly() {
-    let c0 = 0; let c1 = 0; let c2 = 0; let c3 = 0;
+  let c0 = 0; let c1 = 0; let c2 = 0; let c3 = 0;
 
 
   /*
@@ -333,7 +330,7 @@ function CubicPoly() {
     },
 
   };
-};
+}
 
 //
 
@@ -357,7 +354,8 @@ export const getPoint = (curve, t, optionalTarget) => {
     weight = 1;
   }
 
-  let p0; let p1; let p2; let p3; // 4 points
+  let p0;
+  let p3; // 4 points, 2 below
 
   if (curve.closed || intPoint > 0) {
     p0 = points[(intPoint - 1) % l];
@@ -367,8 +365,8 @@ export const getPoint = (curve, t, optionalTarget) => {
     p0 = tmp;
   }
 
-  p1 = points[intPoint % l];
-  p2 = points[(intPoint + 1) % l];
+  const p1 = points[intPoint % l];
+  const p2 = points[(intPoint + 1) % l];
 
   if (curve.closed || intPoint + 2 < l) {
     p3 = points[(intPoint + 2) % l];
@@ -381,9 +379,9 @@ export const getPoint = (curve, t, optionalTarget) => {
   if (curve.curveType === 'centripetal' || curve.curveType === 'chordal') {
     // init Centripetal / Chordal Catmull-Rom
     const pow = curve.curveType === 'chordal' ? 0.5 : 0.25;
-    let dt0 = Math.pow(p0.distanceToSquared(p1), pow);
-    let dt1 = Math.pow(p1.distanceToSquared(p2), pow);
-    let dt2 = Math.pow(p2.distanceToSquared(p3), pow);
+    let dt0 = p0.distanceToSquared(p1) ** pow;
+    let dt1 = p1.distanceToSquared(p2) ** pow;
+    let dt2 = p2.distanceToSquared(p3) ** pow;
 
     // safety check for repeated points
     if (dt1 < 1e-4) dt1 = 1.0;

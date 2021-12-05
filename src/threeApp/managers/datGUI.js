@@ -1,5 +1,6 @@
 import * as dat from 'dat.gui';
 import * as THREE from 'three';
+import { setActiveObject, toggleActiveObject } from '../helpers/mainHelpers';
 import { Config } from '../sceneConfig/general';
 
 // Manages all dat.GUI interactions
@@ -18,25 +19,31 @@ export class DatGUI {
     gui.useLocalStorage = true;
     gui.remember(Config);
 
-    gui.add(Config, 'useBasicMaterials').name('useBasicMaterials').onChange((value) => {
-      Config.useBasicMaterials = value;
-      this.meshes.forEach((mesh) => {
-        if (mesh.material && mesh.material.visible) {
-          mesh.material = new THREE.MeshLambertMaterial({ color: 0x990000, wireframe: true });
-        }
+    gui
+      .add(Config, 'useBasicMaterials')
+      .name('useBasicMaterials')
+      .onChange((value) => {
+        Config.useBasicMaterials = value;
+        this.meshes.forEach((mesh) => {
+          if (mesh.material && mesh.material.visible) {
+            mesh.material = new THREE.MeshLambertMaterial({ color: 0x990000, wireframe: true });
+          }
+        });
       });
-    });
     /* Camera */
     const cameraFolder = gui.addFolder('Camera');
     cameraFolder.open();
-    cameraFolder.add(Config, 'useFollowCam').name('Follow Cam').onChange((value) => {
-      Config.useFollowCam = value;
-      if (value) {
-        Config.clipping = 200
-      } else {
-        Config.clipping = 10000
-      }
-    });
+    cameraFolder
+      .add(Config, 'useFollowCam')
+      .name('Follow Cam')
+      .onChange((value) => {
+        Config.useFollowCam = value;
+        if (value) {
+          Config.clipping = 200;
+        } else {
+          Config.clipping = 10000;
+        }
+      });
     const cameraFOVGui = cameraFolder.add(Config.camera, 'fov', 0, 180).name('Camera FOV');
     cameraFOVGui.onChange((value) => {
       this.controls.enableRotate = false;
@@ -56,15 +63,18 @@ export class DatGUI {
 
       this.controls.enableRotate = true;
     });
-    cameraFolder.add(Config.fog, 'enable').name('Fog').onChange((value) => {
-      main.scene.fog.density = 0;
-      //console.log({ ms: main.scene.fog })
-    });
+    cameraFolder
+      .add(Config.fog, 'enable')
+      .name('Fog')
+      .onChange((value) => {
+        main.scene.fog.density = 0;
+        //console.log({ ms: main.scene.fog })
+      });
     const cameraFogColorGui = cameraFolder.addColor(Config.fog, 'color').name('Fog Color');
     cameraFogColorGui.onChange((value) => {
       main.scene.fog.color.setHex(value);
     });
-    const cameraFogNearGui = cameraFolder.add(Config.fog, 'near', 0.000, 0.010).name('Fog Near');
+    const cameraFogNearGui = cameraFolder.add(Config.fog, 'near', 0.0, 0.01).name('Fog Near');
     cameraFogNearGui.onChange((value) => {
       this.controls.enableRotate = false;
       main.scene.fog.density = value;
@@ -75,11 +85,13 @@ export class DatGUI {
 
     /* Controls */
     const controlsFolder = gui.addFolder('Controls');
-    controlsFolder.add(Config.controls, 'autoRotate').name('Auto Rotate').onChange((value) => {
-      this.controls.autoRotate = value;
-    });
-    const controlsAutoRotateSpeedGui = controlsFolder
-      .add(Config.controls, 'autoRotateSpeed', -1, 1).name('Rotation Speed');
+    controlsFolder
+      .add(Config.controls, 'autoRotate')
+      .name('Auto Rotate')
+      .onChange((value) => {
+        this.controls.autoRotate = value;
+      });
+    const controlsAutoRotateSpeedGui = controlsFolder.add(Config.controls, 'autoRotateSpeed', -1, 1).name('Rotation Speed');
     controlsAutoRotateSpeedGui.onChange((value) => {
       this.controls.enableRotate = false;
       this.controls.autoRotateSpeed = value;
@@ -91,9 +103,12 @@ export class DatGUI {
     /* Lights */
     const lightFolder = gui.addFolder('Lights');
     this.lights.forEach((light) => {
-      lightFolder.add(light, 'intensity').name(light.name).onChange((value) => {
-        light.intensity = value;
-      });
+      lightFolder
+        .add(light, 'intensity')
+        .name(light.name)
+        .onChange((value) => {
+          light.intensity = value;
+        });
     });
 
     /* Meshes */
@@ -101,9 +116,13 @@ export class DatGUI {
     this.meshes
       .filter((m) => m.userData.type !== 'gate' && m.userData.type !== 'decal')
       .forEach((mesh) => {
-        meshFolder.add(mesh, 'visible').name(mesh.name || 'No name').onChange((value) => {
-          mesh.visible = value;
-        });
+        meshFolder
+          .add(mesh, 'visible')
+          .name(mesh.name || 'No name')
+          .onChange((value) => {
+            mesh.visible = value;
+            toggleActiveObject(mesh.name, value);
+          });
       });
   }
 }

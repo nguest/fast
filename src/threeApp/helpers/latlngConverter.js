@@ -8,7 +8,7 @@ export const converLatLngToVector = (coordinates) => {
   const zeroPoint = [zeroX, zeroZ, zeroY];
   return coordinates.map((p) => {
     const x = distanceBetweenTwoPoints([p[0], 0], [zeroPoint[0], 0]);
-    const y = 0; // p[2] - zeroPoint[2];
+    const y = isNaN(p[2]) ? 0 : p[2] - zeroPoint[2];
     const z = distanceBetweenTwoPoints([0, p[1]], [0, zeroPoint[1]]);
 
     return new Vector3(x, y, z);

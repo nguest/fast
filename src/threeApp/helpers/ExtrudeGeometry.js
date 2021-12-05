@@ -16,7 +16,7 @@
  * }
  */
 
-import { Geometry, BufferGeometry, Float32BufferAttribute, Vector2, Vector3, ShapeUtils } from 'three';
+import { BufferGeometry, Float32BufferAttribute, Vector2, Vector3, ShapeUtils } from 'three';
 import { computeFrenetFrames, getSpacedPoints } from './curveHelpers';
 
 // ExtrudeGeometry
@@ -79,9 +79,6 @@ class ExtrudeBufferGeometry extends BufferGeometry {
       const placeholder = [];
 
       // options
-
-      console.log({ options });
-      
 
       const curveSegments = options.curveSegments !== undefined ? options.curveSegments : 12;
       const steps = options.steps !== undefined ? options.steps : 1;

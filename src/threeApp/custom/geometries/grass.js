@@ -56,10 +56,12 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
   const plane = new THREE.PlaneBufferGeometry(0.6, 0.6);
   plane.translate(0, 0.3, 0);
   const up = new Vector3(0, 1, 0);
+  const map = assets.Grassclump_Map_1024;
+  const normalMap = assets.Grassclump_Normal_1024;
 
   const material = new InstancesStandardMaterial({
-    map: assets.Grassclump_Map_1024,
-    normalMap: assets.Grassclump_Normal_1024,
+    map,
+    normalMap,
     //opacity: 0.8,
     // blending: THREE.AdditiveBlending,
     side: THREE.DoubleSide,
@@ -75,7 +77,17 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
     alphaTest: 0.2,
   });
 
-  const { instancedMesh, positions } = createSampledInstanceMesh({
+    // depthMaterial essential for shadows
+  const depthMaterial = new InstancesDepthMaterial({
+    depthPacking: THREE.RGBADepthPacking,
+    map,
+    alphaTest: 0.9,
+    userData: {
+      faceToCamera: true,
+    },
+  });
+
+  const { positions } = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh,
     material,
@@ -91,23 +103,22 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
     },
   });
 
-  const instancedMeshTest = createInstancedMesh({
+  const instancedMesh = createInstancedMesh({
     geometry: plane,
     positions,
     count: 100000,
     offset: new THREE.Vector3(0, 0, 0), // treeHeight * 0.5,
     name: 'grassclumps',
     material,
-    //depthMaterial,
+    depthMaterial,
     //scaleFunc,
     shadow: {
       cast: true,
       receive: true,
     },
   });
-  console.log({ instancedMeshTest });
 
-  scene.add(instancedMeshTest);
+  scene.add(instancedMesh);
 
   //scene.add(instancedMesh);
 };

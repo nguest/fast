@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { computeFrenetFrames } from '../../helpers/curveHelpers';
 import {
   createSampledInstanceMesh,
   createInstancedMesh,
@@ -14,6 +13,7 @@ import { rand } from '../../helpers/helpers';
 export const trackCrossSection = (trackParams) => {
   const shape = new THREE.Shape();
   shape.moveTo(0, trackParams.trackHalfWidth);
+  // shape.lineTo(0.2, 0);
   shape.lineTo(0, -trackParams.trackHalfWidth);
   return shape;
 };
@@ -34,31 +34,7 @@ export const trackUVGenerator = {
     ];
   },
 
-  generateSideWallUV(geometry, vertices, indexA, indexB, indexC, indexD) {
-    // const kx = 1;//0.1
-    // const ky = 1;//10
-    // const kz = 1;//0.1
-
-    // let a_x = vertices[indexA * 3] * kx;
-    // let a_y = vertices[indexA * 3 + 1] * ky;
-    // let a_z = vertices[indexA * 3 + 2] * kz;
-    // let b_x = vertices[indexB * 3] * kx;
-    // let b_y = vertices[indexB * 3 + 1] * ky;
-    // let b_z = vertices[indexB * 3 + 2] * kz;
-    // let c_x = vertices[indexC * 3] * kx;
-    // let c_y = vertices[indexC * 3 + 1] * ky;
-    // let c_z = vertices[indexC * 3 + 2] * kz;
-    // let d_x = vertices[indexD * 3] * kx;
-    // let d_y = vertices[indexD * 3 + 1] * ky;
-    // let d_z = vertices[indexD * 3 + 2] * kz;
-    // console.log({ a_x, a_y, a_z });
-    // console.log({ b_x, b_y, b_z });
-    // console.log({ c_x, c_y, c_z });
-    // console.log({ d_x, d_y, d_z });
-
-    // const u = 1;
-    // const v = 1;
-
+  generateSideWallUV() {
     // simple uv 1:1 mapping:
     return [
       new THREE.Vector2(0, 1),
@@ -70,8 +46,8 @@ export const trackUVGenerator = {
 };
 
 export const decorateTrack = (trackMesh, scene, trackParams, material) => {
-  //const helper = new THREE.VertexNormalsHelper(trackMesh, 2, 0x00ff00, 1);
-  //scene.add(helper);
+  // const helper = new THREE.VertexNormalsHelper(trackMesh, 2, 0x00ff00, 1);
+  // scene.add(helper);
 
   const plane = new THREE.PlaneBufferGeometry(0.2, 10);
   const { instancedMesh } = createSampledInstanceMesh({
@@ -237,7 +213,7 @@ CustomDistanceMaterial.onBeforeCompile = (shader) => {
       ${shader.vertexShader}`;
   shader.vertexShader = shader.vertexShader.replace(
     '#include <project_vertex>',
-    `                     
+    `
         vec3 vPosition = offset + applyQuaternionToVector( orientation, transformed );
  
         vec4 mvPosition = modelMatrix * vec4( vPosition, 1.0 );

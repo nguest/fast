@@ -19,7 +19,9 @@ const zeroVector = new Ammo.btVector3(0, 0, 0);
 
 export const createObjects = (materials, assets, trackParams, scene, manager, physicsWorld) => {
   const t1 = performance.now();
+  const perf = [];
   const objects = objectsIndex(trackParams)
+    .filter(getActiveObjects)
     .map((obj) => {
       const params = {
         ...obj,
@@ -42,8 +44,11 @@ export const createObjects = (materials, assets, trackParams, scene, manager, ph
           damping: obj.physics.damping,
         };
       }
-      return new Mesh(params).getMesh();
+      const mesh = new Mesh(params);
+      perf.push(mesh.getCreateDuration());
+      return mesh.getMesh();
     });
+
   createTrees(scene, trackParams);
   decorateTrack(getObjByName(scene, 'racingLine'), scene, trackParams, materials.roadRacingLine);
   decorateGrass(getObjByName(scene, 'grassL'), scene, trackParams, materials, assets);
@@ -55,6 +60,7 @@ export const createObjects = (materials, assets, trackParams, scene, manager, ph
   const instancedMeshes = scene.children.filter((o) => o.userData.type === 'instancedMesh');
   const t2 = performance.now();
   console.info(`createObjects took ${t2 - t1} ms`);
+  console.table(perf.sort((a, b) => b.createDuration - a.createDuration));
   console.info({
     'this.scene': scene.children.filter((o) => o.userData.type !== 'gate'),
   });
@@ -87,7 +93,6 @@ export const loadAssets = (manager) => {
 
   const TexturePromiseLoader = promisifyLoader(new THREE.TextureLoader(manager));
   const texturesPromises = Object.values(assetsIndex.textures).map((texture) => {
-   // console.info('loading texture: ', texture.path);
     return TexturePromiseLoader.load(texture.path);
   });
   const texturesAndFiles = { imagePromises, texturesPromises };
@@ -141,4 +146,23 @@ export const resetObjects = (gate, physicsWorld, controls, trackParams, showGame
   body.setLinearVelocity(zeroVector);
   body.setAngularVelocity(zeroVector);
   body.setWorldTransform(transform);
+};
+
+export const getActiveObjects = (o) => {
+  const inactiveObjectsJSON = localStorage.getItem('inactiveObjects');
+  const isInactiveObject = JSON.parse(inactiveObjectsJSON)?.find((n) => n === o.name);
+  return !isInactiveObject;
+};
+
+export const toggleActiveObject = (name, isActive) => {
+  const inactiveObjectsJSON = localStorage.getItem('inactiveObjects');
+  const inactiveObjects = JSON.parse(inactiveObjectsJSON) || [];
+  if (!inactiveObjects.includes(name) && !isActive) {
+    const newInactiveObjects = [...(inactiveObjects || []), name];
+    localStorage.setItem('inactiveObjects', JSON.stringify(newInactiveObjects));
+  }
+  if (isActive) {
+    const newInactiveObjects = (inactiveObjects || []).filter((name) => !name);
+    localStorage.setItem('inactiveObjects', JSON.stringify(newInactiveObjects));
+  }
 };

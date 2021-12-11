@@ -21,31 +21,31 @@ import { computeFrenetFrames, getSpacedPoints } from './curveHelpers';
 
 // ExtrudeGeometry
 
-class ExtrudeGeometry extends BufferGeometry {
+class CustomExtrudeGeometry extends BufferGeometry {
   constructor(
     shapes = new Shape([new Vector2(0.5, 0.5), new Vector2(-0.5, 0.5), new Vector2(-0.5, -0.5), new Vector2(0.5, -0.5)]),
     options = {},
   ) {
     super();
 
-    this.type = 'ExtrudeGeometry';
+    this.type = 'CustomExtrudeGeometry';
 
     this.parameters = {
       shapes: shapes,
       options: options,
     };
 
-    this.fromBufferGeometry(new ExtrudeBufferGeometry(shapes, options));
+    this.fromBufferGeometry(new CustomExtrudeBufferGeometry(shapes, options));
     this.mergeVertices();
   }
 }
 
 //  ExtrudeGeometry.prototype = Object.create(Geometry.prototype);
-//  ExtrudeGeometry.prototype.constructor = ExtrudeGeometry;
+//  ExtrudeGeometry.prototype.constructor = 2ometry;
 
 // ExtrudeBufferGeometry
 
-class ExtrudeBufferGeometry extends BufferGeometry {
+class CustomExtrudeBufferGeometry extends BufferGeometry {
   constructor(shapes, options) {
     super();
     this.type = 'ExtrudeBufferGeometry';
@@ -313,4 +313,4 @@ const WorldUVGenerator = {
   },
 };
 
-export { ExtrudeGeometry, ExtrudeBufferGeometry };
+export { CustomExtrudeGeometry, CustomExtrudeBufferGeometry };

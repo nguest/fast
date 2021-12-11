@@ -107,7 +107,7 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
     geometry: plane,
     positions,
     count: 100000,
-    offset: new THREE.Vector3(0, 0, 0), // treeHeight * 0.5,
+    offset: new THREE.Vector3(0, 0, 0),
     name: 'grassclumps',
     material,
     depthMaterial,
@@ -119,8 +119,6 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
   });
 
   scene.add(instancedMesh);
-
-  //scene.add(instancedMesh);
 };
 
 const createDirt = (mesh, scene, trackParams) => {

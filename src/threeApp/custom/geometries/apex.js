@@ -89,7 +89,7 @@ export const createApexMarkers = (scene, trackParams) => {
   const segLen = length / steps;
   const idxScaleFactor = steps / apexCurveCount;
   const cpPoints = centerLine.getSpacedPoints(steps);
-  const { binormals } = centerLine.computeFrenetFrames(steps);
+  const { binormals } = centerLine.computeFrenetFrames(steps, true);
   const STRAIGHT_LENGTH_MIN = 300;
 
   apexes.forEach((apex, i) => {

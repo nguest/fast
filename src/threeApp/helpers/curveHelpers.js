@@ -273,9 +273,13 @@ export const computeFrenetFrames = (curve, segments, closed) => {
     }
 
     // !!! manually set first and last identical?
-    normals[segments] = normals[0];
-    binormals[segments] = binormals[0];
-    tangents[segments] = tangents[0];
+    // normals[segments] = normals[0];
+    // binormals[segments] = binormals[0];
+    // tangents[segments] = tangents[0];
+
+    // normals[segments - 1] = normals[normals.length -1];
+    // binormals[segments -1] = binormals[binormals.length -1];
+    // tangents[segments- 1] = tangents[tangents.length -1];
 
   };
 

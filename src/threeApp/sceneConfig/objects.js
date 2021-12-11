@@ -28,7 +28,7 @@ export const objectsIndex = (trackParams) => ([
   },
   {
     name: 'track',
-    type: 'ExtrudeGeometry',
+    type: 'CustomExtrudeGeometry',
     params: [
       trackCrossSection(trackParams),
       {
@@ -57,7 +57,7 @@ export const objectsIndex = (trackParams) => ([
   },
   {
     name: 'racingLine',
-    type: 'ExtrudeGeometry',
+    type: 'CustomExtrudeGeometry',
     params: [
       racingLineCrossSection(trackParams),
       {
@@ -72,16 +72,17 @@ export const objectsIndex = (trackParams) => ([
     position: [0, 0.1, 0],
     rotation: [0, 0, 0],
     scale: [1, 1, 1],
-    material: 'mappedFlat',//roadRacingLine',
+    material: 'roadRacingLine',//'wireFrame',//'mappedFlat',//roadRacingLine',
     shadows: {
       receive: true,
       cast: false,
     },
+    opacity: 0,
     add: true,
   },
   {
     name: 'terrain',
-    type: 'ExtrudeGeometry',
+    type: 'CustomExtrudeGeometry',
     params: [
       terrainCrossSection(trackParams),
       {
@@ -105,7 +106,7 @@ export const objectsIndex = (trackParams) => ([
   },
   {
     name: 'terrainSmall',
-    type: 'ExtrudeGeometry',
+    type: 'CustomExtrudeGeometry',
     params: [
       terrainCrossSection(trackParams),
       {
@@ -129,7 +130,7 @@ export const objectsIndex = (trackParams) => ([
   },
   {
     name: 'trackKerb',
-    type: 'ExtrudeGeometry',
+    type: 'CustomExtrudeGeometry',
     params: [
       trackKerbCrossSection(trackParams),
       {
@@ -159,7 +160,7 @@ export const objectsIndex = (trackParams) => ([
   },
   {
     name: 'grassL',
-    type: 'ExtrudeGeometry',
+    type: 'CustomExtrudeGeometry',
     params: [
       grassCrossSectionL(trackParams),
       {
@@ -188,7 +189,7 @@ export const objectsIndex = (trackParams) => ([
   },
   {
     name: 'grassR',
-    type: 'ExtrudeGeometry',
+    type: 'CustomExtrudeGeometry',
     params: [
       grassCrossSectionR(trackParams),
       {
@@ -217,7 +218,7 @@ export const objectsIndex = (trackParams) => ([
   },
   // {
   //   name: 'grassEdgeL',
-  //   type: 'ExtrudeGeometry',
+  //   type: 'CustomExtrudeGeometry',
   //   params: [
   //     grassEdgeL(trackParams),
   //     {
@@ -241,7 +242,7 @@ export const objectsIndex = (trackParams) => ([
   // },
   {
     name: 'barriers',
-    type: 'ExtrudeGeometry',
+    type: 'CustomExtrudeGeometry',
     params: [
       barriersCrossSection(trackParams),
       {
@@ -270,7 +271,7 @@ export const objectsIndex = (trackParams) => ([
   },
   {
     name: 'fences',
-    type: 'ExtrudeGeometry',
+    type: 'CustomExtrudeGeometry',
     params: [
       fencesCrossSection(trackParams),
       {

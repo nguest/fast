@@ -163,7 +163,7 @@ export const materialsIndex = [
     wireframe: false,
     //emissive: 0x000000,
     shininess: 0,
-    specular: 40,
+    specular: 20,
   },
   {
     name: 'LongGrassMaterial',

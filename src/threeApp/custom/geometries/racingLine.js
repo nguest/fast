@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { getSpacedPoints, computeFrenetFrames } from '../../helpers/curveHelpers';
 import { splineMethod } from './splineMethod';
 
 export const racingLineCrossSection = () => (new THREE.Shape([
@@ -18,11 +17,11 @@ const mat = {
 export const createRacingLine = (centerLine, cpCount, trackHalfWidth) => {
   const wpCount = 7; // width section pointscount
   //const cpCount = Math.floor(centerLine.getLength() / 15); // segments in track direction
-  const { binormals, tangents } = centerLine.computeFrenetFrames(cpCount);
+  const { normals, binormals, tangents } = centerLine.computeFrenetFrames(cpCount, true);
   const cpPoints = centerLine.getSpacedPoints(cpCount);
 
   const t2 = performance.now();
-  const { racingLine, edgeTouches, apexIndices } = splineMethod(cpPoints, binormals, tangents, trackHalfWidth);
+  const { racingLine, edgeTouches, apexIndices } = splineMethod(cpPoints, normals,binormals, tangents, trackHalfWidth);
   const t3 = performance.now();
   console.info(`SplineMethod took ${t3 - t2} ms with ${cpCount} nodes`);
   const apexes = apexIndices.map((apexDets) => ({

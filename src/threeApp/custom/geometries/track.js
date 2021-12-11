@@ -9,6 +9,7 @@ import {
 } from '../materials/InstancesStandardMaterials';
 import { patchShader } from '../../materials/extend';
 import { rand } from '../../helpers/helpers';
+import { Vector3 } from 'three';
 
 export const trackCrossSection = (trackParams) => {
   const shape = new THREE.Shape();
@@ -68,24 +69,26 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
   //
   const pointsCount = Math.floor(trackParams.steps * 1);
   const curve = new THREE.CatmullRomCurve3(trackParams.racingLine);
-
+  console.log({ pointsCount });
+  
   const points = curve.getSpacedPoints(pointsCount);
-  const { binormals } = curve.computeFrenetFrames(pointsCount);
+  const { binormals, normals, tangents } = curve.computeFrenetFrames(pointsCount, true);
 
   const adjustedPoints = points.reduce(
     (a, p, i) => [
       ...a,
-      p.clone().sub(binormals[i].clone().multiplyScalar(1 * rand(1))),
-      p.clone().sub(binormals[i].clone().multiplyScalar(-(1 * rand(1)))),
+      p.clone().sub(binormals[i].clone().multiplyScalar(1 * rand(2.5))),
+      p.clone().sub(binormals[i].clone().multiplyScalar(-(1 * rand(2.5)))),
+      //p.clone().sub(binormals[i].clone().multiplyScalar(1)),
+      //p.clone().sub(binormals[i].clone().multiplyScalar(-1)),
     ],
     [],
   );
 
   const positions = [];
   const quaternions = [];
-  const dummyQuat = new THREE.Quaternion();
-  const x = new THREE.Vector3(1, 0, 0);
-  const up = new THREE.Vector3(0, 1, 0);
+  let dummyQuat = new THREE.Quaternion();
+  let dummyObj = new THREE.Object3D();
 
   for (let i = 0; i < adjustedPoints.length; i += 1) {
     positions.push(
@@ -93,9 +96,9 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
       adjustedPoints[i].y,
       adjustedPoints[i].z,
     );
-    const angleX = binormals[Math.floor(i * 0.5)].angleTo(x);
-    dummyQuat.setFromAxisAngle(up, angleX);
 
+    dummyObj.lookAt(tangents[Math.floor(i * 0.5)]);
+    dummyQuat = dummyObj.quaternion;
     quaternions.push(dummyQuat.x, dummyQuat.y, dummyQuat.z, dummyQuat.w);
   }
 
@@ -112,8 +115,9 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
     side: THREE.DoubleSide,
     polygonOffset: true,
     polygonOffsetFactor: -1,
-    // transparent: true,
-    opacity: 0.1,
+    blending: THREE.SubtractiveBlending,
+    //transparent: true,
+    //opacity: 0.8,
     renderOrder: 1,
     polygonOffsetUnits: -1.0,
     userData: {
@@ -132,8 +136,9 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
     },
   });
 
-  const geometry = new THREE.PlaneBufferGeometry(0.2, 10);
+  const geometry = new THREE.PlaneBufferGeometry(0.5, 10);
   geometry.rotateX(Math.PI * 0.5);
+  //geometry.rotateZ  (Math.PI * 0.5);
   geometry.translate(0, 0.1, 0);
 
   const instancedMesh2 = createInstancedMesh({
@@ -153,7 +158,7 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
   });
   // instancedMesh2.position.y += 0.1;
 
-  // scene.add(instancedMesh2);
+  scene.add(instancedMesh2);
 };
 
 // create custom material with vertex clipping and proper alpha

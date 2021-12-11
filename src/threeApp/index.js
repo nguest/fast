@@ -32,7 +32,7 @@ import { createCar } from './helpers/car';
 
 // Managers
 import { Interaction } from './managers/Interaction';
-import { DatGUI } from './managers/DatGUI';
+import { DatGUI } from './managers/datGUI';
 
 // Stats
 import { Stats } from './helpers/statsModule';

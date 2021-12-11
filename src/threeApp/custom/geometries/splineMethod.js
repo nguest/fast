@@ -1,16 +1,40 @@
 // https://www.youtube.com/watch?v=FlieT66N9OM
 // https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_RacingLines.cpp
 
-export const splineMethod = (cpPoints, binormals, tangents, trackHalfWidth) => {
+import { MathUtils, Vector3, Matrix4 } from "three";
+
+export const splineMethod = (cpPoints, normals, binormals, tangents, trackHalfWidth) => {
   const displacement = new Array(cpPoints.length).fill(0);
   const racingLine = cpPoints.map((p) => p.clone());
   const nIterations = 5;
   const edgeTouches = {};
   const tolerance = 0.5;
 
-  const alpha = 6; // shortest
+  const alpha = 3.5; // shortest
   const beta = 0.2; // curvature
+  console.log({ normals, binormals, tangents });
+  
+///
+      // let theta = Math.acos(MathUtils.clamp(normals[0].dot(normals[cpPoints.length - 1]), -1, 1));
+      // console.log({ theta });
+      
+      // theta /= cpPoints.length -1;
 
+      // const vec = new Vector3();
+      // const mat = new Matrix4();
+
+      // if (tangents[0].dot(vec.crossVectors(normals[0], normals[cpPoints.length -1])) > 0) {
+      //   theta = -theta;
+      // }
+  
+      // console.log({ theta });
+      
+      // for (let i = 1; i <= cpPoints.length - 1; i++) {
+      //   // twist a little...
+      //   normals[i].applyMatrix4(mat.makeRotationAxis(tangents[i], theta * i));
+      //   binormals[i].crossVectors(tangents[i], normals[i]);
+      // }
+///
   for (let i = 0; i < nIterations; i++) {
     for (let j = 0; j < racingLine.length; j++) {
       // Get locations of neighbour nodes
@@ -35,8 +59,8 @@ export const splineMethod = (cpPoints, binormals, tangents, trackHalfWidth) => {
       displacement[j] += (dotProduct * alpha);
 
       // Curvature
-      // displacement[(j + 1) % racingLine.length] += dotProduct * -beta;
-      // displacement[(j + racingLine.length) % racingLine.length] += dotProduct * -beta;
+      //displacement[(j + 1) % racingLine.length] += dotProduct * -beta;
+      //displacement[(j + racingLine.length) % racingLine.length] += dotProduct * -beta;
 
       // create weights of points as they approach edge
       if (
@@ -60,9 +84,25 @@ export const splineMethod = (cpPoints, binormals, tangents, trackHalfWidth) => {
     }
   }
 
+    // if the curve is closed, postprocess the vectors so the first and last normal vectors are the same
+
+    // if (curve.closed === true) {
+    //   theta = Math.acos(MathUtils.clamp(normals[0].dot(normals[segments]), -1, 1));
+    //   theta /= segments;
+  
+    //   if (tangents[0].dot(vec.crossVectors(normals[0], normals[segments])) > 0) {
+    //     theta = -theta;
+    //   }
+  
+    //   for (i = 1; i <= segments; i++) {
+    //     // twist a little...
+    //     normals[i].applyMatrix4(mat.makeRotationAxis(tangents[i], theta * i));
+    //     binormals[i].crossVectors(tangents[i], normals[i]);
+    //   }
+
   // hmmm.... need to work out what to do at end/finish
-  racingLine[0] = cpPoints[0].clone();
-  racingLine[cpPoints.length - 1] = cpPoints[cpPoints.length - 1].clone();
+  racingLine[0] = racingLine[cpPoints.length - 1];//cpPoints[0].clone();
+  //racingLine[cpPoints.length - 1] = cpPoints[cpPoints.length - 1].clone();
 
 
   const apexIndices = edgeTouchesFilter(edgeTouches);

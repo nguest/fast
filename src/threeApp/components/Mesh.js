@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import Ammo from 'ammonext';
 import { GLTFLoader } from '../loaders/GLTFLoader';
-import { ExtrudeBufferGeometry } from '../helpers/ExtrudeGeometry';
+import { CustomExtrudeBufferGeometry } from '../helpers/CustomExtrudeGeometry';
 
 export class Mesh {
   constructor({
@@ -52,8 +52,8 @@ export class Mesh {
     } else {
       let geometry = THREE[type] && new THREE[type](...params);
       // use custom extrude function
-      if (type === 'ExtrudeGeometry' || type === 'ExtrudeBufferGeometry') {
-        geometry = new ExtrudeBufferGeometry(...params);
+      if (type === 'CustomExtrudeGeometry' || type === 'CustomExtrudeBufferGeometry') {
+        geometry = new CustomExtrudeBufferGeometry(...params);
         let uv;
         if (uv2Params) {
           uv = geometry.attributes.uv.array.map((x, i) => {

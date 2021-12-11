@@ -5,9 +5,10 @@ import { trackOptions } from '../../sceneConfig/tracks';
 
 export const computeTrackParams = (selectedTrack) => {
   const coordinates = trackOptions.find((t) => t.name === selectedTrack).coords;
-  const startPoint = 30;
+  const startPoint = 1;
 
   const trackPoints = converLatLngToVector(coordinates.default);
+console.log({ trackPoints });
 
   // rejig points array so startpoint is at array position 0
   const section2 = trackPoints.splice(0, startPoint);

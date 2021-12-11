@@ -76,7 +76,6 @@ export const createInstancedMesh = ({
   }
   mesh.userData.type = 'instancedMesh';
   mesh.name = name;
-  console.log({ mesh });
   
   return mesh;
 };

@@ -52,6 +52,7 @@ export const createObjects = (materials, assets, trackParams, scene, manager, ph
   createTrees(scene, trackParams);
   decorateTrack(getObjByName(scene, 'racingLine'), scene, trackParams, materials.roadRacingLine);
   decorateGrass(getObjByName(scene, 'grassL'), scene, trackParams, materials, assets);
+  decorateGrass(getObjByName(scene, 'grassR'), scene, trackParams, materials, assets);
   //decorateTerrainSmall(getObjByName(this.scene, 'terrainSmall'), this.scene);
   decorateFences(getObjByName(scene, 'fences'), scene, trackParams, materials.billboards);
   createApexMarkers(scene, trackParams);

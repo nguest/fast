@@ -72,6 +72,7 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
     userData: {
       faceToCamera: true,
       opacityDiscardLimit: 0.1,
+      clipDistance: '50.0'
     },
     transparent: true,
     alphaTest: 0.2,
@@ -84,14 +85,18 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
     alphaTest: 0.9,
     userData: {
       faceToCamera: true,
+      clipDistance: '50.0'
     },
   });
+
+
+  const count = 20000;
 
   const { positions } = createSampledInstanceMesh({
     baseGeometry: plane,
     mesh,
     material,
-    count: 300000,
+    count,
     name: 'grassClumps',
     lookAtNormal: true,
     scaleFunc: () => 1.25,
@@ -103,10 +108,10 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
     },
   });
 
-  const instancedMesh = createInstancedMesh({
+  const instancedGrassClumps = createInstancedMesh({
     geometry: plane,
     positions,
-    count: 100000,
+    count,
     offset: new THREE.Vector3(0, 0, 0),
     name: 'grassclumps',
     material,
@@ -118,7 +123,7 @@ const createGrassClumps = (mesh, scene, materials, assets) => {
     },
   });
 
-  scene.add(instancedMesh);
+  scene.add(instancedGrassClumps);
 };
 
 const createDirt = (mesh, scene, trackParams) => {

@@ -145,7 +145,7 @@ export class Main extends PureComponent {
       if (Config.isDev) this.gui = new DatGUI(this);
 
       // setup light camera goal
-      this.localGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(10, 5, 0.1), materials.green);
+      this.localGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(10, 5, 0.1), materials.mappedFlat);
       this.localGoal.position.set(0, 0, 50);
       this.chassisMesh.add(this.localGoal);
 

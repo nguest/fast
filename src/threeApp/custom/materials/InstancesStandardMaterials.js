@@ -2,15 +2,16 @@ import * as THREE from 'three';
 
 // https://discourse.threejs.org/t/instanced-geometry-vertex-shader-question/2694/6
 
-const OVERRIDE_PROJECT_VERTEX = `
+const OVERRIDE_PROJECT_VERTEX = (clipDistance = '200.0') => (`
   //!! orig // vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
   //transformed = getInstancePosition(transformed);
   transformed = applyTRS( transformed.xyz, instanceOffset, instanceQuaternion, instanceScale );
   vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
   gl_Position = projectionMatrix * mvPosition;
 
-  if (gl_Position.z > 200.0) gl_Position.w = 0.0/0.0;
-`;
+  if (gl_Position.z > ${clipDistance}) gl_Position.w = 0.0/0.0;
+`);
+
 
 export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
   constructor(params) {
@@ -18,6 +19,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
     if (params.userData.faceToCamera) this.faceToCamera = true;
     if (params.userData.faceToQuat) this.faceToQuat = true;
     this.opacityDiscardLimit = params.userData.opacityDiscardLimit ? params.userData.opacityDiscardLimit : 0.9;
+    this.clipDistance = params.userData.clipDistance;
   }
 
   name = 'InstancesStandardMaterial';
@@ -124,7 +126,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
 
   overrideLogic = (shader) => {
     shader.vertexShader = shader.vertexShader
-      .replace('#include <project_vertex>', OVERRIDE_PROJECT_VERTEX)
+      .replace('#include <project_vertex>', OVERRIDE_PROJECT_VERTEX(this.clipDistance))
       .replace('#include <uv_vertex>',
         `
         #ifdef USE_UV
@@ -143,6 +145,7 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
     super(params);
     if (params.userData.faceToCamera) this.faceToCamera = true;
     if (params.userData.faceToQuat) this.faceToQuat = true;
+    this.clipDistance = params.userData.clipDistance;
   }
 
   name = 'InstancesDepthMaterial';
@@ -222,7 +225,7 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
 
   overrideLogic = (shader) => {
     shader.vertexShader = shader.vertexShader
-      .replace('#include <project_vertex>', OVERRIDE_PROJECT_VERTEX)
+      .replace('#include <project_vertex>', OVERRIDE_PROJECT_VERTEX(this.clipDistance))
       .replace('#include <uv_vertex>',
         `
         #ifdef USE_UV

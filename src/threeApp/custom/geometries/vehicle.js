@@ -24,28 +24,6 @@ const BACK_LEFT = 2;
 const BACK_RIGHT = 3;
 const wheelMeshes = [];
 
-// const createWheelMeshOLD = ({ radius, width, index, scene }) => {
-//   console.log({ scene })
-//   const t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
-//   t.rotateZ(Math.PI / 2);
-//   const mesh = new THREE.Mesh(t, materialInteractive);
-//   mesh.add(new THREE.Mesh(
-//     new THREE.BoxGeometry(
-//       width * 1.5,
-//       radius * 1.75,
-//       radius * 0.25,
-//       1, 1, 1,
-//     ),
-//     materialInteractive,
-//   ));
-//   mesh.name = `wheel_${index}`;
-//   mesh.castShadow = true;
-
-//   scene.add(mesh);
-//   return mesh;
-// };
-
-
 const createWheelMesh = ({ index, scene }) => {
   const mesh = new THREE.Mesh();
   mesh.name = `wheel_${index}`;

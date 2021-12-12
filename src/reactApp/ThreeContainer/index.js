@@ -21,7 +21,7 @@ export const ThreeContainer = ({
 }) => {
   const threeRootElement = useRef();
   const [isLoading, setIsLoading] = useState(true);
-  
+
   return (
     <>
       <Main

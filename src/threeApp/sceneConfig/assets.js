@@ -34,6 +34,8 @@ export const assetsIndex = {
     Skyline_Map: { name: 'Skyline_Map', path: './assets/textures/skyline2_map.png' },
     TestQuadrants_Map: { name: 'TestQuadrants_Map', path: './assets/textures/testQuadrants_map.jpg' },
     Tree_Map: { name: 'Tree_Map', path: './assets/textures/tree_map.png' },
+    TreeQuadrant_Map: { name: 'TreeQuadrant_Map', path: './assets/textures/treeQuadrant-2048_map.png' },
+    TreeQuadrant_Normal: { name: 'TreeQuadrant_Normal', path: './assets/textures/treeQuadrantBlock-2048_normal.jpg' },
     UVGrid: { name: 'UVGrid', path: './assets/textures/UV_Grid_Sm.jpg' },
   },
 };

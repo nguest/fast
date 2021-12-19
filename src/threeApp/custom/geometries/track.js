@@ -9,7 +9,7 @@ import {
 } from '../materials/InstancesStandardMaterials';
 import { patchShader } from '../../materials/extend';
 import { rand } from '../../helpers/helpers';
-import { Vector3 } from 'three';
+import { Vector2, Vector3 } from 'three';
 
 export const trackCrossSection = (trackParams) => {
   const shape = new THREE.Shape();
@@ -106,37 +106,39 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
     // if (i % 2 === 0) {
     //   return { x: 1, y: 1, z: 1 };
     // }
-    return { x: 1, y: rand(2), z: rand(2) };
+    return { x: 0.75 + 0.5 * rand(1), y: 1, z: rand(2) };
   };
 
-  const mat = new InstancesStandardMaterial({
-    color: 0x111111,
-    map: new THREE.TextureLoader().load('./assets/textures/racingLine_map.png'),
-    side: THREE.DoubleSide,
+  const trackMarksMaterial = new InstancesStandardMaterial({
+    color: 0x555555,
+    map: new THREE.TextureLoader().load('./assets/textures/trackmarks_256.png'),
+    side: THREE.FrontSide,
+
+    //blending: THREE.SubtractiveBlending,
+    transparent: true,
+    opacity: 0.75,
+    //normalScale: new Vector2(2,2),
     polygonOffset: true,
     polygonOffsetFactor: -1,
-    blending: THREE.SubtractiveBlending,
-    //transparent: true,
-    //opacity: 0.8,
     renderOrder: 1,
     polygonOffsetUnits: -1.0,
     userData: {
       faceToQuat: true,
-      opacityDiscardLimit: 0.01,
+      //opacityDiscardLimit: 0.01,
     },
-    shininess: 1,
-    specular: 0xaaaaaa,
+    shininess: 100,
+    specular: 0xffffff,
   });
 
   const depthMaterial = new InstancesDepthMaterial({
     depthPacking: THREE.RGBADepthPacking,
-    alphaTest: 0.5,
+   // alphaTest: 0.5,
     userData: {
       faceToQuat: true,
     },
   });
 
-  const geometry = new THREE.PlaneBufferGeometry(0.5, 10);
+  const geometry = new THREE.PlaneBufferGeometry(0.3, 10);
   geometry.rotateX(Math.PI * 0.5);
   //geometry.rotateZ  (Math.PI * 0.5);
   geometry.translate(0, 0.1, 0);
@@ -146,7 +148,7 @@ export const decorateTrack = (trackMesh, scene, trackParams, material) => {
     count: adjustedPoints.length * 2,
     offset: new THREE.Vector3(0, 0, 0),
     name: 'trackMarkInstance',
-    material: mat,
+    material: trackMarksMaterial,
     depthMaterial,
     positions,
     quaternions,

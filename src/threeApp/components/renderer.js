@@ -32,7 +32,7 @@ export class Renderer {
 
     // Shadow map options
     this.threeRenderer.shadowMap.enabled = true;
-    this.threeRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.threeRenderer.shadowMap.type = THREE.PCFShadowMap;//THREE.PCFSoftShadowMap;
 
     // Get anisotropy for textures
     Config.maxAnisotropy = this.threeRenderer.capabilities.getMaxAnisotropy();

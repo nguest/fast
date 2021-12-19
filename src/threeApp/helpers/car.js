@@ -54,28 +54,36 @@ export const decorateCar = (car, scene) => {
       if (child.material.name === 'CarpaintMat') {
         //console.log({ 'CarpaintMat': child.material, THREE });
         //child.material.color = new THREE.Color(0xff00ff)
-        child.material.reflectivity = 0.1;
-        child.material.envMap = scene.environment;
-        child.material.clearcoat = 1.0;
-        child.material.clearcoatRoughness = 0.2;
-        child.material.roughness = 0.5;
-        child.material.metalness = 0.7;
+        //child.material.reflectivity = 1.0;
+       // child.material.envMap = scene.environment;
+        //child.material.clearcoat = 1.0;
+        //child.material.clearcoatRoughness = 0.2;
+       // child.material.roughness = 0.5;
+        //child.material.metalness = 0.7;
         child.material.specular = 0xffffff;
+
+        child.material = new THREE.MeshPhysicalMaterial({ 
+          color: 0x444400, 
+          envMap: scene.environment, 
+          reflectivity: 0.7,
+          //clearcoat: 1.0,
+          clearcoatRoughness: 0.3
+        });
+        console.log({ child });
         child.castShadow = true;
         child.receiveShadow = true;
+
         //   ...child.material,
         //   color:  0xffffff,
         // }
       }
-      let carbonMat;
-      if (child.material.name === 'CarbonMat') {
-        carbonMat = child.material;
-      }
       if (child.material.name === 'GlassMat') {
         child.material = new THREE.MeshPhongMaterial({ color: 0x444444, envMap: scene.environment, reflectivity: 1.0 });
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
       if (child.material.name === 'CarbonMat') {
-        child.material = new THREE.MeshPhongMaterial({ color: 0x444444, envMap: scene.environment, reflectivity: 0.7 });
+        child.material = new THREE.MeshPhongMaterial({ color: 0x333333, envMap: scene.environment, reflectivity: 0.5 });
       }
       if (child.material.name === 'CarpaintMat') {
         child.receiveShadow = true;
@@ -95,7 +103,7 @@ export const decorateCar = (car, scene) => {
         ///console.log({ CCCCCCCCC: child.material });
         //console.log({ child });
         child.material.envMap = scene.environment;
-        child.material.reflectivity = 0.7;
+        child.material.reflectivity = 0.1;
         //child.material.alphaTest = 0.5
         //child.material.transparent = true;
         //child.material.opacity = 0.6;
@@ -124,18 +132,25 @@ export const createCar = (scene) => {
 
 // create false shadow underneath car
 const createShadow = () => {
-  const shadowPlane = new THREE.PlaneBufferGeometry(200, 470);
-  shadowPlane.translate(0, 0, -5);
+  const shadowPlane = new THREE.PlaneBufferGeometry(250, 550);
+  shadowPlane.translate(0, 0, -4.8);
   const material = new THREE.MeshLambertMaterial({
-    color: 0xff0000,
+    //color: 0xff0000,
     transparent: true,
     opacity: 0.7,
     side: THREE.DoubleSide,
     polygonOffset: true,
     polygonOffsetFactor: -1,
+    polygonOffsetUnits: 1,
     map: new THREE.TextureLoader().load(('./assets/textures/carShadow_map.png')),
   });
   const shadowPlaneMesh = new THREE.Mesh(shadowPlane, material);
   shadowPlaneMesh.name = 'shadowPlane';
   return shadowPlaneMesh;
+
+  const sh = new THREE.BoxBufferGeometry(240, 420, 530  );
+  const sgMesh = new THREE.Mesh(sh, material);
+  sgMesh.castShadow = true;
+  sgMesh.receiveShadow = true
+  return sgMesh;
 };

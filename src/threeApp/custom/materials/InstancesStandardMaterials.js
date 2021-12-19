@@ -4,8 +4,7 @@ import * as THREE from 'three';
 
 const OVERRIDE_PROJECT_VERTEX = (clipDistance = '200.0') => (`
   //!! orig // vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
-  //transformed = getInstancePosition(transformed);
-  transformed = applyTRS( transformed.xyz, instanceOffset, instanceQuaternion, instanceScale );
+  transformed = applyTRS(transformed.xyz, instanceOffset, instanceQuaternion, instanceScale);
   vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
   gl_Position = projectionMatrix * mvPosition;
 
@@ -42,7 +41,6 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
 
           // rotate to face camera on y-axis for billboarding
           vec3 applyTRS(vec3 position, vec3 translation, vec4 quaternion, vec3 scale) {
-
             vec3 look = cameraPosition - translation;
             look.y = 0.0;
             look = normalize(look);
@@ -52,28 +50,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
               + (billboardUp * position.y * scale.y);
             return pos;
           }
-          // if applying instanceQuaternion
-          // vec3 applyTRS(vec3 position, vec3 translation, vec4 quaternion, vec3 scale) {
-          //   position *= scale;
-          //   // vec4 instanceQuaternion = vec4(0, 0, 0, 1);
-          //   vec3 vcV = cross( instanceQuaternion.xyz, position );
-          //   // position = vcV * ( 2.0 * instanceQuaternion.w ) +
-          //   //   ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
-          //   position = position + 2.0 * cross( instanceQuaternion.xyz, cross( instanceQuaternion.xyz, position ) + instanceQuaternion.w * position );
 
-          //   //position = vcV * ( 2.0 * instanceQuaternion.w ) + ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
-
-          //   position += instanceOffset;
-
-          //   return position;
-          // }
-
-          // vec3 applyTRS( vec3 position, vec3 translation, vec4 quaternion, vec3 scale ) {
-          //   position *= scale;
-          //   position += 2.0 * cross( quaternion.xyz, cross( quaternion.xyz, position ) + quaternion.w * position );
-          //   return position + translation;
-          // }
-          
           void main() {
         `,
       );
@@ -87,22 +64,6 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
           attribute vec4 instanceQuaternion;
           attribute vec3 instanceScale;
           attribute vec2 instanceMapUV;
-
-          // if applying instanceQuaternion
-          // vec3 applyTRS(vec3 position, vec3 translation, vec4 quaternion, vec3 scale) {
-          //   position *= scale;
-          //   // vec4 instanceQuaternion = vec4(0, 0, 0, 1);
-          //   vec3 vcV = cross( instanceQuaternion.xyz, position );
-          //   // position = vcV * ( 2.0 * instanceQuaternion.w ) +
-          //   //   ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
-          //   position = position + 2.0 * cross( instanceQuaternion.xyz, cross( instanceQuaternion.xyz, position ) + instanceQuaternion.w * position );
-
-          //   //position = vcV * ( 2.0 * instanceQuaternion.w ) + ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
-
-          //   position += instanceOffset;
-
-          //   return position;
-          // }
 
           vec3 applyTRS( vec3 position, vec3 translation, vec4 quaternion, vec3 scale ) {
             position *= scale;
@@ -124,6 +85,7 @@ export class InstancesStandardMaterial extends THREE.MeshPhongMaterial {
       )
   }
 
+  // use 4-quadrant UV map for faster randomized texture loading
   overrideLogic = (shader) => {
     shader.vertexShader = shader.vertexShader
       .replace('#include <project_vertex>', OVERRIDE_PROJECT_VERTEX(this.clipDistance))
@@ -194,22 +156,6 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
           attribute vec3 instanceScale;
           attribute vec2 instanceMapUV;
 
-          // if applying instanceQuaternion
-          // vec3 applyTRS(vec3 position, vec3 translation, vec4 quaternion, vec3 scale) {
-          //   position *= scale;
-          //   // vec4 instanceQuaternion = vec4(0, 0, 0, 1);
-          //   vec3 vcV = cross( instanceQuaternion.xyz, position );
-          //   // position = vcV * ( 2.0 * instanceQuaternion.w ) +
-          //   //   ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
-          //   position = position + 2.0 * cross( instanceQuaternion.xyz, cross( instanceQuaternion.xyz, position ) + instanceQuaternion.w * position );
-
-          //   //position = vcV * ( 2.0 * instanceQuaternion.w ) + ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
-
-          //   position += instanceOffset;
-
-          //   return position;
-          // }
-
           vec3 applyTRS( vec3 position, vec3 translation, vec4 quaternion, vec3 scale ) {
             position *= scale;
             position += 2.0 * cross( quaternion.xyz, cross( quaternion.xyz, position ) + quaternion.w * position );
@@ -235,17 +181,3 @@ export class InstancesDepthMaterial extends THREE.MeshDepthMaterial {
       `);
   };
 }
-
-/*
-        // if applying instanceQuaternion
-        // vec3 getInstancePosition(vec3 position) {
-        //   position *= instanceScale;
-        //   vec4 instanceQuaternion = vec4(0, 0, 0, 1);
-        //   vec3 vcV = cross( instanceQuaternion.xyz, position );
-        //   position = vcV * ( 2.0 * instanceQuaternion.w ) +
-        // ( cross( instanceQuaternion.xyz, vcV ) * 2.0 + position );
-        //   position += instanceOffset;
-
-        //   return position;
-        // }
-*/

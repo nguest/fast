@@ -19,26 +19,16 @@ const treesCrossSection2 = (trackParams) => {
 
 export const treesCrossSection = [treesCrossSection1, treesCrossSection2];
 
-export const createTrees = (scene, trackParams) => {
+export const createTrees = (scene, trackParams, assets) => {
   const treeHeight = 12;
   const treePlane = new THREE.PlaneBufferGeometry(7, treeHeight, 1, 1);
   treePlane.translate(0, treeHeight * 0.5, 0);
   treePlane.name = 'treePlane';
-  const loader = new THREE.TextureLoader();
-  const map = loader.load('./assets/textures/treeQuadrant-2048_map.png');
-  
-  //const map = loader.load('./assets/textures/tiledTrees_map.png');
-  //const normalMap = loader.load('./assets/textures/tree_block_normal.png');
-  const normalMap = loader.load('./assets/textures/treeQuadrantBlock-2048_normal.jpg')
-  //loader.load('./assets/textures/grass_alpha.png');
-
-// d    const normalMap = loader.load('./assets/textures/treeQuadrant-2048.png');
 
   const material = new InstancesStandardMaterial({
-    map,
+    map: assets.TreeQuadrant_Map,
     side: THREE.DoubleSide,
-    normalMap,
-    //alphaMap: loader.load('./assets/textures/tree_alpha.png'),
+    normalMap: assets.TreeQuadrant_Normal,
     //normalScale: new THREE.Vector2(1, 1),
     //premultipliedAlpha: true,
     depthFunc: THREE.LessDepth,
@@ -56,7 +46,7 @@ export const createTrees = (scene, trackParams) => {
   // depthMaterial essential for shadows
   const depthMaterial = new InstancesDepthMaterial({
     depthPacking: THREE.RGBADepthPacking,
-    map,
+    map: assets.TreeQuadrant_Map,
     alphaTest: 0.9,
     userData: {
       faceToCamera: true,
@@ -84,7 +74,6 @@ export const createTrees = (scene, trackParams) => {
         cast: true,
       },
     });
-    console.log({ instancedMesh });
     
     scene.add(instancedMesh);
   });

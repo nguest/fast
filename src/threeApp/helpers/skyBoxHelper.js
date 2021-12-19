@@ -74,7 +74,13 @@ export const createSkyBoxFrom4x3 = ({ scene, boxDimension, image, tileSize = 102
   skyBox.name = 'SkyBox';
   skyBox.position.set(0, 0, 0);
   scene.add(skyBox);
-  scene.environment = skyBoxMaterialArray;
+
+  const enviromentMaterialArray = new THREE.CubeTextureLoader().load(new Array(6).fill({}).map(() => ('./assets/textures/dense-cloud_256.jpg')));
+
+  //const enviromentMaterialArray = new Array(6).fill({}).map(() => x)
+console.log({ enviromentMaterialArray, skyBoxMaterialArray });
+
+  scene.environment = enviromentMaterialArray; //skyBoxMaterialArray;
 
   return skyBoxMaterialArray;
 };

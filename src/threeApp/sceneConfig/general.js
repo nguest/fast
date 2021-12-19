@@ -21,7 +21,7 @@ export const Config = {
     alpha: false,
     //logarithmicDepthBuffer: true,
     //toneMapping: THREE.CineonToneMapping,//ACESFilmicToneMapping,
-    precision: 'lowP',
+    precision: 'lowp',
     powerPreference: 'low-power',
   },
   container: {
@@ -56,7 +56,7 @@ export const Config = {
   },
   followCam: {
     fov: 60,
-    near: 0.1,
+    near: 0.01,
     far: 10000,
     aspect: 1,
     position: [0, 1.15, -4.5],
@@ -86,7 +86,3 @@ export const Config = {
   },
   gravity: [0, -10, 0],
 };
-
-const debugObjectFilter = (obj) => {
-
-}

@@ -49,7 +49,7 @@ export const createObjects = (materials, assets, trackParams, scene, manager, ph
       return mesh.getMesh();
     });
 
-  createTrees(scene, trackParams);
+  createTrees(scene, trackParams, assets);
   decorateTrack(getObjByName(scene, 'racingLine'), scene, trackParams, materials.roadRacingLine);
   decorateGrass(getObjByName(scene, 'grassL'), scene, trackParams, materials, assets);
   decorateGrass(getObjByName(scene, 'grassR'), scene, trackParams, materials, assets);

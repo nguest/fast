@@ -42,7 +42,7 @@ export class Light {
       this.light.shadow.camera.bottom = shadow.camera.bottom;
       this.light.shadow.camera.right = shadow.camera.right;
       this.light.shadow.camera.left = shadow.camera.left;
-      this.light.shadow.radius = 0.8
+      this.light.shadow.radius = 0.9
 
       this.addLightHelper();
     }

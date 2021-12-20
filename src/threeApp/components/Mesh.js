@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import Ammo from 'ammonext';
 import { GLTFLoader } from '../loaders/GLTFLoader';
 import { CustomExtrudeBufferGeometry } from '../helpers/CustomExtrudeGeometry';
+import { MeshLambertMaterial } from 'three';
 
 export class Mesh {
   constructor({
@@ -101,6 +102,19 @@ export class Mesh {
     const loader = new GLTFLoader(manager).setPath(url.path);
     loader.load(url.file, (gltf) => {
       const mesh = gltf.scene.children[0];
+console.log({ [mesh.name]: mesh.material });
+
+if (mesh.material) {
+  mesh.material.shininess = 0.1;
+  mesh.material.specular = new THREE.Color('0x666666');
+
+  const newMat = new MeshLambertMaterial({
+    map: mesh.material.map,
+    shininess: 0.1,
+    specular: 0x666666
+  })
+  mesh.material = newMat
+}
 
       mesh.position.set(...this.position);
       mesh.rotation.set(...this.rotation);

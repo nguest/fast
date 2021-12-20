@@ -69,7 +69,6 @@ export const decorateCar = (car, scene) => {
           //clearcoat: 1.0,
           clearcoatRoughness: 0.3
         });
-        console.log({ child });
         child.castShadow = true;
         child.receiveShadow = true;
 
@@ -115,7 +114,7 @@ export const decorateCar = (car, scene) => {
   });
 
   const shadowPlaneMesh = createShadow();
-  car.add(shadowPlaneMesh);
+  //car.add(shadowPlaneMesh);
 
   car.position.set(0, -0.5, 0);
   return { car, brakeLights };

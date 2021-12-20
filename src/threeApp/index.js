@@ -145,11 +145,11 @@ export class Main extends PureComponent {
       if (Config.isDev) this.gui = new DatGUI(this);
 
       // setup light camera goal
-      this.localGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(10, 5, 0.1), materials.mappedFlat);
+      this.localGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(10, 5, 0.1), materials.wireFrame);
       this.localGoal.position.set(0, 0, 30);
       this.chassisMesh.add(this.localGoal);
 
-      this.worldGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 0.1), materials.mappedFlat);
+      this.worldGoal = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 0.1), materials.wireFrame);
       this.scene.add(this.worldGoal);
       this.lights[1].target = this.worldGoal;
 

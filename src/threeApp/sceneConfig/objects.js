@@ -37,6 +37,7 @@ export const objectsIndex = (trackParams) => ([
         UVGenerator: trackUVGenerator,
         extrudePath: trackParams.centerLine,
         widthFactor: trackParams.widthFactor,
+        randomize: new THREE.Vector3(0.1, 0.02, 0.1)
       },
     ],
     position: [0, 0.0, 0],
@@ -378,6 +379,22 @@ export const objectsIndex = (trackParams) => ([
     shadows: {
       receive: false,
       cast: false,
+    },
+    add: false,
+  },
+  {
+    name: 'terraintest',
+    type: 'GLTF',
+    url: {
+      path: 'assets/objects/',
+      file: 'terrain.glb',
+    },
+    position: [2600, -600, 0],
+    rotation: [0,0, 0],
+    scale: [0.5,0.5,0.5],
+    shadows: {
+      receive: true,
+      cast: true,
     },
     add: true,
   },

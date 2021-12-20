@@ -64,6 +64,7 @@ export const getObjByName = (scene, name) => scene.children.find((object) => obj
 export const getObjectsByType = (scene, type) => scene.children.filter((object) => object.userData.type === type);
 
 export const scaleBackground = (scene) => {
+  return null
   const track = getObjByName(scene, 'track');
   track.geometry.computeBoundingSphere();
   track.geometry.computeBoundingBox();

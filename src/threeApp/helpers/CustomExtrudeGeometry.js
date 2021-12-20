@@ -33,6 +33,7 @@ class CustomExtrudeGeometry extends BufferGeometry {
     this.parameters = {
       shapes: shapes,
       options: options,
+      //randomize: options,
     };
 
     this.fromBufferGeometry(new CustomExtrudeBufferGeometry(shapes, options));
@@ -55,6 +56,9 @@ class CustomExtrudeBufferGeometry extends BufferGeometry {
       options,
     };
 
+    this.randomize = options.randomize !== undefined ? options.randomize : null;
+    console.log(this.randomize);
+    
     shapes = Array.isArray(shapes) ? shapes : [shapes];
     const scope = this;
 
@@ -224,9 +228,17 @@ class CustomExtrudeBufferGeometry extends BufferGeometry {
       }
 
       function v(x, y, z) {
-        placeholder.push(x);
-        placeholder.push(y);
-        placeholder.push(z);
+        
+        if (options.randomize) {
+          placeholder.push(x + Math.random() * options.randomize.x);
+          placeholder.push(y + Math.random() * options.randomize.y);
+          placeholder.push(z + Math.random() * options.randomize.z);
+        } else {
+          placeholder.push(x);
+          placeholder.push(y);
+          placeholder.push(z);
+        }
+
       }
 
       function f4(a, b, c, d) {

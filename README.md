@@ -12,6 +12,8 @@ Visit the build-in-progress at [http://fastwebgl.herokuapp.com/](http://fastwebg
 
 The story so far:
 
+update (19 Dec 2021)! instanced grass, 3d backgrounds, other improvements
+![screenshot](https://github.com/nguest/fast/blob/master/public/assets/screenshots/followcam5.jpg)
 update! better trees, instanced track decals etc
 ![screenshot](https://github.com/nguest/fast/blob/master/public/assets/screenshots/followcam4.jpg)
 Initial commits:
